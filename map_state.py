@@ -1,6 +1,8 @@
 from pico2d import *
 import game_framework
 
+stage_count = 0
+stage = None
 class Palm:
     def __init__(self):
         self.image = load_image('map/palmtree.png')
@@ -13,28 +15,42 @@ def handle_events():
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
-            running = False
+            game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
-    delay(0.01)
+            game_framework.quit()
 
 def enter():
-    global running
-    running = True
+    global stage, stage_count
+    if stage_count == 0:
+        stage = Palm()
     pass
 
 def exit():
-
+    global stage, stage_count
+    del stage, stage_count
+    pass
 
 def draw():
     clear_canvas()
+    if stage_count == 0:
+        stage.draw()
     update_canvas()
 
-open_canvas()
-enter()
-while running:
+def update():
     handle_events()
-    draw()
-exit()
-# finalization code
-close_canvas()
+
+def pause():
+    pass
+
+def resume():
+    pass
+
+def test_self():
+    import sys
+    this_module = sys.modules['__main__']
+    open_canvas()
+    game_framework.run(this_module)
+    close_canvas()
+
+if __name__ == '__main__':
+    test_self()

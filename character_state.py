@@ -1,125 +1,152 @@
 from pico2d import *
 import game_framework
 
-running = True
+player_character = None
+character = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
+             'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
 
 class Sonic:
-    img_left = load_image("character/sonic left.png")
-    img_right = load_image("character/sonic right.png")
     def __init__(self):
-        self.image_left = Sonic.img_left
-        self.image_right = Sonic.img_right
+        self.image_left = load_image("character/sonic left.png")
+        self.image_right = load_image("character/sonic left.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Tales:
-    img_left = load_image("character/tales left.png")
-    img_right = load_image("character/tales right.png")
     def __init__(self):
-        self.image_left = Tales.img_left
-        self.image_right = Tales.img_right
+        self.image_left = load_image("character/tales left.png")
+        self.image_right = load_image("character/tales left.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Knuckles:
-    img_left = load_image("character/knuckles left.png")
-    img_right = load_image("character/knuckles right.png")
     def __init__(self):
-        self.image_left = Knuckles.img_left
-        self.image_right = Knuckles.img_right
+        self.image_left = load_image("character/knuckles left.png")
+        self.image_right = load_image("character/knuckles left.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class AmyRose:
-    img_left = load_image("character/amy rose left.png")
-    img_right = load_image("character/amy rose right.png")
     def __init__(self):
-        self.image_left = AmyRose.img_left
-        self.image_right = AmyRose.img_right
+        self.image_left = load_image("character/amy rose left.png")
+        self.image_right = load_image("character/amy rose left.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Tikal:
-    img_left = load_image("character/tikal left.png")
-    img_right = load_image("character/tikal right.png")
     def __init__(self):
-        self.image_left = Tikal.img_left
-        self.image_right = Tikal.img_right
+        self.image_left = load_image("character/tikal left.png")
+        self.image_right = load_image("character/tikal right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Rouge:
-    img_left = load_image("character/rouge left.png")
-    img_right = load_image("character/rouge right.png")
     def __init__(self):
-        self.image_left = Rouge.img_left
-        self.image_right = Rouge.img_right
+        self.image_left = load_image("character/rouge left.png")
+        self.image_right = load_image("character/rouge right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Shadow:
-    img_left = load_image("character/shadow left.png")
-    img_right = load_image("character/shadow right.png")
     def __init__(self):
-        self.image_left = Shadow.img_left
-        self.image_right = Shadow.img_right
+        self.image_left = load_image("character/shadow left.png")
+        self.image_right = load_image("character/shadow right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Silver:
-    img_left = load_image("character/silver left.png")
-    img_right = load_image("character/silver right.png")
     def __init__(self):
-        self.image_left = Silver.img_left
-        self.image_right = Silver.img_right
+        self.image_left = load_image("character/silver left.png")
+        self.image_right = load_image("character/silver right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Blaze:
-    img_left = load_image("character/blaze left.png")
-    img_right = load_image("character/blaze right.png")
     def __init__(self):
-        self.image_left = Blaze.img_left
-        self.image_right = Blaze.img_right
+        self.image_left = load_image("character/blaze left.png")
+        self.image_right = load_image("character/blaze right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Espio:
-    img_left = load_image("character/espio left.png")
-    img_right = load_image("character/espio right.png")
     def __init__(self):
-        self.image_left = Espio.img_left
-        self.image_right = Espio.img_right
+        self.image_left = load_image("character/espio left.png")
+        self.image_right = load_image("character/espio right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class Mighty:
-    img_left = load_image("character/mighty left.png")
-    img_right = load_image("character/mighty right.png")
     def __init__(self):
-        self.image_left = Mighty.img_left
-        self.image_right = Mighty.img_right
+        self.image_left = load_image("character/mighty left.png")
+        self.image_right = load_image("character/mighty right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class SuperSonic:
-    img_left = load_image("character/super sonic left.png")
-    img_right = load_image("character/super sonic right.png")
     def __init__(self):
-        self.image_left = SuperSonic.img_left
-        self.image_right = SuperSonic.img_right
+        self.image_left = load_image("character/super sonic left.png")
+        self.image_right = load_image("character/super sonic right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 class SuperShadow:
-    img_left = load_image("character/super shadow left.png")
-    img_right = load_image("character/super shadow right.png")
     def __init__(self):
-        self.image_left = SuperShadow.img_left
-        self.image_right = SuperShadow.img_right
+        self.image_left = load_image("character/super shadow left.png")
+        self.image_right = load_image("character/super shadow right.png")
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 0, 0, 400, 300)
 
 def handle_events():
     global running
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
-            running = False
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
-    delay(0.01)
+            game_framework.quit()
+        elif event.type == SDL_KEYDOWN:
+            if event.key == SDLK_ESCAPE:
+                game_framework.quit()
 
 def enter():
-    global running
-    running = True
-    pass
+    global player_character
+    player_character = Sonic()
 
 def exit():
+    global player_character
+    del player_character
 
 def draw():
     clear_canvas()
+    player_character.draw()
     update_canvas()
 
-open_canvas()
-enter()
-while running:
+def update():
     handle_events()
-    draw()
-exit()
-# finalization code
-close_canvas()
+
+def pause():
+    pass
+
+def resume():
+    pass
+
+def test_self():
+    import sys
+    this_module = sys.modules['__main__']
+    open_canvas()
+    game_framework.run(this_module)
+    close_canvas()
+
+if __name__ == '__main__':
+    test_self()
