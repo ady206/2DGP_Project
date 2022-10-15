@@ -1,0 +1,54 @@
+--------sonic
+
+default 1
+run 10
+jump 20
+attack 33
+
+--------tales
+
+default 1
+run 7
+jump 6
+attack 8
+
+--------knuckles
+defualt 2
+run 7
+jump 25
+attack 19
+
+--------amy rose
+default 6
+run 10
+jump 23
+attack 27
+
+--------shadow
+default 1
+run 4
+jump 6
+attack 10
+
+--------silver
+default 1
+run 2
+jump 7
+attack 14
+
+--------blaze
+default 1
+run 1
+jump 2
+attack 8
+
+--------espio
+default 1
+run 4
+jump 6
+attack 10
+
+--------super shadow
+default 2
+run 4
+jump 7

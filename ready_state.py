@@ -1,26 +1,16 @@
 from pico2d import *
 import game_framework
-import map_state
+import stage_state
 
-class Ready:
-    image = None
-    def __init__(self):
-        self.image = Ready.image
-
-    def draw(self):
-        self.image.draw(390, 350)
-
-ready = None
-
+image = None
 def enter():
-    Ready.image = load_image('map/ready.png')
-    global ready
-    ready = Ready()
+    global image
+    image = load_image('map/ready.png')
     pass
 
 def exit():
-    global ready
-    del ready
+    global image
+    del image
     pass
 
 def handle_events():
@@ -32,12 +22,12 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_SPACE:
-                game_framework.change_state(map_state)
+                game_framework.change_state(stage_state)
     delay(0.01)
 
 def draw():
     clear_canvas()
-    ready.draw()
+    image.draw(390, 350)
     update_canvas()
 
 def update():
