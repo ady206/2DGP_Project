@@ -114,7 +114,7 @@ class Tikal:
 class Rouge:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -122,18 +122,19 @@ class Rouge:
         self.image_right = load_image("character/rouge right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        self.image_left.clip_draw(self.frame * 28, 2984, 28, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
-
+        delay(0.01)
 class Shadow:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -141,13 +142,15 @@ class Shadow:
         self.image_right = load_image("character/shadow right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 4
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        self.image_left.clip_draw(self.frame * 35 + 202, 2960, 37, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        delay(0.01)
 
 #######################################################
 class Silver:
@@ -321,7 +324,7 @@ def handle_events():
 two, three, four = None, None, None
 def enter():
     global player_character, stage, stage_count, two, three, four
-    player_character = Tales()
+    player_character = Shadow()
     stage = load_image('map/palmtree.png')
     two, three, four = 600, 1000, 600
     stage_count = 0
