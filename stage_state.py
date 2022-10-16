@@ -9,6 +9,7 @@ character = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow'
 stage_count = None
 stage = None
 
+#######################################################
 class Sonic:
     def __init__(self):
         self.hp = 100
@@ -144,6 +145,7 @@ class Shadow:
         self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
 
+#######################################################
 class Silver:
     def __init__(self):
         self.hp = 100
@@ -155,18 +157,19 @@ class Silver:
         self.image_right = load_image("character/silver right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 7
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        self.image_left.clip_draw(self.frame * 50, 2984, 40, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
 
 class Blaze:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -174,13 +177,14 @@ class Blaze:
         self.image_right = load_image("character/blaze right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 13
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(0, 0, 0, 0, 400, 300)
-        self.image_right.clip_draw(0, 0, 0, 0, 400, 300)
+        self.image_left.clip_draw(self.frame * 31 + 382, 1710, 30, 40, 400, 300)
+        self.image_right.clip_draw(self.frame, 0, 0, 0, 400, 300)
 
 class Espio:
     def __init__(self):
@@ -222,6 +226,7 @@ class Mighty:
         self.image_left.clip_draw(self.frame * 25 + 3, 2880, 27, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
         delay(0.03)
+
 class SuperSonic:
     def __init__(self):
         self.hp = 100
@@ -259,6 +264,7 @@ class SuperShadow:
     def draw(self):
         self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+#######################################################
 
 def InsideWindow(x, y):
     if x > game.window_size_x:
@@ -309,7 +315,7 @@ def handle_events():
 two, three, four = None, None, None
 def enter():
     global player_character, stage, stage_count, two, three, four
-    player_character = Espio()
+    player_character = Silver()
     stage = load_image('map/palmtree.png')
     two, three, four = 600, 1000, 600
     stage_count = 0
@@ -324,7 +330,7 @@ def update():
 
 def draw():
     clear_canvas()
-    stage.clip_draw(0, two, three, four, 400, 300)
+    # stage.clip_draw(0, two, three, four, 400, 300)
     player_character.draw()
     update_canvas()
 
