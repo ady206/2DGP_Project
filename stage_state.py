@@ -185,7 +185,7 @@ class Blaze:
 class Espio:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -193,18 +193,19 @@ class Espio:
         self.image_right = load_image("character/espio right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        self.image_left.clip_draw(self.frame * 27 + 5, 1220, 30, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
 
 class Mighty:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -212,14 +213,15 @@ class Mighty:
         self.image_right = load_image("character/mighty right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 7
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        self.image_left.clip_draw(self.frame * 25 + 3, 2880, 27, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
-
+        delay(0.03)
 class SuperSonic:
     def __init__(self):
         self.hp = 100
@@ -307,7 +309,7 @@ def handle_events():
 two, three, four = None, None, None
 def enter():
     global player_character, stage, stage_count, two, three, four
-    player_character = Sonic()
+    player_character = Espio()
     stage = load_image('map/palmtree.png')
     two, three, four = 600, 1000, 600
     stage_count = 0
