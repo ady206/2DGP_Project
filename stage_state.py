@@ -34,7 +34,7 @@ class Sonic:
 class Tales:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -42,13 +42,15 @@ class Tales:
         self.image_right = load_image("character/tales left.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 8
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        self.image_left.clip_draw(self.frame * 55 + 10, 2980, 50, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        delay(0.01)
 
 class Knuckles:
     def __init__(self):
@@ -91,7 +93,7 @@ class AmyRose:
 class Tikal:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -99,13 +101,15 @@ class Tikal:
         self.image_right = load_image("character/tikal right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
-        self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        self.image_left.clip_draw(self.frame * 30 + 5, 2754, 30, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        delay(0.01)
 
 class Rouge:
     def __init__(self):
@@ -149,7 +153,7 @@ class Shadow:
 class Silver:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 2
         self.frame = 0
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 300
@@ -165,6 +169,7 @@ class Silver:
     def draw(self):
         self.image_left.clip_draw(self.frame * 50, 2984, 40, 40, self.x, self.y)
         self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        delay(0.01)
 
 class Blaze:
     def __init__(self):
@@ -185,6 +190,7 @@ class Blaze:
     def draw(self):
         self.image_left.clip_draw(self.frame * 31 + 382, 1710, 30, 40, 400, 300)
         self.image_right.clip_draw(self.frame, 0, 0, 0, 400, 300)
+        delay(0.01)
 
 class Espio:
     def __init__(self):
@@ -315,7 +321,7 @@ def handle_events():
 two, three, four = None, None, None
 def enter():
     global player_character, stage, stage_count, two, three, four
-    player_character = Silver()
+    player_character = Tales()
     stage = load_image('map/palmtree.png')
     two, three, four = 600, 1000, 600
     stage_count = 0
