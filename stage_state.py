@@ -68,18 +68,20 @@ class Knuckles:
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/knuckles left.png")
-        self.image_right = load_image("character/knuckles left.png")
+        self.image_right = load_image("character/knuckles right.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 3
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+            self.image_left.clip_draw(self.frame * 35 + 410, 2980, 35, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        delay(0.01)
 
 class AmyRose:
     def __init__(self):
@@ -88,20 +90,22 @@ class AmyRose:
         self.frame = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = 30, 130
+        self.x, self.y = 400, 300
         self.image_left = load_image("character/amy rose left.png")
         self.image_right = load_image("character/amy rose left.png")
 
     def update(self):
+        self.frame = (self.frame + 1) % 8
         self.x += self.dir_x * self.speed * frametime.FrameTime()
         self.y += self.dir_y * self.speed * frametime.FrameTime()
         InsideWindow(self.x, self.y)
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+            self.image_left.clip_draw(self.frame * 28 + 2, 2750, 30, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        delay(0.01)
 
 class Tikal:
     def __init__(self):
@@ -383,7 +387,7 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count
-    player_character = Shadow()
+    player_character = AmyRose()
     stage = Palm()
     stage_count = 0
 
