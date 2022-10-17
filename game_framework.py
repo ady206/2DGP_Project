@@ -1,5 +1,3 @@
-import frametime
-
 
 class GameState:
     def __init__(self, state):
@@ -98,7 +96,6 @@ def run(start_state):
     while (len(stack) > 0):
         stack[-1].exit()
         stack.pop()
-    frametime.SetStartTime()
 
 
 def test_game_framework():

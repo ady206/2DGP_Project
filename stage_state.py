@@ -1,52 +1,58 @@
 from pico2d import *
-import random
-import math
+from random import *
+from math import *
+import time
 import game_framework
 import game
-import frametime
 
 player_character = None
 character = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
 stage_count = None
 stage = None
+
+g = -9.81
+t = 0
+radian = 0 * pi / 180
+
 #######################################################
 class Sonic:
     def __init__(self):
         self.hp = 100
-        self.speed = 2
+        self.speed = 5
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = 30, 130
+        self.x, self.y = 225, 130
+        self.vector = (0, 0, 0)
         self.image_left = load_image("character/sonic left.png")
         self.image_right = load_image("character/sonic right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 8
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 8
+        self.x += self.dir_x * self.speed * cos(radian)
+        self.y += self.speed * sin(radian) - (g * t / 2)
+
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(20 + (self.frame * 30), 2320, 30, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(3982 - (self.frame * 30), 2320, 30, 40, self.x, self.y)
-        delay(0.05)
 
 class Tales:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -54,30 +60,28 @@ class Tales:
         self.image_right = load_image("character/tales right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 8
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 8
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 55 + 10, 2980, 50, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(3972 - self.frame * 55, 2980, 50, 40, self.x, self.y)
-        delay(0.01)
 
 class Knuckles:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -85,30 +89,28 @@ class Knuckles:
         self.image_right = load_image("character/knuckles right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 3
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 3
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 35 + 410, 2980, 35, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(4032 - 410 - 35 - self.frame * 35, 2980, 35, 40, self.x, self.y)
-        delay(0.01)
 
 class AmyRose:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -116,17 +118,15 @@ class AmyRose:
         self.image_right = load_image("character/amy rose right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 8
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 8
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         # if self.dir_x == 1 or self.right == 1:
@@ -139,6 +139,7 @@ class Tikal:
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -146,30 +147,28 @@ class Tikal:
         self.image_right = load_image("character/tikal right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 6
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 6
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 30 + 5, 2754, 30, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(4032 - 5 - 30 - self.frame * 30, 2754, 30, 40, self.x, self.y)
-        delay(0.01)
 
 class Rouge:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -177,30 +176,27 @@ class Rouge:
         self.image_right = load_image("character/rouge right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 6
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 6
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 28, 2984, 28, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(4032 - 28 - self.frame * 28, 2984, 28, 40, self.x, self.y)
-        delay(0.01)
 
 class Shadow:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -208,24 +204,20 @@ class Shadow:
         self.image_right = load_image("character/shadow right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 4
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 4
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 35 + 202, 2960, 37, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(4032 - 202 - 37 - self.frame * 35, 2960, 37, 40, self.x, self.y)
-        delay(0.01)
 
 #######################################################
 class Silver:
@@ -233,6 +225,7 @@ class Silver:
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -240,30 +233,27 @@ class Silver:
         self.image_right = load_image("character/silver right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 7
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 7
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 50, 2984, 40, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(4032 - 40 - self.frame * 50, 2984, 40, 40, self.x, self.y)
-        delay(0.01)
 
 class Blaze:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 1, 0
         self.x, self.y = 30, 130
@@ -271,30 +261,28 @@ class Blaze:
         self.image_right = load_image("character/blaze right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 13
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 13
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 31 + 382, 1710, 30, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(4032 - 382 - 30 - self.frame * 31, 1710, 30, 40, self.x, self.y)
-        delay(0.01)
 
 class Espio:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -302,17 +290,15 @@ class Espio:
         self.image_right = load_image("character/espio right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 6
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 6
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
@@ -325,6 +311,7 @@ class Mighty:
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -332,30 +319,28 @@ class Mighty:
         self.image_right = load_image("character/mighty right.png")
 
     def update(self):
-        self.frame = (self.frame + 1) % 7
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 7
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
             self.image_left.clip_draw(self.frame * 25 + 3, 2880, 27, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(4032 - 3 - 27 - self.frame * 25, 2880, 27, 40, self.x, self.y)
-        delay(0.03)
 
 class SuperSonic:
     def __init__(self):
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -363,16 +348,15 @@ class SuperSonic:
         self.image_right = load_image("character/super sonic right.png")
 
     def update(self):
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        # self.time += 1
+        # if self.time % 3 == 0:
+        #     self.frame = (self.frame + 1) % 8
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         # if self.dir_x == 1 or self.right == 1:
@@ -385,6 +369,7 @@ class SuperShadow:
         self.hp = 100
         self.speed = 2
         self.frame = 0
+        self.time = 0
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
@@ -392,16 +377,15 @@ class SuperShadow:
         self.image_right = load_image("character/super shadow right.png")
 
     def update(self):
-        self.x += self.dir_x * self.speed * frametime.FrameTime()
-        self.y += self.dir_y * self.speed * frametime.FrameTime()
+        # self.time += 1
+        # if self.time % 3 == 0:
+        #     self.frame = (self.frame + 1) % 8
+        self.x += self.dir_x * self.speed
+        self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
             self.x = 0
-        if self.y > game.window_size_y:
-            self.y = game.window_size_y
-        if self.y < 0:
-            self.y = 0
 
     def draw(self):
         # if self.dir_x == 1 or self.right == 1:
@@ -425,8 +409,12 @@ class Palm:
         for i in range(0, 7):
             self.image_floor.clip_draw(0, 0, 100, 40, i * 30 + 630, 100)
 
+#######################################################
+
+#######################################################
 def handle_events():
-    global player_character, stage, stage_count, two, three, four
+    global player_character, stage, stage_count, g, t, radian
+
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -435,16 +423,14 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_UP:
-                player_character.dir_y = 1
-                player_character.y += player_character.dir_y * 1
+                player_character.y += player_character.speed * sin(radian) - (g * t / 2)
+                print(t)
             elif event.key == SDLK_LEFT:
                 player_character.right = 0
                 player_character.dir_x = -1
-                player_character.x += player_character.dir_x * 1
             elif event.key == SDLK_RIGHT:
                 player_character.right = 1
                 player_character.dir_x = 1
-                player_character.x += player_character.dir_x * 1
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_UP:
                 player_character.dir_y = 0
@@ -465,6 +451,9 @@ def exit():
     del player_character, stage, stage_count
 
 def update():
+    global g, t, radian
+
+    t += 0.01
     player_character.update()
     handle_events()
 
