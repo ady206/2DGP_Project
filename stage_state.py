@@ -348,9 +348,9 @@ class SuperSonic:
         self.image_right = load_image("character/super sonic right.png")
 
     def update(self):
-        # self.time += 1
-        # if self.time % 3 == 0:
-        #     self.frame = (self.frame + 1) % 8
+        self.time += 1
+        if self.time % 3 == 0:
+            self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed
         self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
@@ -359,10 +359,10 @@ class SuperSonic:
             self.x = 0
 
     def draw(self):
-        # if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
-        # if self.dir_x == -1 or self.right == 0:
-        #     self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        if self.dir_x == 1 or self.right == 1:
+            self.image_left.clip_draw(self.frame * 24, 2894, 24, 46, self.x, self.y)
+        if self.dir_x == -1 or self.right == 0:
+            self.image_right.clip_draw(4032 - 24 - self.frame * 24, 2894, 24, 46, self.x, self.y)
 
 class SuperShadow:
     def __init__(self):
@@ -373,13 +373,13 @@ class SuperShadow:
         self.right = 1
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
-        self.image_left = load_image("character/super shadow left.png")
-        self.image_right = load_image("character/super shadow right.png")
+        self.image_left = load_image("character/super shadow right.png")
+        self.image_right = load_image("character/super shadow left.png")
 
     def update(self):
-        # self.time += 1
-        # if self.time % 3 == 0:
-        #     self.frame = (self.frame + 1) % 8
+        self.time += 1
+        if self.time % 5 == 0:
+            self.frame = (self.frame + 1) % 2
         self.x += self.dir_x * self.speed
         self.y += self.dir_y * self.speed
         if self.x > game.window_size_x:
@@ -388,10 +388,10 @@ class SuperShadow:
             self.x = 0
 
     def draw(self):
-        # if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
-        # if self.dir_x == -1 or self.right == 0:
-        #     self.image_right.clip_draw(self.frame, 300, 400, 300, self.x, self.y)
+        if self.dir_x == 1 or self.right == 1:
+            self.image_left.clip_draw(4032 - 280 - 26 - self.frame * 26, 2940, 26, 40, self.x, self.y)
+        if self.dir_x == -1 or self.right == 0:
+            self.image_right.clip_draw(self.frame * 26 + 280, 2940, 26, 40, self.x, self.y)
 #######################################################
 
 class Palm:
@@ -442,7 +442,7 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count
-    player_character = Sonic()
+    player_character = SuperShadow()
     stage = Palm()
     stage_count = 0
 
