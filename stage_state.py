@@ -1,7 +1,7 @@
 from pico2d import *
 from random import *
 from math import *
-import time
+import ready_state
 import game_framework
 import game
 
@@ -11,18 +11,16 @@ character = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow'
 stage_count = None
 stage = None
 
-g = -9.81
-t = 0
-radian = 0 * pi / 180
-
 #######################################################
 class Sonic:
     def __init__(self):
         self.hp = 100
-        self.speed = 5
+        self.speed = 3
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 225, 130
         self.vector = (0, 0, 0)
@@ -33,9 +31,15 @@ class Sonic:
         self.time += 1
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 8
-        self.x += self.dir_x * self.speed * cos(radian)
-        self.y += self.speed * sin(radian) - (g * t / 2)
-
+        self.x += self.dir_x * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -54,6 +58,8 @@ class Tales:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/tales left.png")
@@ -64,7 +70,14 @@ class Tales:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 8
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -83,6 +96,8 @@ class Knuckles:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/knuckles left.png")
@@ -93,7 +108,14 @@ class Knuckles:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 3
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -112,6 +134,8 @@ class AmyRose:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/amy rose left.png")
@@ -122,7 +146,14 @@ class AmyRose:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 8
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -141,6 +172,8 @@ class Tikal:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/tikal left.png")
@@ -151,7 +184,14 @@ class Tikal:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -170,6 +210,8 @@ class Rouge:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/rouge left.png")
@@ -179,7 +221,14 @@ class Rouge:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -198,6 +247,8 @@ class Shadow:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/shadow left.png")
@@ -207,7 +258,14 @@ class Shadow:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 4
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -227,6 +285,8 @@ class Silver:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/silver left.png")
@@ -236,7 +296,14 @@ class Silver:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 7
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -255,6 +322,8 @@ class Blaze:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 1, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/blaze left.png")
@@ -265,7 +334,14 @@ class Blaze:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 13
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -284,6 +360,8 @@ class Espio:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/espio left.png")
@@ -294,7 +372,14 @@ class Espio:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -313,6 +398,8 @@ class Mighty:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/mighty left.png")
@@ -323,7 +410,14 @@ class Mighty:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 7
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -342,6 +436,8 @@ class SuperSonic:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/super sonic left.png")
@@ -352,7 +448,14 @@ class SuperSonic:
         if self.time % 3 == 0:
             self.frame = (self.frame + 1) % 6
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -371,6 +474,8 @@ class SuperShadow:
         self.frame = 0
         self.time = 0
         self.right = 1
+        self.radian = 0
+        self.jump = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 30, 130
         self.image_left = load_image("character/super shadow right.png")
@@ -381,7 +486,14 @@ class SuperShadow:
         if self.time % 5 == 0:
             self.frame = (self.frame + 1) % 2
         self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 7
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
         if self.x > game.window_size_x:
             self.x = game.window_size_x
         if self.x < 0:
@@ -402,18 +514,14 @@ class Palm:
         self.image_floor = load_image('map/palmtree floor.png')
 
         self.image.clip_draw(0, 600, 1000, 600, 400, 300)
-        for i in range(0, 7):
+        for i in range(0, 30):
             self.image_floor.clip_draw(0, 0, 100, 40, i * 30 + 50, 100)
-        for i in range(0, 7):
-            self.image_floor.clip_draw(0, 0, 100, 40, i * 30 + 340, 100)
-        for i in range(0, 7):
-            self.image_floor.clip_draw(0, 0, 100, 40, i * 30 + 630, 100)
 
 #######################################################
 
 #######################################################
 def handle_events():
-    global player_character, stage, stage_count, g, t, radian
+    global player_character, stage, stage_count, jump
 
     events = get_events()
     for event in events:
@@ -423,8 +531,7 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_UP:
-                player_character.y += player_character.speed * sin(radian) - (g * t / 2)
-                print(t)
+                player_character.jump = True
             elif event.key == SDLK_LEFT:
                 player_character.right = 0
                 player_character.dir_x = -1
@@ -442,7 +549,7 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count
-    player_character = SuperShadow()
+    player_character = ready_state.player_character
     stage = Palm()
     stage_count = 0
 
@@ -451,9 +558,6 @@ def exit():
     del player_character, stage, stage_count
 
 def update():
-    global g, t, radian
-
-    t += 0.01
     player_character.update()
     handle_events()
 
