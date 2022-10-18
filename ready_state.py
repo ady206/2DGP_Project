@@ -49,3 +49,13 @@ def pause():
 
 def resume():
     pass
+
+def test_self():
+    import sys
+    this_module = sys.modules['__main__']
+    open_canvas()
+    game_framework.run(this_module)
+    close_canvas()
+
+if __name__ == '__main__': # 만약 단독 실행 상태이면
+    test_self()

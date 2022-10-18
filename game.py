@@ -3,6 +3,7 @@ import game_framework
 import ready_state
 import stage_state
 
+
 window_size_x = 800
 window_size_y = 600
 
