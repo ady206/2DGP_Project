@@ -18,6 +18,8 @@ class Sonic:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -58,6 +60,8 @@ class Tales:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -97,6 +101,8 @@ class Knuckles:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -136,6 +142,8 @@ class AmyRose:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -175,6 +183,8 @@ class Tikal:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -214,6 +224,8 @@ class Rouge:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -253,6 +265,8 @@ class Shadow:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -294,6 +308,8 @@ class Silver:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -333,6 +349,8 @@ class Blaze:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -372,6 +390,8 @@ class Espio:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -411,6 +431,8 @@ class Mighty:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -450,6 +472,8 @@ class SuperSonic:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -489,6 +513,8 @@ class SuperShadow:
         self.hp = 100
         self.speed = 3
         self.frame = 0
+        self.attack = True
+        self.damage = 6
         self.time = 0
         self.right = 1
         self.radian = 0
@@ -585,6 +611,10 @@ def handle_events():
                     player_character = SuperSonic()
                 elif choice(character) == 'Super Shadow':
                     player_character = SuperShadow()
+                elif event.key == SDLK_2:
+                    player_character = Sonic()
+                elif event.key == SDLK_3:
+                    player_character = Tales()
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_UP:
                 pass
