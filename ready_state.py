@@ -1,9 +1,8 @@
 from pico2d import *
 import game_framework
-import game
+from stage_state import player_character
 import stage_state
 
-player_character = None
 image = None
 
 def handle_events():
@@ -27,14 +26,14 @@ def handle_events():
                 player_character = stage_state.Shadow()
     delay(0.01)
 def enter():
-    global image, player_character
-    player_character = stage_state.Sonic()
+    global image
+    stage_state.player_character = stage_state.Tales()
     image = load_image('map/ready.png')
     pass
 
 def exit():
-    global image, player_character
-    del image, player_character
+    global image
+    del image
     pass
 
 def draw():
