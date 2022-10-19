@@ -59,8 +59,10 @@ class Sonic:
 class Tales:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 4
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -76,12 +78,14 @@ class Tales:
     def update(self):
         self.time += 1
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 8
+            self.idle_frame = (self.idle_frame + 1) % 8
+            self.move_frame = (self.move_frame + 1) % 8
+            self.jump_frame = (self.jump_frame + 1) % 8
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 12)
-                self.y += sin(self.radian) * 6
+                self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -94,19 +98,19 @@ class Tales:
     def draw(self):
         if self.dir_x == 1:
             if self.jump == True:
-                self.image_left.clip_draw(self.frame * 50 + 15, 2740, 40, 45, self.x, self.y)
+                self.image_left.clip_draw(self.jump_frame * 50 + 15, 2740, 40, 45, self.x, self.y)
             else:
-                self.image_left.clip_draw(self.frame * 55 + 10, 2980, 50, 40, self.x, self.y)
+                self.image_left.clip_draw(self.move_frame * 55 + 10, 2980, 50, 40, self.x, self.y)
         if self.dir_x == -1:
             if self.jump == True:
-                self.image_right.clip_draw(4032 - 15 - 40 - self.frame * 50, 2740, 40, 45, self.x, self.y)
+                self.image_right.clip_draw(4032 - 15 - 40 - self.jump_frame * 50, 2740, 40, 45, self.x, self.y)
             else:
-                self.image_right.clip_draw(3972 - self.frame * 55, 2980, 50, 40, self.x, self.y)
+                self.image_right.clip_draw(3972 - self.move_frame * 55, 2980, 50, 40, self.x, self.y)
         if self.dir_x == 0:
-            if self.right == 0:
-                self.image_right.clip_draw(4032 - 20 - 50 - self.frame * 52, 2650, 50, 40, self.x, self.y)
-            elif self.right == 1:
-                self.image_left.clip_draw(self.frame * 52 + 20, 2650, 50, 40, self.x, self.y)
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 52 + 20, 2650, 50, 40, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 20 - 50 - self.idle_frame * 52, 2650, 50, 40, self.x, self.y)
 
 class Knuckles:
     def __init__(self):
@@ -275,8 +279,10 @@ class Rouge:
 class Shadow:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 4
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -292,12 +298,16 @@ class Shadow:
     def update(self):
         self.time += 1
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 4
+            self.move_frame = (self.move_frame + 1) % 8
+            self.jump_frame = (self.jump_frame + 1) % 4
+        if self.time % 10 == 0:
+            self.idle_frame = (self.idle_frame + 1) % 4
+
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                self.radian += (pi / 12)
+                self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -308,10 +318,21 @@ class Shadow:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 35 + 202, 2960, 37, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 202 - 37 - self.frame * 35, 2960, 37, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 35 + 620, 2720, 38, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame * 41 + 6, 2864, 42, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 620 - 35 - self.jump_frame * 35, 2720, 38, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 6 - 41 - self.move_frame * 41, 2864, 42, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 35 + 202, 2958, 37, 40, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 202 - 37 - self.idle_frame * 35, 2958, 37, 40, self.x, self.y)
 
 ##############################################################################################################
 
@@ -576,6 +597,35 @@ class Palm:
 
 ##############################################################################################################
 
+def RandomCharacter():
+    global player_character
+    if choice(character) == 'Sonic':
+        player_character = Sonic()
+    elif choice(character) == 'Tales':
+        player_character = Tales()
+    elif choice(character) == 'Knuckles':
+        player_character = Knuckles()
+    elif choice(character) == 'AmyRose':
+        player_character = AmyRose()
+    elif choice(character) == 'Tikal':
+        player_character = Tikal()
+    elif choice(character) == 'Rouge':
+        player_character = Rouge()
+    elif choice(character) == 'Shadow':
+        player_character = Shadow()
+    elif choice(character) == 'Silver':
+        player_character = Silver()
+    elif choice(character) == 'Blaze':
+        player_character = Blaze()
+    elif choice(character) == 'Espio':
+        player_character = Espio()
+    elif choice(character) == 'Mighty':
+        player_character = Mighty()
+    elif choice(character) == 'Super Sonic':
+        player_character = SuperSonic()
+    elif choice(character) == 'Super Shadow':
+        player_character = SuperShadow()
+
 def handle_events():
     global player_character, stage, stage_count, sound, sound_on
     events = get_events()
@@ -597,35 +647,13 @@ def handle_events():
                 player_character.right = 1
                 player_character.dir_x = 1
             elif event.key == SDLK_1:
-                if choice(character) == 'Sonic':
-                    player_character = Sonic()
-                elif choice(character) == 'Tales':
-                    player_character = Tales()
-                elif choice(character) == 'Knuckles':
-                    player_character = Knuckles()
-                elif choice(character) == 'AmyRose':
-                    player_character = AmyRose()
-                elif choice(character) == 'Tikal':
-                    player_character = Tikal()
-                elif choice(character) == 'Rouge':
-                    player_character = Rouge()
-                elif choice(character) == 'Shadow':
-                    player_character = Shadow()
-                elif choice(character) == 'Silver':
-                    player_character = Silver()
-                elif choice(character) == 'Blaze':
-                    player_character = Blaze()
-                elif choice(character) == 'Espio':
-                    player_character = Espio()
-                elif choice(character) == 'Mighty':
-                    player_character = Mighty()
-                elif choice(character) == 'Super Sonic':
-                    player_character = SuperSonic()
-                elif choice(character) == 'Super Shadow':
-                    player_character = SuperShadow()
+                RandomCharacter()
             elif event.key == SDLK_F8:
                 sound_on = ~sound_on
-                sound.stop()
+                if(sound_on == True):
+                    sound.repeat_play()
+                else:
+                    sound.stop()
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_UP:
                 pass
@@ -644,12 +672,11 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count, sound, sound_on
-    player_character = Tales()
+    player_character = Shadow()
     stage = Palm()
-    if(sound_on == True):
-        sound = load_music('sound/Tropical.mp3')
-        sound.set_volume(20)
-        sound.repeat_play()
+    sound = load_music('sound/Tropical.mp3')
+    sound.set_volume(20)
+    sound.repeat_play()
     stage_count = 0
 
 def exit():
