@@ -52,8 +52,7 @@ class Sonic:
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
-            # self.image_left.clip_draw(20 + (self.frame * 30), 2320, 30, 40, self.x, self.y)
-            self.image_left.clip_draw(0, 1870, 300, 200, self.x, self.y)
+            self.image_left.clip_draw(20 + (self.frame * 30), 2320, 30, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(3982 - (self.frame * 30), 2320, 30, 40, self.x, self.y)
 
@@ -578,7 +577,7 @@ class Palm:
 ##############################################################################################################
 
 def handle_events():
-    global player_character, stage, stage_count
+    global player_character, stage, stage_count, sound, sound_on
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -624,8 +623,9 @@ def handle_events():
                     player_character = SuperSonic()
                 elif choice(character) == 'Super Shadow':
                     player_character = SuperShadow()
-                elif event.key == SDLK_2:
-                    pass
+            elif event.key == SDLK_F8:
+                sound_on = ~sound_on
+                sound.stop()
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_UP:
                 pass
@@ -646,14 +646,15 @@ def enter():
     global player_character, stage, stage_count, sound, sound_on
     player_character = Tales()
     stage = Palm()
-    sound = load_music('sound/Tropical.mp3')
-    sound.set_volume(20)
-    sound.repeat_play()
+    if(sound_on == True):
+        sound = load_music('sound/Tropical.mp3')
+        sound.set_volume(20)
+        sound.repeat_play()
     stage_count = 0
 
 def exit():
-    global player_character, stage, stage_count, sound
-    del player_character, stage, stage_count, sound
+    global player_character, stage, stage_count, sound, sound_on
+    del player_character, stage, stage_count, sound, sound_on
 
 def update():
     player_character.update()
