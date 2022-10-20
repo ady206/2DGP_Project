@@ -2,12 +2,13 @@ from pico2d import *
 from math import *
 from random import *
 import game_framework
-import time
+import middle_state
+import result_state
 
 player_character = None
 character = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
-stage_count = None
+stage_count = 0
 stage = None
 sound = None
 sound_on = True
@@ -635,6 +636,13 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
+            elif event.key == SDLK_SPACE:
+                stage_count += 1
+                if stage_count >= 3:
+                    stage_count = 0
+                    middle_state.stack = stage_count
+                    game_framework.change_state(result_state)
+                game_framework.change_state(middle_state)
             elif event.key == SDLK_UP:
                 if player_character.y == 130:
                     player_character.jump = True
@@ -671,17 +679,29 @@ def handle_events():
 ##############################################################################################################
 
 def enter():
-    global player_character, stage, stage_count, sound, sound_on
+    global player_character, stage, stage_count, sound
     player_character = Shadow()
     stage = Palm()
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
     sound.repeat_play()
+    if stage_count == 2:
+        player_character = Shadow()
+        stage = Palm()
+        sound = load_music('sound/Tropical.mp3')
+        sound.set_volume(20)
+        sound.repeat_play()
+    if stage_count == 3:
+        player_character = Shadow()
+        stage = Palm()
+        sound = load_music('sound/Tropical.mp3')
+        sound.set_volume(20)
+        sound.repeat_play()
     stage_count = 0
 
 def exit():
-    global player_character, stage, stage_count, sound, sound_on
-    del player_character, stage, stage_count, sound, sound_on
+    global player_character, stage, sound
+    del player_character, stage, sound
 
 def update():
     player_character.update()
@@ -698,7 +718,6 @@ def pause():
 
 def resume():
     pass
-
 
 def test_self():
     import sys

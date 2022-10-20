@@ -1,7 +1,7 @@
 from pico2d import *
 import game_framework
 import ready_state
-import stage_state
+import main_state
 
 
 window_size_x = 800

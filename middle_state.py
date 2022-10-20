@@ -1,11 +1,12 @@
 from pico2d import *
 import game_framework
 import main_state
-import middle_state
 
 image = None
 
+# 927 618
 def handle_events():
+    global stack
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -13,21 +14,15 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-            elif event.key == SDLK_1:
-                main_state.player_character = main_state.Sonic()
-            elif event.key == SDLK_2:
-                main_state.player_character = main_state.Tales()
-            elif event.key == SDLK_3:
-                main_state.player_character = main_state.Knuckles()
-            elif event.key == SDLK_4:
-                main_state.player_character = main_state.Shadow()
         elif event.type == SDL_MOUSEBUTTONDOWN:
-            game_framework.change_state(middle_state)
+            main_state.stage_count += 1
+            game_framework.change_state(main_state)
+
+
 
 def enter():
     global image
-    main_state.player_character = main_state.Tales()
-    image = load_image('map/ready.png')
+    image = load_image('map/stage1.png')
     pass
 
 def exit():
@@ -37,7 +32,7 @@ def exit():
 
 def draw():
     clear_canvas()
-    image.draw(390, 350)
+    image.draw(420, 300)
     update_canvas()
 
 def update():
