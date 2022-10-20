@@ -3,7 +3,7 @@ import game_framework
 import main_state
 
 image = None
-
+stack = None
 # 927 618
 def handle_events():
     global stack
@@ -15,7 +15,6 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
-            main_state.stage_count += 1
             game_framework.change_state(main_state)
 
 

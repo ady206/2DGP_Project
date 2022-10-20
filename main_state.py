@@ -300,9 +300,9 @@ class Shadow:
         self.time += 1
         if self.time % 5 == 0:
             self.move_frame = (self.move_frame + 1) % 8
-            self.jump_frame = (self.jump_frame + 1) % 4
         if self.time % 10 == 0:
             self.idle_frame = (self.idle_frame + 1) % 4
+        self.jump_frame = (self.jump_frame + 1) % 4
 
         self.x += self.dir_x * self.speed
         if self.jump == True:
@@ -545,8 +545,10 @@ class SuperSonic:
 class SuperShadow:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 4
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -562,12 +564,15 @@ class SuperShadow:
     def update(self):
         self.time += 1
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 2
+            self.idle_frame = (self.idle_frame + 1) % 2
+        if self.time % 7 == 0:
+            self.move_frame = (self.move_frame + 1) % 5
+        self.jump_frame = (self.jump_frame + 1) % 6
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                self.radian += (pi / 12)
+                self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -578,10 +583,21 @@ class SuperShadow:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(4032 - 282 - 25 - self.frame * 26, 2940, 25, 38, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(self.frame * 25 + 282, 2940, 25, 38, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(4032 - 38 - 23 - self.jump_frame * 38, 2724, 37, 38, self.x, self.y)
+            else:
+                self.image_left.clip_draw(4032 - 260 - 32 - self.move_frame * 32, 2842, 34, 36, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(self.jump_frame * 38 + 23, 2724, 37, 38, self.x, self.y)
+            else:
+                self.image_right.clip_draw(self.move_frame * 32 + 260, 2842, 34, 36, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(4032 - 282 - 25 - self.idle_frame * 26, 2940, 25, 38, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(self.idle_frame * 25 + 282, 2940, 25, 38, self.x, self.y)
 
 ##############################################################################################################
 
@@ -637,12 +653,8 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_SPACE:
-                stage_count += 1
-                if stage_count >= 3:
-                    stage_count = 0
-                    middle_state.stack = stage_count
-                    game_framework.change_state(result_state)
-                game_framework.change_state(middle_state)
+                result_state.win = True
+                game_framework.change_state(result_state)
             elif event.key == SDLK_UP:
                 if player_character.y == 130:
                     player_character.jump = True
@@ -680,7 +692,7 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count, sound
-    player_character = Shadow()
+    player_character = SuperShadow()
     stage = Palm()
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
