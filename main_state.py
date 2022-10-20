@@ -463,8 +463,10 @@ class Espio:
 class Mighty:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 4
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -480,12 +482,15 @@ class Mighty:
     def update(self):
         self.time += 1
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 7
+            self.idle_frame = (self.idle_frame + 1) % 7
+            self.move_frame = (self.move_frame + 1) % 8
+        if self.time % 7 == 0:
+            self.jump_frame = (self.jump_frame + 1) % 7
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                self.y += sin(self.radian) * 12
             else:
                 self.y = 130
                 self.jump = False
@@ -496,10 +501,22 @@ class Mighty:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 25 + 3, 2880, 27, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 3 - 27 - self.frame * 25, 2880, 27, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 40 + 310, 2870, 38, 38, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame * 35 + 137, 2780, 33, 38, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 310 - 40 - self.jump_frame * 40, 2870, 38, 38, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 137 - 35 - self.move_frame * 35, 2780, 33, 38, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 28 + 5, 2870, 30, 35, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 28 - 5 - self.idle_frame * 28, 2870, 30, 35, self.x, self.y)
+
 
 class SuperSonic:
     def __init__(self):
@@ -692,7 +709,7 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count, sound
-    player_character = SuperShadow()
+    player_character = Mighty()
     stage = Palm()
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
