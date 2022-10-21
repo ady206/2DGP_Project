@@ -484,7 +484,6 @@ class Mighty:
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 7
             self.move_frame = (self.move_frame + 1) % 8
-        if self.time % 7 == 0:
             self.jump_frame = (self.jump_frame + 1) % 7
         self.x += self.dir_x * self.speed
         if self.jump == True:
@@ -516,7 +515,6 @@ class Mighty:
                 self.image_left.clip_draw(self.idle_frame * 28 + 5, 2870, 30, 35, self.x, self.y)
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 28 - 5 - self.idle_frame * 28, 2870, 30, 35, self.x, self.y)
-
 
 class SuperSonic:
     def __init__(self):
@@ -670,8 +668,13 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_SPACE:
-                result_state.win = True
-                game_framework.change_state(result_state)
+                stage_count += 1
+                if(stage_count >= 3):
+                    stage_count = 0
+                    result_state.win = True
+                    game_framework.change_state(result_state)
+                else:
+                    game_framework.push_state(middle_state)
             elif event.key == SDLK_UP:
                 if player_character.y == 130:
                     player_character.jump = True
