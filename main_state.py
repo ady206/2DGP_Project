@@ -117,8 +117,10 @@ class Tales:
 class Knuckles:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 1.2
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -134,12 +136,17 @@ class Knuckles:
     def update(self):
         self.time += 1
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 3
+            self.jump_frame = (self.jump_frame + 1) % 8
+        if self.time % 10 == 0:
+            self.idle_frame = (self.idle_frame + 1) % 3
+        if self.time % 20 == 0:
+            self.move_frame = (self.move_frame + 1) % 8
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -150,11 +157,21 @@ class Knuckles:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 35 + 410, 2980, 35, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 410 - 35 - self.frame * 35, 2980, 35, 40, self.x, self.y)
-
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 51 + 2, 1074, 45, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame * 41 + 2, 2680, 40, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 51 - 2 - self.jump_frame * 51, 1074, 45, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 41 - 2 - self.move_frame * 41, 2680, 40, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 35 + 410, 2980, 35, 40, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 410 - 35 - self.idle_frame * 35, 2980, 35, 40, self.x, self.y)
 class AmyRose:
     def __init__(self):
         self.hp = 100
@@ -212,7 +229,6 @@ class AmyRose:
                 self.image_left.clip_draw(self.idle_frame * 28 + 2, 2750, 30, 40, self.x, self.y)
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 30 - 2 - self.idle_frame * 28, 2750, 30, 40, self.x, self.y)
-
 
 class Tikal:
     def __init__(self):
@@ -748,7 +764,7 @@ def handle_events():
 def enter():
     global player_character, stage, stage_count, sound
     if stage_count == 0:
-        player_character = AmyRose()
+        player_character = Knuckles()
         stage = Palm()
         sound = load_music('sound/Tropical.mp3')
         sound.set_volume(20)
