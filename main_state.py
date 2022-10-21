@@ -60,7 +60,7 @@ class Sonic:
 class Tales:
     def __init__(self):
         self.hp = 100
-        self.speed = 4
+        self.speed = 1.2
         self.idle_frame = 0
         self.move_frame = 0
         self.jump_frame = 0
@@ -85,8 +85,9 @@ class Tales:
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 12)
-                self.y += sin(self.radian) * 10
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -157,8 +158,10 @@ class Knuckles:
 class AmyRose:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 1.2
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -173,13 +176,17 @@ class AmyRose:
 
     def update(self):
         self.time += 1
-        if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 8
+        if self.time % 30 == 0:
+            self.idle_frame = (self.idle_frame + 1) % 8
+        if self.time % 10 == 0:
+            self.move_frame = (self.move_frame + 1) % 8
+            self.jump_frame = (self.jump_frame + 1) % 7
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -190,10 +197,22 @@ class AmyRose:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 28 + 2, 2750, 30, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 30 - 2 - self.frame * 28, 2750, 30, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 51 + 2, 1855, 50, 44, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame * 41 + 2, 2563, 38, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 51 - 2 - self.jump_frame * 51, 1855, 50, 44, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 41 - 2 - self.move_frame * 41,  2563, 38, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 28 + 2, 2750, 30, 40, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 30 - 2 - self.idle_frame * 28, 2750, 30, 40, self.x, self.y)
+
 
 class Tikal:
     def __init__(self):
@@ -280,7 +299,7 @@ class Rouge:
 class Shadow:
     def __init__(self):
         self.hp = 100
-        self.speed = 4
+        self.speed = 1.2
         self.idle_frame = 0
         self.move_frame = 0
         self.jump_frame = 0
@@ -307,8 +326,9 @@ class Shadow:
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 12)
-                self.y += sin(self.radian) * 10
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -463,7 +483,7 @@ class Espio:
 class Mighty:
     def __init__(self):
         self.hp = 100
-        self.speed = 4
+        self.speed = 1.2
         self.idle_frame = 0
         self.move_frame = 0
         self.jump_frame = 0
@@ -484,12 +504,14 @@ class Mighty:
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 7
             self.move_frame = (self.move_frame + 1) % 8
+        if self.time % 20 == 0:
             self.jump_frame = (self.jump_frame + 1) % 7
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 12
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -560,7 +582,7 @@ class SuperSonic:
 class SuperShadow:
     def __init__(self):
         self.hp = 100
-        self.speed = 4
+        self.speed = 1.2
         self.idle_frame = 0
         self.move_frame = 0
         self.jump_frame = 0
@@ -586,8 +608,9 @@ class SuperShadow:
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 12)
-                self.y += sin(self.radian) * 10
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -619,13 +642,25 @@ class SuperShadow:
 class Palm:
     image = None
     image_floor = None
-    def draw(self):
+
+    def __init__(self):
         self.image = load_image('map/palmtree.png')
         self.image_floor = load_image('map/palmtree floor.png')
 
+    def draw(self):
         self.image.clip_draw(0, 600, 1000, 600, 400, 300)
         for i in range(0, 30):
             self.image_floor.clip_draw(0, 0, 100, 40, i * 30 + 50, 100)
+
+class Lake:
+    image = None
+    image_floor = None
+
+    def __init__(self):
+        self.image = load_image('map/lake.png')
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 800, 600, 400, 300)
 
 ##############################################################################################################
 
@@ -712,18 +747,19 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count, sound
-    player_character = Mighty()
-    stage = Palm()
-    sound = load_music('sound/Tropical.mp3')
-    sound.set_volume(20)
-    sound.repeat_play()
-    if stage_count == 2:
-        player_character = Shadow()
+    if stage_count == 0:
+        player_character = AmyRose()
         stage = Palm()
         sound = load_music('sound/Tropical.mp3')
         sound.set_volume(20)
         sound.repeat_play()
-    if stage_count == 3:
+    if stage_count == 1:
+        player_character = Shadow()
+        stage = Lake()
+        sound = load_music('sound/Tropical.mp3')
+        sound.set_volume(20)
+        sound.repeat_play()
+    elif stage_count == 2:
         player_character = Shadow()
         stage = Palm()
         sound = load_music('sound/Tropical.mp3')
