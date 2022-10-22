@@ -459,8 +459,10 @@ class Blaze:
 class Espio:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 1.2
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -469,19 +471,23 @@ class Espio:
         self.jump = False
         self.jump_sound = load_wav('sound/00_jump.wav')
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        self.x, self.y = 400, 130 # randrange(100, 700), 130
         self.image_left = load_image("character/espio left.png")
         self.image_right = load_image("character/espio right.png")
 
     def update(self):
         self.time += 1
-        if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 6
+        if self.time % 20 == 0:
+            self.idle_frame = (self.idle_frame + 1) % 6
+            self.move_frame = (self.move_frame + 1) % 9
+        if self.time % 20 == 0:
+            self.jump_frame = (self.jump_frame + 1) % 10
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -492,10 +498,21 @@ class Espio:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 27 + 5, 1220, 27, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 30 - self.frame * 27, 1220, 27, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 35 + 5, 780, 35, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame * 35 + 5, 1130, 35, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 35 - 5 - self.jump_frame * 35, 780, 35, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 35 - 5 - self.move_frame * 35, 1130, 35, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 27 + 5, 1220, 27, 40, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 27 - 5 - self.idle_frame * 27, 1220, 27, 40, self.x, self.y)
 
 class Mighty:
     def __init__(self):
@@ -781,19 +798,7 @@ def handle_events():
 def enter():
     global player_character, stage, stage_count, sound
     if stage_count == 0:
-        player_character = SuperSonic()
-        stage = Palm()
-        sound = load_music('sound/Tropical.mp3')
-        sound.set_volume(20)
-        sound.repeat_play()
-    if stage_count == 1:
-        player_character = Shadow()
-        stage = Lake()
-        sound = load_music('sound/Tropical.mp3')
-        sound.set_volume(20)
-        sound.repeat_play()
-    elif stage_count == 2:
-        player_character = Shadow()
+        player_character = Tikal()
         stage = Palm()
         sound = load_music('sound/Tropical.mp3')
         sound.set_volume(20)

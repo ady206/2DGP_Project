@@ -45,8 +45,6 @@ attack 8
 
 --------espio
 
-run 4
-jump 6
 attack 10
 
 --------mighty
@@ -55,8 +53,6 @@ attack
 
 --------super sonic
 
-run
-jump
 attack
 
 --------super shadow
