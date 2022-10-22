@@ -172,6 +172,7 @@ class Knuckles:
                 self.image_left.clip_draw(self.idle_frame * 35 + 410, 2980, 35, 40, self.x, self.y)
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 410 - 35 - self.idle_frame * 35, 2980, 35, 40, self.x, self.y)
+
 class AmyRose:
     def __init__(self):
         self.hp = 100
@@ -557,8 +558,10 @@ class Mighty:
 class SuperSonic:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 1.2
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -567,19 +570,22 @@ class SuperSonic:
         self.jump = False
         self.jump_sound = load_wav('sound/00_jump.wav')
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        self.x, self.y = 400, 130 #randrange(100, 700), 130
         self.image_left = load_image("character/super sonic left.png")
         self.image_right = load_image("character/super sonic right.png")
 
     def update(self):
         self.time += 1
-        if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 6
+        if self.time % 20 == 0:
+            self.idle_frame = (self.idle_frame + 1) % 6
+        if self.time % 10 == 0:
+            self.jump_frame = (self.jump_frame + 1) % 4
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -590,10 +596,21 @@ class SuperSonic:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 24, 2894, 24, 46, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 24 - self.frame * 24, 2894, 24, 46, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 36 + 10, 2410, 38, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame + 394, 2890, 35, 46, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 36 - 10 - self.jump_frame * 36, 2410, 38, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 40 - 394 - self.move_frame, 2890, 35, 46, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 25 + 2, 2890, 24, 46, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 24 - 2 - self.idle_frame * 25, 2890, 24, 46, self.x, self.y)
 
 class SuperShadow:
     def __init__(self):
@@ -764,7 +781,7 @@ def handle_events():
 def enter():
     global player_character, stage, stage_count, sound
     if stage_count == 0:
-        player_character = Knuckles()
+        player_character = SuperSonic()
         stage = Palm()
         sound = load_music('sound/Tropical.mp3')
         sound.set_volume(20)
