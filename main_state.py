@@ -14,50 +14,7 @@ sound = None
 sound_on = True
 
 ##############################################################################################################
-
-class Sonic:
-    def __init__(self):
-        self.hp = 100
-        self.speed = 3
-        self.frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
-        self.vector = (0, 0, 0)
-        self.image_left = load_image("character/sonic left.png")
-        self.image_right = load_image("character/sonic right.png")
-
-    def update(self):
-        self.time += 1
-        if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 8
-        self.x += self.dir_x * self.speed
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
-
-    def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(20 + (self.frame * 30), 2320, 30, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(3982 - (self.frame * 30), 2320, 30, 40, self.x, self.y)
-
-class Tales:
+class Character:
     def __init__(self):
         self.hp = 100
         self.speed = 1.2
@@ -73,16 +30,53 @@ class Tales:
         self.jump_sound = load_wav('sound/00_jump.wav')
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = randrange(100, 700), 130
+
+    def update(self):
+        self.time += 1
+        self.x += self.dir_x * self.speed
+
+        if self.x > 800:
+            self.x = 800
+        if self.x < 0:
+            self.x = 0
+
+class Sonic(Character):
+    def __init__(self):
+        super(Sonic, self).__init__()
+        self.image_left = load_image("character/sonic left.png")
+        self.image_right = load_image("character/sonic right.png")
+
+    def update(self):
+        super(Sonic, self).update()
+        if self.time % 5 == 0:
+            self.frame = (self.frame + 1) % 8
+        if self.jump == True:
+            if self.radian <= pi * 3 / 2:
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 6
+            else:
+                self.y = 130
+                self.jump = False
+                self.radian = 0
+
+    def draw(self):
+        if self.dir_x == 1 or self.right == 1:
+            self.image_left.clip_draw(20 + (self.frame * 30), 2320, 30, 40, self.x, self.y)
+        if self.dir_x == -1 or self.right == 0:
+            self.image_right.clip_draw(3982 - (self.frame * 30), 2320, 30, 40, self.x, self.y)
+
+class Tales(Character):
+    def __init__(self):
+        super(Tales, self).__init__()
         self.image_left = load_image("character/tales left.png")
         self.image_right = load_image("character/tales right.png")
 
     def update(self):
-        self.time += 1
+        super(Tales, self).update()
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 8
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -92,10 +86,6 @@ class Tales:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -114,34 +104,20 @@ class Tales:
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 20 - 50 - self.idle_frame * 52, 2650, 50, 40, self.x, self.y)
 
-class Knuckles:
+class Knuckles(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(Knuckles, self).__init__()
         self.image_left = load_image("character/knuckles left.png")
         self.image_right = load_image("character/knuckles right.png")
 
     def update(self):
-        self.time += 1
+        super(Knuckles, self).update()
         if self.time % 5 == 0:
             self.jump_frame = (self.jump_frame + 1) % 8
         if self.time % 10 == 0:
             self.idle_frame = (self.idle_frame + 1) % 3
         if self.time % 20 == 0:
             self.move_frame = (self.move_frame + 1) % 8
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -151,10 +127,6 @@ class Knuckles:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -173,33 +145,19 @@ class Knuckles:
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 410 - 35 - self.idle_frame * 35, 2980, 35, 40, self.x, self.y)
 
-class AmyRose:
+class AmyRose(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(AmyRose, self).__init__()
         self.image_left = load_image("character/amy rose left.png")
         self.image_right = load_image("character/amy rose right.png")
 
     def update(self):
-        self.time += 1
+        super(AmyRose, self).update()
         if self.time % 30 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 7
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -209,10 +167,6 @@ class AmyRose:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -231,33 +185,19 @@ class AmyRose:
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 30 - 2 - self.idle_frame * 28, 2750, 30, 40, self.x, self.y)
 
-class Tikal:
+class Tikal(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(Tikal, self).__init__()
         self.image_left = load_image("character/tikal left.png")
         self.image_right = load_image("character/tikal right.png")
 
     def update(self):
-        self.time += 1
+        super(Tikal, self).update()
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
         if self.time % 30 == 0:
             self.jump_frame = (self.jump_frame + 1) % 8
             self.idle_frame = (self.idle_frame + 1) % 6
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -267,10 +207,6 @@ class Tikal:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -289,92 +225,45 @@ class Tikal:
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 36 - 5 - self.idle_frame * 36, 2700, 38, 40, self.x, self.y)
 
-class Rouge:
+class Rouge(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = 400, 130 # randrange(100, 700), 130
+        super(Rouge, self).__init__()
         self.image_left = load_image("character/rouge left.png")
         self.image_right = load_image("character/rouge right.png")
 
     def update(self):
-        self.time += 1
-        if self.time % 25 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 6
-        if self.time % 20 == 0:
-            self.move_frame = (self.move_frame + 1) % 8
-            self.jump_frame = (self.jump_frame + 1) % 6
-        self.x += self.dir_x * self.speed
+        super(Rouge, self).update()
+        if self.time % 5 == 0:
+            self.frame = (self.frame + 1) % 6
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
+                self.radian += (pi / 8)
+                self.y += sin(self.radian) * 6
             else:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
-        if self.dir_x == 1:
-            if self.jump == True:
-                self.image_left.clip_draw(self.jump_frame * 40, 2730, 38, 40, self.x, self.y)
-            else:
-                self.image_left.clip_draw(self.move_frame * 35, 2905, 36, 40, self.x, self.y)
-        if self.dir_x == -1:
-            if self.jump == True:
-                self.image_right.clip_draw(4032 - 40 - self.idle_frame * 40, 2730, 38, 40, self.x, self.y)
-            else:
-                self.image_right.clip_draw(4032 - 35 - self.move_frame * 35, 2905, 36, 40, self.x, self.y)
-        if self.dir_x == 0:
-            if self.right == 1:
-                self.image_left.clip_draw(self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
-            elif self.right == 0:
-                self.image_right.clip_draw(4032 - 28 - self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
+        if self.dir_x == 1 or self.right == 1:
+            self.image_left.clip_draw(self.frame * 28, 2984, 28, 40, self.x, self.y)
+        if self.dir_x == -1 or self.right == 0:
+            self.image_right.clip_draw(4032 - 28 - self.frame * 28, 2984, 28, 40, self.x, self.y)
 
-class Shadow:
+class Shadow(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(Shadow, self).__init__()
         self.image_left = load_image("character/shadow left.png")
         self.image_right = load_image("character/shadow right.png")
 
     def update(self):
-        self.time += 1
+        super(Shadow, self).update()
         if self.time % 5 == 0:
             self.move_frame = (self.move_frame + 1) % 8
         if self.time % 10 == 0:
             self.idle_frame = (self.idle_frame + 1) % 4
-        self.jump_frame = (self.jump_frame + 1) % 4
+            self.jump_frame = (self.jump_frame + 1) % 4
 
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -384,10 +273,6 @@ class Shadow:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -408,28 +293,16 @@ class Shadow:
 
 ##############################################################################################################
 
-class Silver:
+class Silver(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 3
-        self.frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(Silver, self).__init__()
         self.image_left = load_image("character/silver right.png")
         self.image_right = load_image("character/silver left.png")
 
     def update(self):
-        self.time += 1
+        super(Silver, self).update()
         if self.time % 5 == 0:
             self.frame = (self.frame + 1) % 7
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 8)
@@ -438,10 +311,6 @@ class Silver:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
@@ -449,28 +318,16 @@ class Silver:
         if self.dir_x == -1 or self.right == 0:
             self.image_right.clip_draw(self.frame * 50, 2984, 40, 40, self.x, self.y)
 
-class Blaze:
+class Blaze(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 3
-        self.frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(Blaze, self).__init__()
         self.image_left = load_image("character/blaze left.png")
         self.image_right = load_image("character/blaze right.png")
 
     def update(self):
-        self.time += 1
+        super(Blaze, self).update()
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 13
-        self.x += self.dir_x * self.speed
+            self.idle_frame = (self.idle_frame + 1) % 13
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 8)
@@ -479,44 +336,26 @@ class Blaze:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 31 + 382, 1710, 30, 40, self.x, self.y)
+            self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
         if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 382 - 30 - self.frame * 31, 1710, 30, 40, self.x, self.y)
+            self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
 
-class Espio:
+class Espio(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = 400, 130 # randrange(100, 700), 130
+        super(Espio, self).__init__()
         self.image_left = load_image("character/espio left.png")
         self.image_right = load_image("character/espio right.png")
 
     def update(self):
-        self.time += 1
+        super(Espio, self).update()
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
             self.move_frame = (self.move_frame + 1) % 9
         if self.time % 20 == 0:
             self.jump_frame = (self.jump_frame + 1) % 10
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -526,10 +365,6 @@ class Espio:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -548,33 +383,19 @@ class Espio:
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 27 - 5 - self.idle_frame * 27, 1220, 27, 40, self.x, self.y)
 
-class Mighty:
+class Mighty(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(Mighty, self).__init__()
         self.image_left = load_image("character/mighty left.png")
         self.image_right = load_image("character/mighty right.png")
 
     def update(self):
-        self.time += 1
+        super(Mighty, self).update()
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 7
             self.move_frame = (self.move_frame + 1) % 8
         if self.time % 20 == 0:
             self.jump_frame = (self.jump_frame + 1) % 7
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -584,10 +405,6 @@ class Mighty:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -606,32 +423,18 @@ class Mighty:
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 28 - 5 - self.idle_frame * 28, 2870, 30, 35, self.x, self.y)
 
-class SuperSonic:
+class SuperSonic(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = 400, 130 #randrange(100, 700), 130
+        super(SuperSonic, self).__init__()
         self.image_left = load_image("character/super sonic left.png")
         self.image_right = load_image("character/super sonic right.png")
 
     def update(self):
-        self.time += 1
+        super(SuperSonic, self).update()
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
         if self.time % 10 == 0:
             self.jump_frame = (self.jump_frame + 1) % 4
-        self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -641,10 +444,6 @@ class SuperSonic:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -663,33 +462,19 @@ class SuperSonic:
             elif self.right == 0:
                 self.image_right.clip_draw(4032 - 24 - 2 - self.idle_frame * 25, 2890, 24, 46, self.x, self.y)
 
-class SuperShadow:
+class SuperShadow(Character):
     def __init__(self):
-        self.hp = 100
-        self.speed = 1.2
-        self.idle_frame = 0
-        self.move_frame = 0
-        self.jump_frame = 0
-        self.attack = True
-        self.damage = 6
-        self.time = 0
-        self.right = 1
-        self.radian = 0
-        self.jump = False
-        self.jump_sound = load_wav('sound/00_jump.wav')
-        self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        super(SuperShadow, self).__init__()
         self.image_left = load_image("character/super shadow right.png")
         self.image_right = load_image("character/super shadow left.png")
 
     def update(self):
-        self.time += 1
+        super(SuperShadow, self).update()
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 2
         if self.time % 7 == 0:
             self.move_frame = (self.move_frame + 1) % 5
-        self.jump_frame = (self.jump_frame + 1) % 6
-        self.x += self.dir_x * self.speed
+            self.jump_frame = (self.jump_frame + 1) % 6
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
@@ -699,10 +484,6 @@ class SuperShadow:
                 self.y = 130
                 self.jump = False
                 self.radian = 0
-        if self.x > 800:
-            self.x = 800
-        if self.x < 0:
-            self.x = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -732,7 +513,7 @@ class Palm:
         self.image_floor = load_image('map/palmtree floor.png')
 
     def draw(self):
-        self.image.clip_draw(400, 5, 1000, 600, 400, 300)
+        self.image.clip_draw(0, 600, 1000, 600, 400, 300)
         for i in range(0, 30):
             self.image_floor.clip_draw(0, 0, 100, 40, i * 30 + 50, 100)
 
@@ -832,7 +613,7 @@ def handle_events():
 def enter():
     global player_character, stage, stage_count, sound
     if stage_count == 0:
-        player_character = Rouge()
+        player_character = Tikal()
         stage = Palm()
         sound = load_music('sound/Tropical.mp3')
         sound.set_volume(20)
