@@ -292,8 +292,10 @@ class Tikal:
 class Rouge:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 1.2
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -302,19 +304,23 @@ class Rouge:
         self.jump = False
         self.jump_sound = load_wav('sound/00_jump.wav')
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        self.x, self.y = 400, 130 # randrange(100, 700), 130
         self.image_left = load_image("character/rouge left.png")
         self.image_right = load_image("character/rouge right.png")
 
     def update(self):
         self.time += 1
-        if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 6
+        if self.time % 25 == 0:
+            self.idle_frame = (self.idle_frame + 1) % 6
+        if self.time % 20 == 0:
+            self.move_frame = (self.move_frame + 1) % 8
+            self.jump_frame = (self.jump_frame + 1) % 6
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -325,10 +331,21 @@ class Rouge:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 28, 2984, 28, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 28 - self.frame * 28, 2984, 28, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 40, 2730, 38, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame * 35, 2905, 36, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 40 - self.idle_frame * 40, 2730, 38, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 35 - self.move_frame * 35, 2905, 36, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 28 - self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
 
 class Shadow:
     def __init__(self):
@@ -715,7 +732,7 @@ class Palm:
         self.image_floor = load_image('map/palmtree floor.png')
 
     def draw(self):
-        self.image.clip_draw(0, 600, 1000, 600, 400, 300)
+        self.image.clip_draw(400, 5, 1000, 600, 400, 300)
         for i in range(0, 30):
             self.image_floor.clip_draw(0, 0, 100, 40, i * 30 + 50, 100)
 
@@ -815,7 +832,7 @@ def handle_events():
 def enter():
     global player_character, stage, stage_count, sound
     if stage_count == 0:
-        player_character = Tikal()
+        player_character = Rouge()
         stage = Palm()
         sound = load_music('sound/Tropical.mp3')
         sound.set_volume(20)

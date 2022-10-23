@@ -19,14 +19,10 @@ attack 27
 
 --------tikal
 
-run
-jump
 attack
 
 --------rouge
 
-run
-jump
 attack
 
 --------shadow
