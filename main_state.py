@@ -234,8 +234,10 @@ class AmyRose:
 class Tikal:
     def __init__(self):
         self.hp = 100
-        self.speed = 3
-        self.frame = 0
+        self.speed = 1.2
+        self.idle_frame = 0
+        self.move_frame = 0
+        self.jump_frame = 0
         self.attack = True
         self.damage = 6
         self.time = 0
@@ -250,13 +252,17 @@ class Tikal:
 
     def update(self):
         self.time += 1
-        if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 6
+        if self.time % 10 == 0:
+            self.move_frame = (self.move_frame + 1) % 8
+        if self.time % 30 == 0:
+            self.jump_frame = (self.jump_frame + 1) % 8
+            self.idle_frame = (self.idle_frame + 1) % 6
         self.x += self.dir_x * self.speed
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
+                if self.time % 7 == 0:
+                    self.radian += (pi / 12)
+                    self.y += sin(self.radian) * 10
             else:
                 self.y = 130
                 self.jump = False
@@ -267,10 +273,21 @@ class Tikal:
             self.x = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 30 + 5, 2754, 30, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 5 - 30 - self.frame * 30, 2754, 30, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.jump_frame * 39 + 5, 2570, 38, 43, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.move_frame * 41 + 5, 2640, 40, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 39 - 5 - self.jump_frame * 39, 2570, 38, 43, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 41 - 5 - self.move_frame * 41, 2640, 40, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.right == 1:
+                self.image_left.clip_draw(self.idle_frame * 36 + 5, 2700, 38, 40, self.x, self.y)
+            elif self.right == 0:
+                self.image_right.clip_draw(4032 - 36 - 5 - self.idle_frame * 36, 2700, 38, 40, self.x, self.y)
 
 class Rouge:
     def __init__(self):
