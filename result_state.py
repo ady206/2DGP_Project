@@ -17,8 +17,7 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
-            game_framework.change_state(ready_state)
-
+            game_framework.quit()
 
 def enter():
     global image

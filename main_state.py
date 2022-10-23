@@ -29,7 +29,7 @@ class Character:
         self.jump = False
         self.jump_sound = load_wav('sound/00_jump.wav')
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = randrange(100, 700), 130
+        self.x, self.y = 400, 130
 
     def update(self):
         self.time += 1
@@ -568,9 +568,7 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_SPACE:
-                stage_count += 1
-                if(stage_count >= 3):
-                    stage_count = 0
+                if(stage_count >= 2):
                     result_state.win = True
                     game_framework.change_state(result_state)
                 else:
@@ -612,13 +610,11 @@ def handle_events():
 
 def enter():
     global player_character, stage, stage_count, sound
-    if stage_count == 0:
-        player_character = Tikal()
-        stage = Palm()
-        sound = load_music('sound/Tropical.mp3')
-        sound.set_volume(20)
-        sound.repeat_play()
-    stage_count = 0
+    player_character = Tikal()
+    stage = Palm()
+    sound = load_music('sound/Tropical.mp3')
+    sound.set_volume(20)
+    sound.repeat_play()
 
 def exit():
     global player_character, stage, sound
@@ -635,10 +631,23 @@ def draw():
     update_canvas()
 
 def pause():
-    pass
+    global stage_count
+    stage_count += 1
 
 def resume():
-    pass
+    global player_character, stage, stage_count, sound
+    if stage_count == 1:
+        player_character = Tales()
+        stage = Lake()
+        sound = load_music('sound/Tropical.mp3')
+        sound.set_volume(20)
+        sound.repeat_play()
+    if stage_count == 2:
+        player_character = Tikal()
+        stage = Palm()
+        sound = load_music('sound/Tropical.mp3')
+        sound.set_volume(20)
+        sound.repeat_play()
 
 def test_self():
     import sys

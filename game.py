@@ -3,7 +3,6 @@ import game_framework
 import ready_state
 import main_state
 
-
 window_size_x = 800
 window_size_y = 600
 

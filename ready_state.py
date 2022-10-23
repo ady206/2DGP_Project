@@ -26,7 +26,6 @@ def handle_events():
 
 def enter():
     global image
-    main_state.player_character = main_state.Tales()
     image = load_image('map/ready.png')
     pass
 
