@@ -6,7 +6,7 @@ import middle_state
 import result_state
 
 player_character = None
-character = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
+list = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
 stage_count = 0
 stage = None
@@ -14,6 +14,7 @@ sound = None
 sound_on = True
 
 ##############################################################################################################
+
 class Character:
     def __init__(self):
         self.hp = 100
@@ -531,31 +532,31 @@ class Lake:
 
 def RandomCharacter():
     global player_character
-    if choice(character) == 'Sonic':
+    if choice(list) == 'Sonic':
         player_character = Sonic()
-    elif choice(character) == 'Tales':
+    elif choice(list) == 'Tales':
         player_character = Tales()
-    elif choice(character) == 'Knuckles':
+    elif choice(list) == 'Knuckles':
         player_character = Knuckles()
-    elif choice(character) == 'AmyRose':
+    elif choice(list) == 'AmyRose':
         player_character = AmyRose()
-    elif choice(character) == 'Tikal':
+    elif choice(list) == 'Tikal':
         player_character = Tikal()
-    elif choice(character) == 'Rouge':
+    elif choice(list) == 'Rouge':
         player_character = Rouge()
-    elif choice(character) == 'Shadow':
+    elif choice(list) == 'Shadow':
         player_character = Shadow()
-    elif choice(character) == 'Silver':
+    elif choice(list) == 'Silver':
         player_character = Silver()
-    elif choice(character) == 'Blaze':
+    elif choice(list) == 'Blaze':
         player_character = Blaze()
-    elif choice(character) == 'Espio':
+    elif choice(list) == 'Espio':
         player_character = Espio()
-    elif choice(character) == 'Mighty':
+    elif choice(list) == 'Mighty':
         player_character = Mighty()
-    elif choice(character) == 'Super Sonic':
+    elif choice(list) == 'Super Sonic':
         player_character = SuperSonic()
-    elif choice(character) == 'Super Shadow':
+    elif choice(list) == 'Super Shadow':
         player_character = SuperShadow()
 
 def handle_events():
