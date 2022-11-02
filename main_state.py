@@ -202,7 +202,7 @@ class Tikal(Character):
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 if self.time % 7 == 0:
-                    self.radian += (pi / 12)
+                    self.radian += (pi / 10)
                     self.y += sin(self.radian) * 10
             else:
                 self.y = 130
@@ -527,6 +527,18 @@ class Lake:
 
     def draw(self):
         self.image.clip_draw(0, 0, 800, 600, 400, 300)
+class Space:
+    image = None
+    image_floor = None
+
+    def __init__(self):
+        self.image = load_image('map/space.png')
+        self.image_floor = load_image('map/space floor.png')
+
+    def draw(self):
+        self.image.clip_draw(0, 0, 800, 600, 400, 300)
+        for i in range(28):
+            self.image_floor.clip_draw(33, 0, 30, 30, i * 30, 100)
 
 ##############################################################################################################
 
@@ -634,6 +646,11 @@ def draw():
 def pause():
     global stage_count
     stage_count += 1
+    middle_state.image = load_image('map/stage1.png')
+    if(stage_count == 1):
+        middle_state.image = load_image('map/stage2.png')
+    if(stage_count == 2):
+        middle_state.image = load_image('map/stage3.png')
 
 def resume():
     global player_character, stage, stage_count, sound
@@ -645,7 +662,7 @@ def resume():
         sound.repeat_play()
     if stage_count == 2:
         player_character = Tikal()
-        stage = Palm()
+        stage = Space()
         sound = load_music('sound/Tropical.mp3')
         sound.set_volume(20)
         sound.repeat_play()

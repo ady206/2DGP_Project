@@ -6,7 +6,6 @@ image = None
 
 # 927 618
 def handle_events():
-    global stack
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -14,22 +13,17 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-        elif event.type == SDL_MOUSEBUTTONDOWN:
-            if main_state.stage_count == 0:
-                game_framework.change_state(main_state)
-            else:
-                game_framework.pop_state()
-
+            elif event.key == SDLK_RETURN:
+                if main_state.stage_count == 0:
+                    game_framework.change_state(main_state)
+                else:
+                    game_framework.pop_state()
 
 
 def enter():
-    global image
-    image = load_image('map/stage1.png')
     pass
 
 def exit():
-    global image
-    del image
     pass
 
 def draw():

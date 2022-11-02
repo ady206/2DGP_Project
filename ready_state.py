@@ -13,16 +13,12 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-            elif event.key == SDLK_1:
-                main_state.player_character = main_state.Sonic()
-            elif event.key == SDLK_2:
-                main_state.player_character = main_state.Tales()
-            elif event.key == SDLK_3:
-                main_state.player_character = main_state.Knuckles()
-            elif event.key == SDLK_4:
-                main_state.player_character = main_state.Shadow()
+            elif event.key == SDLK_RETURN:
+                middle_state.image = load_image('map/stage1.png')
+                game_framework.change_state(middle_state)
+
         elif event.type == SDL_MOUSEBUTTONDOWN:
-            game_framework.change_state(middle_state)
+            pass
 
 def enter():
     global image
