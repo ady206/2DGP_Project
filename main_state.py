@@ -25,52 +25,45 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
-        elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_ESCAPE:
-                game_framework.quit()
-            elif event.key == SDLK_RETURN:
-                if(stage_count >= 2):
-                    result_state.win = True
-                    game_framework.change_state(result_state)
-                else:
-                    game_framework.push_state(middle_state)
-            # elif event.key == SDLK_1:
-            #     RandomCharacter()
-            elif event.key == SDLK_F8:
-                sound_on = ~sound_on
-                if(sound_on == True):
-                    sound.repeat_play()
-                else:
-                    sound.stop()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
+            game_framework.quit()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RETURN):
+            if(stage_count >= 2):
+                result_state.win = True
+                game_framework.change_state(result_state)
             else:
-                player_character.handle_event()
-        elif event.type == SDL_KEYUP:
-            if event.key == SDLK_UP:
-                pass
-            elif event.key == SDLK_LEFT:
-                if player_character.right == 1:
-                    player_character.dir_x = 1
-                else:
-                    player_character.dir_x = 0
-            elif event.key == SDLK_RIGHT:
-                if player_character.right == 0:
-                    player_character.dir_x = -1
-                else:
-                    player_character.dir_x = 0
-            elif event.key == SDLK_SPACE:
-                player_character.attack = False
+                game_framework.push_state(middle_state)
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_F8):
+            sound_on = ~sound_on
+            if(sound_on == True): sound.repeat_play()
+            else: sound.stop()
+        else:
+            player_character.handle_event(event)
 
 ##############################################################################################################
+
+def inComputer(characters):
+    computer_character.append(characters)
 
 def enter():
     global player_character, computer_character
     global stage, stage_count, sound
     player_character = Tikal()
+    inComputer(SuperShadow())
+    inComputer(Shadow())
+    inComputer(Knuckles())
     stage = Palm()
+
+    player_character.x = 130
+
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
     sound.repeat_play()
 
+    game_world.add_object(player_character, 1)
+    for in_character in computer_character:
+        game_world.add_object(in_character, 1)
+    game_world.add_object(stage, 0)
 
 def exit():
     global player_character, computer_character, stage, sound
