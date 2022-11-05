@@ -4,12 +4,13 @@ import middle_state
 
 image = None
 character_image = None
+character_name = None
 
 choose = False
 x, y = 0, 0
 
 def handle_events():
-    global character_image, choose, x, y
+    global choose, x, y
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -22,7 +23,6 @@ def handle_events():
                 game_framework.change_state(middle_state)
         elif event.type == SDL_MOUSEBUTTONDOWN:
             x, y = event.x, 600 - 1 - event.y
-            #  y 280 < 390 < 500 x 25 < 130 < 240 < 345 < 450 < 560 < 665 < 770
             if 280 <= y <= 500 and 25 <= x <= 770:
                 choose = True
 
@@ -38,43 +38,61 @@ def exit():
     pass
 
 def draw():
-    global choose, x, y
+    global choose, character_image, character_name, stage_go, x, y
     clear_canvas()
     image.draw(390, 300)
 
     #  y 280 < 390 < 500 x 25 < 130 < 240 < 345 < 450 < 560 < 665 < 770
     if choose == True:
         character_image = load_image('map/choose.png')
+        character_name = load_image('map/names.png')
+        # stage_go = load_image('map/go.png')
+
+        # stage_go.clip_draw(0, 0, 230, 115, 685, 50)
         if 390 <= y < 500:
             if 25 <= x < 130:
                 character_image.clip_draw(0, 0, 150, 120, 410, 140)
+                character_name.clip_draw(0, 0, 100, 23, 410, 47)
             if 130 <= x < 240:
                 character_image.clip_draw(150, 0, 150, 120, 405, 140)
+                character_name.clip_draw(0, 23, 100, 23, 410, 47)
             if 240 <= x < 345:
                 character_image.clip_draw(320, 0, 150, 120, 410, 140)
+                character_name.clip_draw(0, 46, 100, 23, 410, 47)
             if 345 <= x < 450:
                 character_image.clip_draw(470, 0, 150, 120, 410, 140)
+                character_name.clip_draw(0, 69, 100, 23, 410, 47)
             if 450 <= x < 560:
                 character_image.clip_draw(620, 0, 150, 120, 405, 140)
+                character_name.clip_draw(0, 92, 100, 23, 410, 47)
             if 560 <= x < 665:
                 character_image.clip_draw(0, 125, 150, 120, 410, 140)
+                character_name.clip_draw(0, 115, 100, 23, 410, 47)
             if 665 <= x < 770:
                 character_image.clip_draw(170, 125, 150, 120, 410, 140)
+                character_name.clip_draw(0, 138, 100, 23, 410, 47)
         elif 280 <= y <= 390:
             if 25 <= x < 130:
                 character_image.clip_draw(320, 125, 150, 120, 410, 140)
+                character_name.clip_draw(0, 161, 100, 23, 410, 47)
             if 130 <= x < 240:
                 character_image.clip_draw(470, 125, 150, 120, 405, 140)
+                character_name.clip_draw(0, 186, 100, 23, 410, 47)
             if 240 <= x < 345:
                 character_image.clip_draw(620, 125, 150, 120, 410, 140)
+                character_name.clip_draw(0, 211, 100, 23, 410, 47)
             if 345 <= x < 450:
                 character_image.clip_draw(0, 250, 150, 120, 410, 140)
+                character_name.clip_draw(0, 236, 100, 23, 410, 47)
             if 450 <= x < 560:
                 character_image.clip_draw(160, 250, 150, 120, 405, 140)
+                character_name.clip_draw(0, 261, 100, 23, 410, 47)
             if 560 <= x < 665:
                 character_image.clip_draw(310, 250, 150, 120, 410, 140)
+                character_name.clip_draw(0, 286, 100, 23, 410, 47)
             if 665 <= x < 770:
                 character_image.clip_draw(470, 250, 150, 120, 410, 140)
+                character_name.clip_draw(0, 311, 100, 23, 410, 47)
 
     update_canvas()
 
