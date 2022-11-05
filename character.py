@@ -22,9 +22,13 @@ class IDLE:
     @staticmethod
     def exit(self, event):
         print('EXIT IDLE')
+        if JUMP == event:
+            self.jump = True
+            IDLE.do(self)
 
     def do(self):
-        pass
+        if self.jump == True:
+            self.Jump()
 
 class RUN:
     def enter(self, event):
@@ -41,35 +45,19 @@ class RUN:
     def exit(self, event):
         print('EXIT RUN')
         self.face_dir = self.dir_x
+        if JUMP == event:
+            self.jump = True
+            RUN.do(self)
 
     def do(self):
         self.x += self.dir_x * self.speed
         self.x = clamp(0, self.x, 800)
-
-class JUMP:
-    @staticmethod
-    def enter(self, event):
-        print('ENTER JUMP')
-        self.jump = True
-
-    @staticmethod
-    def exit(self, event):
-        print('EXIT JUMP')
-
-    def do(self):
-        if self.radian <= pi * 3 / 2:
-            self.radian += (pi / 10)
-            self.y += sin(self.radian) * 10
-        else:
-            self.y = 130
-            self.jump = False
-            self.radian = 0
-        pass
+        if self.jump == True:
+            self.Jump()
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,  SPACE: IDLE, JUMP: JUMP},
-    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, SPACE: RUN,  JUMP: JUMP},
-    JUMP:  {RU: RUN, LU: RUN, RD: RUN, LD: RUN, SPACE: JUMP,  JUMP: RUN}
+    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,  SPACE: IDLE, JUMP: IDLE},
+    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, SPACE: RUN,  JUMP: RUN}
 }
 
 ########################################
@@ -97,8 +85,6 @@ class Character:
 
     def update(self):
         self.time += 1
-        self.cur_state.do(self)
-
         if self.event_que:
             event = self.event_que.pop()
             self.cur_state.exit(self, event)
@@ -115,6 +101,17 @@ class Character:
         if (event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
+
+    def Jump(self):
+        if self.jump == True:
+            if self.time % 8 == 0:
+                if self.radian <= pi * 3 / 2:
+                    self.radian += (pi / 10)
+                    self.y += sin(self.radian) * 10
+                else:
+                    self.y = 130
+                    self.jump = False
+                    self.radian = 0
 
 class Sonic(Character):
     def __init__(self):
@@ -149,19 +146,12 @@ class Tales(Character):
 
     def update(self):
         super(Tales, self).update()
+        self.cur_state.do(self)
+
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 8
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -188,21 +178,14 @@ class Knuckles(Character):
 
     def update(self):
         super(Knuckles, self).update()
+        self.cur_state.do(self)
+
         if self.time % 5 == 0:
             self.jump_frame = (self.jump_frame + 1) % 8
         if self.time % 10 == 0:
             self.idle_frame = (self.idle_frame + 1) % 3
         if self.time % 20 == 0:
             self.move_frame = (self.move_frame + 1) % 8
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -229,20 +212,13 @@ class AmyRose(Character):
 
     def update(self):
         super(AmyRose, self).update()
+        self.cur_state.do(self)
+
         if self.time % 30 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 7
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -269,6 +245,8 @@ class Tikal(Character):
 
     def update(self):
         super(Tikal, self).update()
+        self.cur_state.do(self)
+
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
         if self.time % 30 == 0:
@@ -325,21 +303,13 @@ class Shadow(Character):
 
     def update(self):
         super(Shadow, self).update()
+        self.cur_state.do(self)
+
         if self.time % 5 == 0:
             self.move_frame = (self.move_frame + 1) % 8
         if self.time % 10 == 0:
             self.idle_frame = (self.idle_frame + 1) % 4
             self.jump_frame = (self.jump_frame + 1) % 4
-
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -418,20 +388,13 @@ class Espio(Character):
 
     def update(self):
         super(Espio, self).update()
+        self.cur_state.do(self)
+
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
             self.move_frame = (self.move_frame + 1) % 9
         if self.time % 20 == 0:
             self.jump_frame = (self.jump_frame + 1) % 10
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -458,20 +421,13 @@ class Mighty(Character):
 
     def update(self):
         super(Mighty, self).update()
+        self.cur_state.do(self)
+
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 7
             self.move_frame = (self.move_frame + 1) % 8
         if self.time % 20 == 0:
             self.jump_frame = (self.jump_frame + 1) % 7
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -498,19 +454,12 @@ class SuperSonic(Character):
 
     def update(self):
         super(SuperSonic, self).update()
+        self.cur_state.do(self)
+
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
         if self.time % 10 == 0:
             self.jump_frame = (self.jump_frame + 1) % 4
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
@@ -537,20 +486,13 @@ class SuperShadow(Character):
 
     def update(self):
         super(SuperShadow, self).update()
+        self.cur_state.do(self)
+
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 2
         if self.time % 7 == 0:
             self.move_frame = (self.move_frame + 1) % 5
             self.jump_frame = (self.jump_frame + 1) % 6
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                if self.time % 7 == 0:
-                    self.radian += (pi / 12)
-                    self.y += sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
 
     def draw(self):
         if self.dir_x == 1:
