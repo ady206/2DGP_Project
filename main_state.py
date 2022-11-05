@@ -48,7 +48,7 @@ def inComputer(characters):
 def enter():
     global player_character, computer_character
     global stage, stage_count, sound
-    player_character = Tikal()
+    player_character = SuperSonic()
     inComputer(SuperShadow())
     inComputer(Shadow())
     inComputer(Knuckles())
