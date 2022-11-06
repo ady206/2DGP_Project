@@ -3,38 +3,69 @@ import game_world
 from math import *
 from random import *
 
-current_player_character = None
+player_character = None
+computer_character = []
+
 list = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
-
+human = False
 def RandomCharacter():
-    global player_character
-    if choice(list) == 'Sonic':
-        player_character = Sonic()
-    elif choice(list) == 'Tales':
-        player_character = Tales()
-    elif choice(list) == 'Knuckles':
-        player_character = Knuckles()
-    elif choice(list) == 'AmyRose':
-        player_character = AmyRose()
-    elif choice(list) == 'Tikal':
-        player_character = Tikal()
-    elif choice(list) == 'Rouge':
-        player_character = Rouge()
-    elif choice(list) == 'Shadow':
-        player_character = Shadow()
-    elif choice(list) == 'Silver':
-        player_character = Silver()
-    elif choice(list) == 'Blaze':
-        player_character = Blaze()
-    elif choice(list) == 'Espio':
-        player_character = Espio()
-    elif choice(list) == 'Mighty':
-        player_character = Mighty()
-    elif choice(list) == 'Super Sonic':
-        player_character = SuperSonic()
-    elif choice(list) == 'Super Shadow':
-        player_character = SuperShadow()
+    global player_character, computer_character, human
+    rc = choice(list)
+    if human == True:
+        if rc == 'Sonic':
+            player_character = Sonic()
+        elif rc == 'Tales':
+            player_character = Tales()
+        elif rc == 'Knuckles':
+            player_character = Knuckles()
+        elif rc == 'AmyRose':
+            player_character = AmyRose()
+        elif rc == 'Tikal':
+            player_character = Tikal()
+        elif rc == 'Rouge':
+            player_character = Rouge()
+        elif rc == 'Shadow':
+            player_character = Shadow()
+        elif rc == 'Silver':
+            player_character = Silver()
+        elif rc == 'Blaze':
+            player_character = Blaze()
+        elif rc == 'Espio':
+            player_character = Espio()
+        elif rc == 'Mighty':
+            player_character = Mighty()
+        elif rc == 'Super Sonic':
+            player_character = SuperSonic()
+        elif rc == 'Super Shadow':
+            player_character = SuperShadow()
+    else:
+        if rc == 'Sonic':
+            computer_character.append(Sonic())
+        elif rc == 'Tales':
+            computer_character.append(Tales())
+        elif rc == 'Knuckles':
+            computer_character.append(Knuckles())
+        elif rc == 'AmyRose':
+            computer_character.append(AmyRose())
+        elif rc == 'Tikal':
+            computer_character.append(Tikal())
+        elif rc == 'Rouge':
+            computer_character.append(Rouge())
+        elif rc == 'Shadow':
+            computer_character.append(Shadow())
+        elif rc == 'Silver':
+            computer_character.append(Silver())
+        elif rc == 'Blaze':
+            computer_character.append(Blaze())
+        elif rc == 'Espio':
+            computer_character.append(Espio())
+        elif rc == 'Mighty':
+            computer_character.append(Mighty())
+        elif rc == 'Super Sonic':
+            computer_character.append(SuperSonic())
+        elif rc == 'Super Shadow':
+            computer_character.append(SuperShadow())
 
 ##############################################################################################################
 

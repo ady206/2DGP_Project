@@ -10,8 +10,6 @@ import result_state
 from character import *
 from map import *
 
-player_character = None
-computer_character = []
 stage = None
 sound = None
 sound_on = True
@@ -39,36 +37,36 @@ def handle_events():
             if(sound_on == True): sound.repeat_play()
             else: sound.stop()
         else:
-            player_character.handle_event(event)
+            character.player_character.handle_event(event)
 
 ##############################################################################################################
 
-def inComputer(characters):
-    computer_character.append(characters)
-
 def enter():
-    global player_character, computer_character
     global stage, stage_count, sound
-    player_character = character.current_player_character
-    inComputer(SuperShadow())
-    inComputer(Shadow())
-    inComputer(Knuckles())
     stage = Palm()
 
-    player_character.x = 130
+    character.human = False
+    for i in range (3):
+        character.RandomCharacter()
 
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
     sound.repeat_play()
 
-    game_world.add_object(player_character, 1)
-    for in_character in computer_character:
+    game_world.add_object(character.player_character, 1)
+    for in_character in character.computer_character:
         game_world.add_object(in_character, 1)
+        print(in_character)
     game_world.add_object(stage, 0)
 
+    character.player_character.x = 150
+    character.computer_character[0].x = 300
+    character.computer_character[1].x = 500
+    character.computer_character[2].x = 650
+
 def exit():
-    global player_character, computer_character, stage, sound
-    del player_character, computer_character, stage, sound
+    global stage, sound
+    del stage, sound
 
 def update():
     for game_object in game_world.all_objects():
@@ -93,19 +91,20 @@ def pause():
         middle_state.image = load_image('map/stage3.png')
 
 def resume():
-    global player_character, stage, stage_count, sound
-    if stage_count == 1:
-        player_character = Tales()
-        stage = Lake()
-        sound = load_music('sound/Tropical.mp3')
-        sound.set_volume(20)
-        sound.repeat_play()
-    if stage_count == 2:
-        player_character = Tikal()
-        stage = Space()
-        sound = load_music('sound/Tropical.mp3')
-        sound.set_volume(20)
-        sound.repeat_play()
+    # global player_character, stage, stage_count, sound
+    # if stage_count == 1:
+    #     player_character = Tales()
+    #     stage = Lake()
+    #     sound = load_music('sound/Tropical.mp3')
+    #     sound.set_volume(20)
+    #     sound.repeat_play()
+    # if stage_count == 2:
+    #     player_character = Tikal()
+    #     stage = Space()
+    #     sound = load_music('sound/Tropical.mp3')
+    #     sound.set_volume(20)
+    #     sound.repeat_play()
+    pass
 
 def test_self():
     import sys
