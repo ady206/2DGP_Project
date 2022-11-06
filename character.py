@@ -1,6 +1,42 @@
 from pico2d import *
 import game_world
 from math import *
+from random import *
+
+current_player_character = None
+list = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
+             'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
+
+def RandomCharacter():
+    global player_character
+    if choice(list) == 'Sonic':
+        player_character = Sonic()
+    elif choice(list) == 'Tales':
+        player_character = Tales()
+    elif choice(list) == 'Knuckles':
+        player_character = Knuckles()
+    elif choice(list) == 'AmyRose':
+        player_character = AmyRose()
+    elif choice(list) == 'Tikal':
+        player_character = Tikal()
+    elif choice(list) == 'Rouge':
+        player_character = Rouge()
+    elif choice(list) == 'Shadow':
+        player_character = Shadow()
+    elif choice(list) == 'Silver':
+        player_character = Silver()
+    elif choice(list) == 'Blaze':
+        player_character = Blaze()
+    elif choice(list) == 'Espio':
+        player_character = Espio()
+    elif choice(list) == 'Mighty':
+        player_character = Mighty()
+    elif choice(list) == 'Super Sonic':
+        player_character = SuperSonic()
+    elif choice(list) == 'Super Shadow':
+        player_character = SuperShadow()
+
+##############################################################################################################
 
 RD, LD, RU, LU, SPACE, JUMP = range(6)
 event_name = [ 'RD', 'LD', 'RU', 'LU', 'SPACE', 'JUMP' ]

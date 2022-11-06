@@ -2,6 +2,7 @@ from pico2d import *
 from math import *
 from random import *
 
+import character
 import game_framework
 import middle_state
 import result_state
@@ -48,7 +49,7 @@ def inComputer(characters):
 def enter():
     global player_character, computer_character
     global stage, stage_count, sound
-    player_character = SuperSonic()
+    player_character = character.current_player_character
     inComputer(SuperShadow())
     inComputer(Shadow())
     inComputer(Knuckles())
