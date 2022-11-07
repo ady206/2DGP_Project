@@ -59,10 +59,10 @@ def enter():
         print(in_character)
     game_world.add_object(stage, 0)
 
-    character.player_character.x = 150
-    character.computer_character[0].x = 300
+    character.player_character.x = 400
+    character.computer_character[0].x = 200
     character.computer_character[1].x = 500
-    character.computer_character[2].x = 650
+    character.computer_character[2].x = 600
 
 def exit():
     global stage, sound

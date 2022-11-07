@@ -189,7 +189,7 @@ class Sonic(Character):
     def update(self):
         super(Sonic, self).update()
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 8
+            self.idle_frame = (self.idle_frame + 1) % 8
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 8)
@@ -200,10 +200,21 @@ class Sonic(Character):
                 self.radian = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(20 + (self.frame * 30), 2320, 30, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(3982 - (self.frame * 30), 2320, 30, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(20 + (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(20 + (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(3982 - (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(3982 - (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.face_dir == 1:
+                self.image_left.clip_draw(20 + (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+            elif self.face_dir == -1:
+                self.image_right.clip_draw(3982 - (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
 
 class Tales(Character):
     def __init__(self):
@@ -346,7 +357,7 @@ class Rouge(Character):
     def update(self):
         super(Rouge, self).update()
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 6
+            self.idle_frame = (self.idle_frame + 1) % 6
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 8)
@@ -357,10 +368,21 @@ class Rouge(Character):
                 self.radian = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.frame * 28, 2984, 28, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 28 - self.frame * 28, 2984, 28, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 28 - self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 28 - self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.face_dir == 1:
+                self.image_left.clip_draw(self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
+            elif self.face_dir == -1:
+                self.image_right.clip_draw(4032 - 28 - self.idle_frame * 28, 2984, 28, 40, self.x, self.y)
 
 class Shadow(Character):
     def __init__(self):
@@ -406,7 +428,7 @@ class Silver(Character):
     def update(self):
         super(Silver, self).update()
         if self.time % 5 == 0:
-            self.frame = (self.frame + 1) % 7
+            self.idle_frame = (self.idle_frame + 1) % 7
         if self.jump == True:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 8)
@@ -417,10 +439,21 @@ class Silver(Character):
                 self.radian = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(4032 - 40 - self.frame * 50, 2984, 40, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(self.frame * 50, 2984, 40, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(4032 - 40 - self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(4032 - 40 - self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.face_dir == 1:
+                self.image_left.clip_draw(4032 - 40 - self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
+            elif self.face_dir == -1:
+                self.image_right.clip_draw(self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
 
 class Blaze(Character):
     def __init__(self):
@@ -442,10 +475,21 @@ class Blaze(Character):
                 self.radian = 0
 
     def draw(self):
-        if self.dir_x == 1 or self.right == 1:
-            self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
-        if self.dir_x == -1 or self.right == 0:
-            self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
+        if self.dir_x == 1:
+            if self.jump == True:
+                self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
+            else:
+                self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
+        if self.dir_x == -1:
+            if self.jump == True:
+                self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
+            else:
+                self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
+        if self.dir_x == 0:
+            if self.face_dir == 1:
+                self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
+            elif self.face_dir == -1:
+                self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
 
 class Espio(Character):
     def __init__(self):
