@@ -81,12 +81,13 @@ key_event_table = {
 }
 
 class IDLE:
+    global move_dir
     @staticmethod
     def enter(self, event):
         print('ENTER IDLE')
-        if event == LU:
+        if event == RU:
             self.dir_x = 0
-        elif event == RU:
+        elif event == LU:
             self.dir_x = 0
 
     @staticmethod
@@ -101,15 +102,33 @@ class IDLE:
                                             self.rotate, self.face_dir,
                                             self.x, self.y, self.idle_type[4], self.idle_type[5])
 
+move_dir = [ False, False ]
 class RUN:
+    global move_dir
     def enter(self, event):
         print('ENTER RUN')
         if event == RD:
+            move_dir[0] = True
+        elif event == LD:
+            move_dir[1] = True
+        if event == RU:
+            move_dir[0] = False
+        elif event == LU:
+            move_dir[1] = False
+
+        if move_dir[0] == True:
             self.dir_x = 1
             self.face_dir = 'None'
-        elif event == LD:
+        if move_dir[1] == True:
             self.dir_x = -1
             self.face_dir = 'h'
+        if move_dir[0] == False and move_dir[1] == False:
+            self.cur_state.exit(self, NULL)
+            try:
+                self.cur_state = next_state[IDLE][NULL]
+            except KeyError:
+                print('Error', self.cur_state.__name__, ' ', "None")
+            self.cur_state.enter(self, NULL)
 
     def exit(self, event):
         print('EXIT RUN')
@@ -127,14 +146,19 @@ class RUN:
 class Player_JUMP:
     @staticmethod
     def enter(self, event):
+        print('ENTER JUMP')
         if event == RD:
             self.dir_x = 1
             self.face_dir = 'None'
+            move_dir[0] = True
         elif event == LD:
             self.dir_x = -1
             self.face_dir = 'h'
-
-        print('ENTER JUMP')
+            move_dir[1] = True
+        if event == RU:
+            move_dir[0] = False
+        elif event == LU:
+            move_dir[1] = False
 
     @staticmethod
     def exit(self, event):
