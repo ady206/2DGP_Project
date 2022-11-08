@@ -46,8 +46,8 @@ def enter():
     stage = Palm()
 
     character.human = False
-    for i in range (3):
-        character.RandomCharacter()
+    # for i in range (3):
+    #     character.RandomCharacter()
 
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
@@ -59,9 +59,9 @@ def enter():
     game_world.add_object(stage, 0)
 
     character.player_character.x = 400
-    character.computer_character[0].x = 200
-    character.computer_character[1].x = 500
-    character.computer_character[2].x = 600
+    # character.computer_character[0].x = 200
+    # character.computer_character[1].x = 500
+    # character.computer_character[2].x = 600
 
 def exit():
     global stage, sound

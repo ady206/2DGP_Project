@@ -1,8 +1,6 @@
-6개남음
+2개남음
 --------sonic
 
-run 10
-jump 20
 attack 33
 
 --------tales
@@ -37,6 +35,8 @@ attack 14
 
 --------blaze
 
+run
+jump
 attack 8
 
 --------espio
