@@ -56,7 +56,6 @@ def enter():
     game_world.add_object(character.player_character, 1)
     for in_character in character.computer_character:
         game_world.add_object(in_character, 1)
-        print(in_character)
     game_world.add_object(stage, 0)
 
     character.player_character.x = 400

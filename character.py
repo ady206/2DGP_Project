@@ -188,33 +188,35 @@ class Sonic(Character):
 
     def update(self):
         super(Sonic, self).update()
-        if self.time % 5 == 0:
+        self.cur_state.do(self)
+
+        if self.time % 15 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
+            self.move_frame = (self.move_frame + 1) % 8
+            self.jump_frame = (self.jump_frame + 1) % 3
 
     def draw(self):
         if self.dir_x == 1:
             if self.jump == True:
-                self.image_left.clip_draw(20 + (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+                self.image_left.clip_draw(245 + (self.jump_frame * 40), 1250, 35, 40, self.x, self.y)
             else:
-                self.image_left.clip_draw(20 + (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+                self.image_left.clip_draw(10 + self.move_frame * 40, 1830, 40, 40, self.x, self.y)
         if self.dir_x == -1:
             if self.jump == True:
-                self.image_right.clip_draw(3982 - (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+                self.image_right.clip_draw(4032 - 35 - 245 - (self.jump_frame * 40), 1250, 35, 40, self.x, self.y)
             else:
-                self.image_right.clip_draw(3982 - (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+                self.image_right.clip_draw(4032 - 40 - 10  - (self.move_frame * 40), 1830, 40, 40, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(20 + (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(245 + (self.jump_frame * 40), 1250, 35, 40, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(7 + self.idle_frame * 30, 2285, 30, 40, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(3982 - (self.idle_frame * 30), 2320, 30, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 35 - 245 - (self.jump_frame * 40), 1250, 35, 40, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 30 - 7 - (self.idle_frame * 30), 2285, 30, 40, self.x, self.y)
 
 class Tales(Character):
     def __init__(self):
@@ -244,9 +246,15 @@ class Tales(Character):
                 self.image_right.clip_draw(3972 - self.move_frame * 55, 2980, 50, 40, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 52 + 20, 2650, 50, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 50 + 15, 2740, 40, 45, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 52 + 20, 2650, 50, 40, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 20 - 50 - self.idle_frame * 52, 2650, 50, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 15 - 40 - self.jump_frame * 50, 2740, 40, 45, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 20 - 50 - self.idle_frame * 52, 2650, 50, 40, self.x, self.y)
 
 class Knuckles(Character):
     def __init__(self):
@@ -278,9 +286,15 @@ class Knuckles(Character):
                 self.image_right.clip_draw(4032 - 41 - 2 - self.move_frame * 41, 2680, 40, 40, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 35 + 410, 2980, 35, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 51 + 2, 1074, 45, 40, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 35 + 410, 2980, 35, 40, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 410 - 35 - self.idle_frame * 35, 2980, 35, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 51 - 2 - self.jump_frame * 51, 1074, 45, 40, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 410 - 35 - self.idle_frame * 35, 2980, 35, 40, self.x, self.y)
 
 class AmyRose(Character):
     def __init__(self):
@@ -311,9 +325,15 @@ class AmyRose(Character):
                 self.image_right.clip_draw(4032 - 41 - 2 - self.move_frame * 41,  2563, 38, 40, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 28 + 2, 2750, 30, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 51 + 2, 1855, 50, 44, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 28 + 2, 2750, 30, 40, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 30 - 2 - self.idle_frame * 28, 2750, 30, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 51 - 2 - self.jump_frame * 51, 1855, 50, 44, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 30 - 2 - self.idle_frame * 28, 2750, 30, 40, self.x, self.y)
 
 class Tikal(Character):
     def __init__(self):
@@ -344,9 +364,15 @@ class Tikal(Character):
                 self.image_right.clip_draw(4032 - 41 - 5 - self.move_frame * 41, 2640, 40, 40, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 36 + 5, 2700, 38, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 39 + 5, 2570, 38, 43, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 36 + 5, 2700, 38, 40, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 36 - 5 - self.idle_frame * 36, 2700, 38, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 39 - 5 - self.jump_frame * 39, 2570, 38, 43, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 36 - 5 - self.idle_frame * 36, 2700, 38, 40, self.x, self.y)
 
 class Rouge(Character):
     def __init__(self):
@@ -413,9 +439,15 @@ class Shadow(Character):
                 self.image_right.clip_draw(4032 - 6 - 41 - self.move_frame * 41, 2864, 42, 40, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 35 + 202, 2958, 37, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 35 + 620, 2720, 38, 40, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 35 + 202, 2958, 37, 40, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 202 - 37 - self.idle_frame * 35, 2958, 37, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 620 - 35 - self.jump_frame * 35, 2720, 38, 40, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 202 - 37 - self.idle_frame * 35, 2958, 37, 40, self.x, self.y)
 
 ##############################################################################################################
 
@@ -520,9 +552,15 @@ class Espio(Character):
                 self.image_right.clip_draw(4032 - 35 - 5 - self.move_frame * 35, 1130, 35, 40, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 27 + 5, 1220, 27, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 35 + 5, 780, 35, 40, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 27 + 5, 1220, 27, 40, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 27 - 5 - self.idle_frame * 27, 1220, 27, 40, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 35 - 5 - self.jump_frame * 35, 780, 35, 40, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 27 - 5 - self.idle_frame * 27, 1220, 27, 40, self.x, self.y)
 
 class Mighty(Character):
     def __init__(self):
@@ -553,9 +591,15 @@ class Mighty(Character):
                 self.image_right.clip_draw(4032 - 137 - 35 - self.move_frame * 35, 2780, 33, 38, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 28 + 5, 2870, 30, 35, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 40 + 310, 2870, 38, 38, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 28 + 5, 2870, 30, 35, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 28 - 5 - self.idle_frame * 28, 2870, 30, 35, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 310 - 40 - self.jump_frame * 40, 2870, 38, 38, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 28 - 5 - self.idle_frame * 28, 2870, 30, 35, self.x, self.y)
 
 class SuperSonic(Character):
     def __init__(self):
@@ -585,9 +629,15 @@ class SuperSonic(Character):
                 self.image_right.clip_draw(4032 - 40 - 394 - self.move_frame, 2890, 35, 46, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 25 + 2, 2890, 24, 46, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(self.jump_frame * 36 + 10, 2410, 38, 40, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(self.idle_frame * 25 + 2, 2890, 24, 46, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 24 - 2 - self.idle_frame * 25, 2890, 24, 46, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(4032 - 36 - 10 - self.jump_frame * 36, 2410, 38, 40, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(4032 - 24 - 2 - self.idle_frame * 25, 2890, 24, 46, self.x, self.y)
 
 class SuperShadow(Character):
     def __init__(self):
@@ -618,6 +668,12 @@ class SuperShadow(Character):
                 self.image_right.clip_draw(self.move_frame * 32 + 260, 2842, 34, 36, self.x, self.y)
         if self.dir_x == 0:
             if self.face_dir == 1:
-                self.image_left.clip_draw(4032 - 282 - 25 - self.idle_frame * 26, 2940, 25, 38, self.x, self.y)
+                if self.jump == True:
+                    self.image_left.clip_draw(4032 - 38 - 23 - self.jump_frame * 38, 2724, 37, 38, self.x, self.y)
+                else:
+                    self.image_left.clip_draw(4032 - 282 - 25 - self.idle_frame * 26, 2940, 25, 38, self.x, self.y)
             elif self.face_dir == -1:
-                self.image_right.clip_draw(self.idle_frame * 25 + 282, 2940, 25, 38, self.x, self.y)
+                if self.jump == True:
+                    self.image_right.clip_draw(self.jump_frame * 38 + 23, 2724, 37, 38, self.x, self.y)
+                else:
+                    self.image_right.clip_draw(self.idle_frame * 25 + 282, 2940, 25, 38, self.x, self.y)
