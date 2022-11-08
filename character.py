@@ -143,6 +143,7 @@ class RUN:
         self.image.clip_composite_draw(self.move_type[0],self.move_type[1],self.move_type[2],self.move_type[3],
                                             self.rotate, self.face_dir,
                                             self.x, self.y, self.move_type[4], self.move_type[5])
+
 class Player_JUMP:
     @staticmethod
     def enter(self, event):
@@ -554,23 +555,22 @@ class Mighty(Character):
         super(Mighty, self).__init__()
         self.image = load_image("character/mighty.png")
 
-        self.idle_type = [0, 2870, 30, 35, 30, 35]
-        self.move_type = [0, 2780, 33, 38, 33, 38]
-        self.jump_type = [0, 2870, 38, 38, 38, 38]
+        self.idle_type = [0, 2920, 30, 40, 30, 40]
+        self.move_type = [0, 2670, 38, 40, 38, 40]
+        self.jump_type = [0, 2830, 30, 40, 30, 40]
 
     def update(self):
         super(Mighty, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 28 + 5
-        self.move_size = self.move_frame * 35 + 137
-        self.jump_size = self.jump_frame * 40 + 310
+        self.idle_size = self.idle_frame * 28
+        self.move_size = self.move_frame * 35
+        self.jump_size = self.jump_frame * 24
 
         if self.time % 5 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 7
-            self.move_frame = (self.move_frame + 1) % 8
-        if self.time % 20 == 0:
-            self.jump_frame = (self.jump_frame + 1) % 7
+            self.idle_frame = (self.idle_frame + 1) % 5
+            self.move_frame = (self.move_frame + 1) % 9
+            self.jump_frame = (self.jump_frame + 1) % 6
 
     def draw(self):
         self.cur_state.draw(self)
