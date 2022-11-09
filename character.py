@@ -491,39 +491,28 @@ class Silver(Character):
 class Blaze(Character):
     def __init__(self):
         super(Blaze, self).__init__()
-        self.image_left = load_image("character/blaze left.png")
-        self.image_right = load_image("character/blaze right.png")
+        self.image = load_image("character/123.png")
+
+        self.idle_type = [0, 2810, 34, 40, 34, 40]
+        self.move_type = [0, 2610, 35, 40, 35, 40]
+        self.jump_type = [0, 2480, 35, 40, 35, 40]
 
     def update(self):
         super(Blaze, self).update()
+        self.cur_state.do(self)
+
+        self.idle_size = self.idle_frame * 35 + 24
+        self.move_size = self.move_frame * 35 + 24
+        self.jump_size = self.jump_frame * 40 + 210
+
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 13
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
+            self.move_frame = (self.move_frame + 1) % 8
+            self.jump_frame = (self.jump_frame + 1) % 3
 
     def draw(self):
-        if self.dir_x == 1:
-            if self.jump == True:
-                self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
-            else:
-                self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
-        if self.dir_x == -1:
-            if self.jump == True:
-                self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
-            else:
-                self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
-        if self.dir_x == 0:
-            if self.face_dir == 1:
-                self.image_left.clip_draw(self.idle_frame * 31 + 382, 1710, 30, 40, self.x, self.y)
-            elif self.face_dir == -1:
-                self.image_right.clip_draw(4032 - 382 - 30 - self.idle_frame * 31, 1710, 30, 40, self.x, self.y)
-
+        self.cur_state.draw(self)
+        # delay(1)
 class Espio(Character):
     def __init__(self):
         super(Espio, self).__init__()
