@@ -2,6 +2,7 @@ from pico2d import *
 import game_world
 from math import *
 from random import *
+from time import *
 
 player_character = None
 computer_character = []
@@ -87,8 +88,10 @@ class IDLE:
         print('ENTER IDLE')
         if event == RU:
             self.dir_x = 0
+            move_dir[0] = False
         elif event == LU:
             self.dir_x = 0
+            move_dir[1] = False
 
     @staticmethod
     def exit(self, event):
@@ -145,21 +148,25 @@ class RUN:
                                             self.x, self.y, self.move_type[4], self.move_type[5])
 
 class Player_JUMP:
+    global move_dir
     @staticmethod
     def enter(self, event):
         print('ENTER JUMP')
         if event == RD:
-            self.dir_x = 1
-            self.face_dir = 'None'
             move_dir[0] = True
         elif event == LD:
-            self.dir_x = -1
-            self.face_dir = 'h'
             move_dir[1] = True
         if event == RU:
             move_dir[0] = False
         elif event == LU:
             move_dir[1] = False
+
+        if move_dir[0] == True:
+            self.dir_x = 1
+            self.face_dir = 'None'
+        if move_dir[1] == True:
+            self.dir_x = -1
+            self.face_dir = 'h'
 
     @staticmethod
     def exit(self, event):
@@ -185,24 +192,77 @@ class Player_JUMP:
                     print('Error', self.cur_state.__name__, ' ', "None")
                 self.cur_state.enter(self, NULL)
 
-        pass
-
     @staticmethod
     def draw(self):
         self.image.clip_composite_draw(self.jump_type[0],self.jump_type[1],self.jump_type[2],self.jump_type[3],
                                        self.rotate, self.face_dir,
                                        self.x, self.y, self.jump_type[4], self.jump_type[5])
 
+set_time, cur_time = 0, 0
+class ATTACK:
+    @staticmethod
+    def enter(self, event):
+        global set_time
+        set_time = time()
+        print('ENTER ATTACK')
+        if event == RD:
+            move_dir[0] = True
+        elif event == LD:
+            move_dir[1] = True
+        if event == RU:
+            move_dir[0] = False
+        elif event == LU:
+            move_dir[1] = False
+
+        if move_dir[0] == True:
+            self.dir_x = 1
+            self.face_dir = 'None'
+        if move_dir[1] == True:
+            self.dir_x = -1
+            self.face_dir = 'h'
+        if move_dir[0] == False and move_dir[1] == False:
+            self.dir_x = 0
+
+    @staticmethod
+    def exit(self, event):
+        print('EXIT ATTACK')
+    @staticmethod
+    def do(self):
+        global cur_time, set_time
+        self.attack_type[0] = self.attack_size
+        self.x += self.dir_x * self.speed
+        self.x = clamp(0, self.x, 800)
+
+        cur_time = time()
+        if cur_time > set_time + 0.3:
+            self.cur_state.exit(self, NULL)
+            try:
+                if move_dir[0] == False and move_dir[1] == False:
+                    self.cur_state = next_state[IDLE][NULL]
+                else:
+                    self.cur_state = next_state[RUN][NULL]
+            except KeyError:
+                print('Error', self.cur_state.__name__, ' ', "None")
+            self.cur_state.enter(self, NULL)
+    @staticmethod
+    def draw(self):
+        self.image.clip_composite_draw(self.attack_type[0],self.attack_type[1],self.attack_type[2],self.attack_type[3],
+                                       self.rotate, self.face_dir,
+                                       self.x, self.y, self.attack_type[4], self.attack_type[5])
+
 next_state = {
-    IDLE:  {RU: RUN, RD: RUN,
-            LU: RUN, LD: RUN,
-            NULL: IDLE, SPACE: IDLE, JUMP: Player_JUMP},
+    IDLE:  {RU: IDLE, RD: RUN,
+            LU: IDLE, LD: RUN,
+            NULL: IDLE, SPACE: ATTACK, JUMP: Player_JUMP},
     RUN:   {RU: RUN, RD: RUN,
             LU: RUN, LD: RUN,
-            NULL:RUN, SPACE: RUN,  JUMP: Player_JUMP},
+            NULL: RUN, SPACE: ATTACK, JUMP: Player_JUMP},
     Player_JUMP:   {RU: Player_JUMP, RD: Player_JUMP,
                     LU: Player_JUMP, LD: Player_JUMP,
-                    NULL:Player_JUMP, SPACE: Player_JUMP,  JUMP: Player_JUMP},
+                    NULL: Player_JUMP, SPACE: Player_JUMP, JUMP: Player_JUMP},
+    ATTACK:   {RU: ATTACK, RD: ATTACK,
+               LU: ATTACK, LD: ATTACK,
+               NULL: ATTACK, SPACE: ATTACK, JUMP: ATTACK},
 }
 
 ########################################
@@ -217,10 +277,12 @@ class Character:
         self.idle_frame = 0
         self.move_frame = 0
         self.jump_frame = 0
+        self.attack_frame = 0
 
         self.idle_size = 0
         self.move_size = 0
         self.jump_size = 0
+        self.attack_size = 0
 
         self.damage = 6
         self.time = 0
@@ -229,7 +291,6 @@ class Character:
         self.radian = 0
 
         self.jump_sound = load_wav('sound/00_jump.wav')
-        self.attack = False
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 130
 
@@ -260,17 +321,6 @@ class Character:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
 
-    def Jump(self):
-        if self.jump == True:
-            if self.time % 8 == 0:
-                if self.radian <= pi * 3 / 2:
-                    self.radian += (pi / 10)
-                    self.y += sin(self.radian) * 10
-                else:
-                    self.y = 130
-                    self.jump = False
-                    self.radian = 0
-
 class Sonic(Character):
     def __init__(self):
         super(Sonic, self).__init__()
@@ -279,6 +329,7 @@ class Sonic(Character):
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]
         self.jump_type = [0, 1250, 35, 40, 35, 40]
+        self.attack_type = [0, 950, 45, 40, 45, 40]
 
     def update(self):
         super(Sonic, self).update()
@@ -287,11 +338,13 @@ class Sonic(Character):
         self.idle_size = self.idle_frame * 30 + 7
         self.move_size = self.move_frame * 40 + 10
         self.jump_size = self.jump_frame * 50 + 15
+        self.attack_size = self.attack_frame * 45
 
         if self.time % 15 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 3
+            self.attack_frame = (self.attack_frame + 1) % 6
 
     def draw(self):
         self.cur_state.draw(self)
@@ -304,6 +357,7 @@ class Tales(Character):
         self.idle_type = [0, 2650, 50, 40, 50, 40]
         self.move_type = [0, 2980, 50, 40, 50, 40]
         self.jump_type = [0, 2740, 40, 45, 40, 45]
+        self.attack_type = [0, 950, 40, 40, 40, 40]
 
     def update(self):
         super(Tales, self).update()
@@ -312,11 +366,13 @@ class Tales(Character):
         self.idle_size = self.idle_frame * 52 + 20
         self.move_size = self.move_frame * 55 + 10
         self.jump_size = self.jump_frame * 50 + 15
+        self.attack_size = self.attack_frame * 40
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 8
+            self.attack_frame = (self.attack_frame + 1) % 8
 
     def draw(self):
         self.cur_state.draw(self)
@@ -329,6 +385,7 @@ class Knuckles(Character):
         self.idle_type = [0, 2980, 35, 40, 35, 40]
         self.move_type = [0, 2680, 40, 40, 40, 40]
         self.jump_type = [0, 1074, 45, 40, 45, 40]
+        self.attack_type = [0, 1074, 45, 40, 45, 40]
 
     def update(self):
         super(Knuckles, self).update()
@@ -337,6 +394,7 @@ class Knuckles(Character):
         self.idle_size = self.idle_frame * 35 + 410
         self.move_size = self.move_frame * 41 + 2
         self.jump_size = self.jump_frame * 51 + 2
+        self.attack_size = self.attack_frame * 40
 
         if self.time % 5 == 0:
             self.jump_frame = (self.jump_frame + 1) % 8
@@ -356,6 +414,7 @@ class AmyRose(Character):
         self.idle_type = [0, 2750, 30, 40, 30, 40]
         self.move_type = [0, 2563, 38, 40, 38, 40]
         self.jump_type = [0, 1855, 50, 44, 50, 44]
+        self.attack_type = [0, 1074, 45, 40, 45, 40]
 
     def update(self):
         super(AmyRose, self).update()
@@ -364,6 +423,7 @@ class AmyRose(Character):
         self.idle_size = self.idle_frame * 28 + 2
         self.move_size = self.move_frame * 41 + 2
         self.jump_size = self.jump_frame * 51 + 2
+        self.attack_size = self.attack_frame * 51 + 2
 
         if self.time % 30 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
@@ -382,6 +442,7 @@ class Tikal(Character):
         self.idle_type = [0, 2700, 38, 40, 38, 40]
         self.move_type = [0, 2640, 40, 40, 40, 40]
         self.jump_type = [0, 2570, 38, 43, 38, 43]
+        self.attack_type = [0, 2570, 38, 43, 38, 43]
 
     def update(self):
         super(Tikal, self).update()
@@ -390,6 +451,7 @@ class Tikal(Character):
         self.idle_size = self.idle_frame * 36 + 5
         self.move_size = self.move_frame * 41 + 5
         self.jump_size = self.jump_frame * 39 + 5
+        self.attack_size = self.attack_frame * 51 + 2
 
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
@@ -407,6 +469,7 @@ class Rouge(Character):
         self.idle_type = [0, 2984, 28, 40, 28, 40]
         self.move_type = [0, 2905, 36, 40, 36, 40]
         self.jump_type = [0, 2730, 38, 40, 38, 40]
+        self.attack_type = [0, 2730, 38, 40, 38, 40]
 
     def update(self):
         super(Rouge, self).update()
@@ -415,6 +478,7 @@ class Rouge(Character):
         self.idle_size = self.idle_frame * 28
         self.move_size = self.move_frame * 36
         self.jump_size = self.jump_frame * 40
+        self.attack_size = self.attack_frame * 40
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
@@ -432,6 +496,7 @@ class Shadow(Character):
         self.idle_type = [0, 2958, 37, 40, 37, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
         self.jump_type = [0, 2720, 38, 40, 38, 40]
+        self.attack_type = [0, 2720, 38, 40, 38, 40]
 
     def update(self):
         super(Shadow, self).update()
@@ -440,6 +505,7 @@ class Shadow(Character):
         self.idle_size = self.idle_frame * 35 + 202
         self.move_size = self.move_frame * 41 + 6
         self.jump_size = self.jump_frame * 35 + 620
+        self.attack_size = self.attack_frame * 35 + 620
 
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
@@ -455,38 +521,29 @@ class Shadow(Character):
 class Silver(Character):
     def __init__(self):
         super(Silver, self).__init__()
-        self.image_left = load_image("character/silver right.png")
-        self.image_right = load_image("character/silver left.png")
+        self.image = load_image("character/silver.png")
+
+        self.idle_type = [self.idle_frame * 50, 2984, 40, 40]
+        self.move_type = [0, 2864, 42, 40, 42, 40]
+        self.jump_type = [0, 2720, 38, 40, 38, 40]
+        self.attack_type = [0, 2720, 38, 40, 38, 40]
 
     def update(self):
         super(Silver, self).update()
+        self.cur_state.do(self)
+
+        self.idle_size = self.idle_frame * 35 + 202
+        self.move_size = self.move_frame * 41 + 6
+        self.jump_size = self.jump_frame * 35 + 620
+        self.attack_size = self.attack_frame * 35 + 620
+
         if self.time % 15 == 0:
             self.idle_frame = (self.idle_frame + 1) % 7
-        if self.jump == True:
-            if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 8)
-                self.y += sin(self.radian) * 6
-            else:
-                self.y = 130
-                self.jump = False
-                self.radian = 0
+            self.move_frame = (self.move_frame + 1) % 7
+            self.jump_frame = (self.jump_frame + 1) % 7
 
     def draw(self):
-        if self.dir_x == 1:
-            if self.jump == True:
-                self.image_left.clip_draw(4032 - 40 - self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
-            else:
-                self.image_left.clip_draw(4032 - 40 - self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
-        if self.dir_x == -1:
-            if self.jump == True:
-                self.image_right.clip_draw(self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
-            else:
-                self.image_right.clip_draw(self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
-        if self.dir_x == 0:
-            if self.face_dir == 1:
-                self.image_left.clip_draw(4032 - 40 - self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
-            elif self.face_dir == -1:
-                self.image_right.clip_draw(self.idle_frame * 50, 2984, 40, 40, self.x, self.y)
+        self.cur_state.draw(self)
 
 class Blaze(Character):
     def __init__(self):
@@ -496,6 +553,7 @@ class Blaze(Character):
         self.idle_type = [0, 2810, 34, 40, 34, 40]
         self.move_type = [0, 2610, 35, 40, 35, 40]
         self.jump_type = [0, 2480, 35, 40, 35, 40]
+        self.attack_type = [0, 2480, 35, 40, 35, 40]
 
     def update(self):
         super(Blaze, self).update()
@@ -504,6 +562,7 @@ class Blaze(Character):
         self.idle_size = self.idle_frame * 35 + 24
         self.move_size = self.move_frame * 35 + 24
         self.jump_size = self.jump_frame * 40 + 210
+        self.attack_size = self.attack_frame * 40 + 210
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 13
@@ -512,7 +571,7 @@ class Blaze(Character):
 
     def draw(self):
         self.cur_state.draw(self)
-        # delay(1)
+
 class Espio(Character):
     def __init__(self):
         super(Espio, self).__init__()
@@ -521,6 +580,7 @@ class Espio(Character):
         self.idle_type = [0, 1220, 27, 40, 27, 40]
         self.move_type = [0, 1130, 35, 40, 35, 40]
         self.jump_type = [0, 780, 35, 40, 35, 40]
+        self.attack_type = [0, 780, 35, 40, 35, 40]
 
     def update(self):
         super(Espio, self).update()
@@ -529,6 +589,7 @@ class Espio(Character):
         self.idle_size = self.idle_frame * 27 + 5
         self.move_size = self.move_frame * 35 + 5
         self.jump_size = self.jump_frame * 35 + 5
+        self.attack_size = self.attack_frame * 35 + 5
 
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
@@ -547,6 +608,7 @@ class Mighty(Character):
         self.idle_type = [0, 2920, 30, 40, 30, 40]
         self.move_type = [0, 2670, 38, 40, 38, 40]
         self.jump_type = [0, 2830, 30, 40, 30, 40]
+        self.attack_type = [0, 2830, 30, 40, 30, 40]
 
     def update(self):
         super(Mighty, self).update()
@@ -555,6 +617,7 @@ class Mighty(Character):
         self.idle_size = self.idle_frame * 28
         self.move_size = self.move_frame * 35
         self.jump_size = self.jump_frame * 24
+        self.attack_size = self.attack_frame * 24
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 5
@@ -572,6 +635,7 @@ class SuperSonic(Character):
         self.idle_type = [0, 2890, 24, 46, 24, 46]
         self.move_type = [0, 2890, 35, 46, 35, 46]
         self.jump_type = [0, 2410, 38, 40, 38, 40]
+        self.attack_type = [0, 2410, 38, 40, 38, 40]
 
     def update(self):
         super(SuperSonic, self).update()
@@ -580,11 +644,13 @@ class SuperSonic(Character):
         self.idle_size = self.idle_frame * 25 + 2
         self.move_size = self.move_frame + 394
         self.jump_size = self.jump_frame * 36 + 10
+        self.attack_size = self.attack_frame * 36 + 10
 
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
         if self.time % 10 == 0:
             self.jump_frame = (self.jump_frame + 1) % 4
+            self.attack_frame = (self.attack_frame + 1) % 4
 
     def draw(self):
         self.cur_state.draw(self)
@@ -597,6 +663,7 @@ class SuperShadow(Character):
         self.idle_type = [0, 2940, 25, 38, 25, 38]
         self.move_type = [0, 2842, 34, 36, 34, 36]
         self.jump_type = [0, 2724, 37, 38, 37, 38]
+        self.attack_type = [0, 2724, 37, 38, 37, 38]
 
     def update(self):
         super(SuperShadow, self).update()
@@ -605,12 +672,14 @@ class SuperShadow(Character):
         self.idle_size = 4032 - 282 - 25 - self.idle_frame * 26
         self.move_size = 4032 - 260 - 32 - self.move_frame * 32
         self.jump_size = 4032 - 38 - 23 - self.jump_frame * 38
+        self.attack_size = 4032 - 38 - 23 - self.attack_frame * 38
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 2
         if self.time % 7 == 0:
             self.move_frame = (self.move_frame + 1) % 5
             self.jump_frame = (self.jump_frame + 1) % 6
+            self.attack_frame = (self.attack_frame + 1) % 6
 
     def draw(self):
         self.cur_state.draw(self)
