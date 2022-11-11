@@ -61,7 +61,6 @@ def handle_events():
                         character.human = True
                         character.RandomCharacter()
 
-
 def enter():
     global image
     image = load_image('map/ready.png')
