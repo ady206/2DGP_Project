@@ -1,16 +1,8 @@
---------shadow
-
-attack 10
-
 --------silver
 
 run 2
 jump 7
 attack 14
-
---------blaze
-
-attack 8
 
 --------espio
 

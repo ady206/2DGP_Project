@@ -632,7 +632,7 @@ class Espio(Character):
         self.idle_type = [0, 1220, 27, 40, 27, 40]
         self.move_type = [0, 1130, 35, 40, 35, 40]
         self.jump_type = [0, 780, 35, 40, 35, 40]
-        self.attack_type = [0, 780, 35, 40, 35, 40]
+        self.attack_type = [0, 514, 45, 40, 45, 40]
 
     def update(self):
         super(Espio, self).update()
@@ -641,13 +641,14 @@ class Espio(Character):
         self.idle_size = self.idle_frame * 27 + 5
         self.move_size = self.move_frame * 35 + 5
         self.jump_size = self.jump_frame * 35 + 5
-        self.attack_size = self.attack_frame * 35 + 5
+        self.attack_size = self.attack_frame * 45
 
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
             self.move_frame = (self.move_frame + 1) % 9
         if self.time % 20 == 0:
             self.jump_frame = (self.jump_frame + 1) % 10
+            self.attack_frame = (self.attack_frame + 1) % 5
 
     def draw(self):
         self.cur_state.draw(self)
@@ -659,10 +660,10 @@ class Mighty(Character):
         if Mighty.image == None:
             self.image = load_image("character/mighty.png")
 
-        self.idle_type = [0, 2920, 30, 40, 30, 40]
+        self.idle_type = [0, 2920, 30, 40, 33, 40]
         self.move_type = [0, 2670, 38, 40, 38, 40]
         self.jump_type = [0, 2830, 30, 40, 30, 40]
-        self.attack_type = [0, 2830, 30, 40, 30, 40]
+        self.attack_type = [0, 2220, 40, 40, 40, 40]
 
     def update(self):
         super(Mighty, self).update()
@@ -671,12 +672,13 @@ class Mighty(Character):
         self.idle_size = self.idle_frame * 28
         self.move_size = self.move_frame * 35
         self.jump_size = self.jump_frame * 24
-        self.attack_size = self.attack_frame * 24
+        self.attack_size = self.attack_frame * 40
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 5
             self.move_frame = (self.move_frame + 1) % 9
             self.jump_frame = (self.jump_frame + 1) % 6
+            self.attack_frame = (self.attack_frame + 1) % 3
 
     def draw(self):
         self.cur_state.draw(self)
