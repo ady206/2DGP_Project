@@ -434,7 +434,7 @@ class AmyRose(Character):
         self.idle_type = [0, 2750, 30, 40, 30, 40]
         self.move_type = [0, 2563, 38, 40, 38, 40]
         self.jump_type = [0, 1855, 50, 44, 50, 44]
-        self.attack_type = [0, 1074, 45, 40, 45, 40]
+        self.attack_type = [0, 1600, 50, 40, 45, 40]
 
     def update(self):
         super(AmyRose, self).update()
@@ -443,14 +443,14 @@ class AmyRose(Character):
         self.idle_size = self.idle_frame * 28 + 2
         self.move_size = self.move_frame * 41 + 2
         self.jump_size = self.jump_frame * 51 + 2
-        self.attack_size = self.attack_frame * 51 + 2
+        self.attack_size = self.attack_frame * 55
 
         if self.time % 30 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 7
-            self.attack_frame = (self.attack_frame + 1) % 7
+            self.attack_frame = (self.attack_frame + 1) % 8
 
     def draw(self):
         self.cur_state.draw(self)
@@ -495,21 +495,22 @@ class Rouge(Character):
         self.idle_type = [0, 2984, 28, 40, 28, 40]
         self.move_type = [0, 2905, 36, 40, 36, 40]
         self.jump_type = [0, 2730, 38, 40, 38, 40]
-        self.attack_type = [0, 2730, 38, 40, 38, 40]
+        self.attack_type = [0, 2470, 45, 42, 45, 42]
 
     def update(self):
         super(Rouge, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 28
+        self.idle_size = self.idle_frame * 30
         self.move_size = self.move_frame * 36
         self.jump_size = self.jump_frame * 40
-        self.attack_size = self.attack_frame * 40
+        self.attack_size = self.attack_frame * 50
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 6
+            self.attack_frame = (self.attack_frame + 1) % 14
 
     def draw(self):
         self.cur_state.draw(self)
