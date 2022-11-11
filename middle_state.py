@@ -19,8 +19,15 @@ def handle_events():
                 else:
                     game_framework.pop_state()
 
-
 def enter():
+    global image
+    image = None
+    if image == None:
+        image = load_image('map/stage1.png')
+    if main_state.stage_count == 1:
+        image = load_image('map/stage2.png')
+    if main_state.stage_count == 2:
+        image = load_image('map/stage3.png')
     pass
 
 def exit():

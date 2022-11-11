@@ -7,15 +7,9 @@ from time import *
 import character
 from map import *
 
-stage = None
-sound = None
-sound_on = True
-
-stage_count = 0
 ##############################################################################################################
 
 def handle_events():
-    global player_character, computer_character
     global stage, stage_count, sound, sound_on
     events = get_events()
     for event in events:
@@ -31,7 +25,8 @@ def handle_events():
                 game_framework.push_state(middle_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_F8):
             sound_on = ~sound_on
-            if(sound_on == True): sound.repeat_play()
+            if sound_on == True:
+                sound.repeat_play()
             else: sound.stop()
         else:
             character.player_character.handle_event(event)
@@ -43,11 +38,20 @@ cur_stage_time = 0
 timer = 0
 stage_time = 600
 
+stage = None
+sound = None
+sound_on = True
+font = None
+
+stage_count = 0
+
 def enter():
-    global stage, stage_count, sound, set_stage_time
+    global stage, stage_count, sound, set_stage_time, font
     set_stage_time = time()
+    font = load_font('ENCR10B.TTF', 30)
 
     stage = Palm()
+
     character.human = False
     for i in range (3):
         character.RandomCharacter()
@@ -61,10 +65,10 @@ def enter():
         game_world.add_object(in_character, 1)
     game_world.add_object(stage, 0)
 
-    character.player_character.x = 400
-    character.computer_character[0].x = 200
+    character.player_character.x = 300
+    character.computer_character[0].x = 100
     character.computer_character[1].x = 500
-    character.computer_character[2].x = 600
+    character.computer_character[2].x = 700
 
 def exit():
     global stage, sound
@@ -77,15 +81,19 @@ def update():
 
     cur_stage_time = time()
     timer = cur_stage_time - set_stage_time
-    stage_time = stage_time - timer
+    stage_time = 600 - timer
 
     if timer >= 600:
         result_state.win = False
         game_framework.change_state(result_state)
 
 def draw_world():
+    global font, stage_time
     for game_object in game_world.all_objects():
         game_object.draw()
+
+    tm = localtime(stage_time)
+    font.draw(350, 560, f'{tm.tm_min} : {tm.tm_sec}', (0, 0, 0))
 
 def draw():
     clear_canvas()
@@ -93,28 +101,38 @@ def draw():
     update_canvas()
 
 def pause():
-    global stage_count
+    global stage_count, sound
     stage_count += 1
-    middle_state.image = load_image('map/stage1.png')
-    if(stage_count == 1):
-        middle_state.image = load_image('map/stage2.png')
-    if(stage_count == 2):
-        middle_state.image = load_image('map/stage3.png')
+    sound.stop()
+    game_world.remove_object(stage)
 
 def resume():
-    # global player_character, stage, stage_count, sound
-    # if stage_count == 1:
-    #     player_character = Tales()
-    #     stage = Lake()
-    #     sound = load_music('sound/Tropical.mp3')
-    #     sound.set_volume(20)
-    #     sound.repeat_play()
-    # if stage_count == 2:
-    #     player_character = Tikal()
-    #     stage = Space()
-    #     sound = load_music('sound/Tropical.mp3')
-    #     sound.set_volume(20)
-    #     sound.repeat_play()
+    global stage, stage_count, sound_on, sound, set_stage_time
+    if stage_count == 1:
+        stage = Lake()
+        sound = load_music('sound/Tropical.mp3')
+        if sound_on == True:
+            sound.set_volume(20)
+            sound.repeat_play()
+        else:
+            sound.stop()
+    if stage_count == 2:
+        stage = Space()
+        sound = load_music('sound/Tropical.mp3')
+        if sound_on == True:
+            sound.set_volume(20)
+            sound.repeat_play()
+        else:
+            sound.stop()
+
+    game_world.add_object(stage, 0)
+
+    character.player_character.x = 300
+    character.computer_character[0].x = 100
+    character.computer_character[1].x = 500
+    character.computer_character[2].x = 700
+
+    set_stage_time = time()
     pass
 
 def collide(a, b):

@@ -270,8 +270,6 @@ next_state = {
 
 class Character:
     def __init__(self):
-        self.font = None
-
         self.hp = 100
         self.speed = 1.2
 
@@ -334,7 +332,6 @@ class Sonic(Character):
         super(Sonic, self).__init__()
         if Sonic.image == None:
             self.image = load_image("character/sonic.png")
-        # self.font = load_font()
 
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]
@@ -358,8 +355,6 @@ class Sonic(Character):
 
     def draw(self):
         self.cur_state.draw(self)
-        # self.font.draw(self.x - 60, self.y + 50,
-        #               '(Time: %3.2f)' % get_time(), (255, 255, 0))
 
     def get_bb(self):
         return self.x - 20, self.y - 50, self.x + 20, self.y + 50

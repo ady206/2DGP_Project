@@ -27,6 +27,7 @@ class Palm(Map):
         return 0, 0, 1600 - 1, 50
 
 class Lake(Map):
+
     def __init__(self):
         self.image = load_image('map/lake.png')
 

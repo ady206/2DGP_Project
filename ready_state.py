@@ -22,7 +22,6 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_RETURN:
-                middle_state.image = load_image('map/stage1.png')
                 if go == True:
                     game_framework.change_state(middle_state)
         elif event.type == SDL_MOUSEBUTTONDOWN:

@@ -12,7 +12,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_ESCAPE:
+            if event.key == SDLK_ESCAPE or event.key == SDLK_RETURN:
                 game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
             game_framework.quit()
