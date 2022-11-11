@@ -661,9 +661,9 @@ class Mighty(Character):
             self.image = load_image("character/mighty.png")
 
         self.idle_type = [0, 2920, 30, 40, 33, 40]
-        self.move_type = [0, 2670, 38, 40, 38, 40]
+        self.move_type = [0, 2670, 35, 40, 35, 40]
         self.jump_type = [0, 2830, 30, 40, 30, 40]
-        self.attack_type = [0, 2220, 40, 40, 40, 40]
+        self.attack_type = [0, 2220, 35, 40, 35, 40]
 
     def update(self):
         super(Mighty, self).update()
@@ -693,7 +693,7 @@ class SuperSonic(Character):
         self.idle_type = [0, 2890, 24, 46, 24, 46]
         self.move_type = [0, 2890, 35, 46, 35, 46]
         self.jump_type = [0, 2410, 38, 40, 38, 40]
-        self.attack_type = [0, 2410, 38, 40, 38, 40]
+        self.attack_type = [0, 2730, 45, 40, 45, 40]
 
     def update(self):
         super(SuperSonic, self).update()
@@ -702,13 +702,17 @@ class SuperSonic(Character):
         self.idle_size = self.idle_frame * 25 + 2
         self.move_size = self.move_frame + 394
         self.jump_size = self.jump_frame * 36 + 10
-        self.attack_size = self.attack_frame * 36 + 10
+        self.attack_size = self.attack_frame * 45 + (self.attack % 2 * 150)
 
         if self.time % 20 == 0:
             self.idle_frame = (self.idle_frame + 1) % 6
         if self.time % 10 == 0:
             self.jump_frame = (self.jump_frame + 1) % 4
-            self.attack_frame = (self.attack_frame + 1) % 4
+            if self.attack % 2 == 0:
+                self.attack_frame = (self.attack_frame + 1) % 4
+            if self.attack % 2 == 1:
+                self.attack_frame = (self.attack_frame + 1) % 3
+
 
     def draw(self):
         self.cur_state.draw(self)
@@ -723,7 +727,7 @@ class SuperShadow(Character):
         self.idle_type = [0, 2940, 25, 38, 25, 38]
         self.move_type = [0, 2842, 34, 36, 34, 36]
         self.jump_type = [0, 2724, 37, 38, 37, 38]
-        self.attack_type = [0, 2724, 37, 38, 37, 38]
+        self.attack_type = [0, 2380, 45, 35, 45, 35]
 
     def update(self):
         super(SuperShadow, self).update()
@@ -732,7 +736,7 @@ class SuperShadow(Character):
         self.idle_size = 4032 - 282 - 25 - self.idle_frame * 26
         self.move_size = 4032 - 260 - 32 - self.move_frame * 32
         self.jump_size = 4032 - 38 - 23 - self.jump_frame * 38
-        self.attack_size = 4032 - 38 - 23 - self.attack_frame * 38
+        self.attack_size = 4032 - 45 - self.attack_frame * 45
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 2
