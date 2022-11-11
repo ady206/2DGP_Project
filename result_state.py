@@ -32,7 +32,7 @@ def exit():
 
 def draw():
     clear_canvas()
-    image.draw(400, 300)
+    image.draw(450, 300)
     update_canvas()
 
 def update():

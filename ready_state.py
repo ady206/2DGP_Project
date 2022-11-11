@@ -59,7 +59,7 @@ def handle_events():
                     if 560 <= x < 665:
                         character.player_character = character.SuperShadow()
                     if 665 <= x < 770:
-                        human = True
+                        character.human = True
                         character.RandomCharacter()
 
 

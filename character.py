@@ -143,7 +143,7 @@ class RUN:
         self.x = clamp(0, self.x, 800)
 
     def draw(self):
-        self.image.clip_composite_draw(self.move_type[0],self.move_type[1],self.move_type[2],self.move_type[3],
+        self.image.clip_composite_draw(self.move_type[0], self.move_type[1], self.move_type[2], self.move_type[3],
                                             self.rotate, self.face_dir,
                                             self.x, self.y, self.move_type[4], self.move_type[5])
 
@@ -175,8 +175,9 @@ class Player_JUMP:
     @staticmethod
     def do(self):
         self.jump_type[0] = self.jump_size
-        self.x += self.dir_x * self.speed
-        self.x = clamp(0, self.x, 800)
+        if move_dir[0] == True or move_dir[1] == True:
+            self.x += self.dir_x * self.speed
+            self.x = clamp(0, self.x, 800)
 
         if self.time % 8 == 0:
             if self.radian <= pi * 3 / 2:
@@ -194,7 +195,7 @@ class Player_JUMP:
 
     @staticmethod
     def draw(self):
-        self.image.clip_composite_draw(self.jump_type[0],self.jump_type[1],self.jump_type[2],self.jump_type[3],
+        self.image.clip_composite_draw(self.jump_type[0], self.jump_type[1], self.jump_type[2], self.jump_type[3],
                                        self.rotate, self.face_dir,
                                        self.x, self.y, self.jump_type[4], self.jump_type[5])
 
@@ -269,7 +270,7 @@ next_state = {
 
 class Character:
     def __init__(self):
-        self.image = None
+        self.font = None
 
         self.hp = 100
         self.speed = 1.2
@@ -321,10 +322,19 @@ class Character:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
 
+    def get_bb(self):
+        return self.x - 20, self.y - 50, self.x + 20, self.y + 50
+
+    def handle_collision(self, other, group):
+        pass
+
 class Sonic(Character):
+    image = None
     def __init__(self):
         super(Sonic, self).__init__()
-        self.image = load_image("character/sonic.png")
+        if Sonic.image == None:
+            self.image = load_image("character/sonic.png")
+        # self.font = load_font()
 
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]
@@ -348,11 +358,21 @@ class Sonic(Character):
 
     def draw(self):
         self.cur_state.draw(self)
+        # self.font.draw(self.x - 60, self.y + 50,
+        #               '(Time: %3.2f)' % get_time(), (255, 255, 0))
+
+    def get_bb(self):
+        return self.x - 20, self.y - 50, self.x + 20, self.y + 50
+
+    def handle_collision(self, other, group):
+        pass
 
 class Tales(Character):
+    image = None
     def __init__(self):
         super(Tales, self).__init__()
-        self.image = load_image("character/tales.png")
+        if Tales.image == None:
+            self.image = load_image("character/tales.png")
 
         self.idle_type = [0, 2650, 50, 40, 50, 40]
         self.move_type = [0, 2980, 50, 40, 50, 40]
@@ -378,9 +398,11 @@ class Tales(Character):
         self.cur_state.draw(self)
 
 class Knuckles(Character):
+    image = None
     def __init__(self):
         super(Knuckles, self).__init__()
-        self.image = load_image("character/knuckles.png")
+        if Knuckles.image == None:
+            self.image = load_image("character/knuckles.png")
 
         self.idle_type = [0, 2980, 35, 40, 35, 40]
         self.move_type = [0, 2680, 40, 40, 40, 40]
@@ -407,9 +429,11 @@ class Knuckles(Character):
         self.cur_state.draw(self)
 
 class AmyRose(Character):
+    image = None
     def __init__(self):
         super(AmyRose, self).__init__()
-        self.image = load_image("character/amy rose.png")
+        if AmyRose.image == None:
+            self.image = load_image("character/amy rose.png")
 
         self.idle_type = [0, 2750, 30, 40, 30, 40]
         self.move_type = [0, 2563, 38, 40, 38, 40]
@@ -435,9 +459,11 @@ class AmyRose(Character):
         self.cur_state.draw(self)
 
 class Tikal(Character):
+    image = None
     def __init__(self):
         super(Tikal, self).__init__()
-        self.image = load_image("character/tikal.png")
+        if Tikal.image == None:
+            self.image = load_image("character/tikal.png")
 
         self.idle_type = [0, 2700, 38, 40, 38, 40]
         self.move_type = [0, 2640, 40, 40, 40, 40]
@@ -463,9 +489,12 @@ class Tikal(Character):
         self.cur_state.draw(self)
 
 class Rouge(Character):
+    image = None
     def __init__(self):
         super(Rouge, self).__init__()
-        self.image = load_image("character/rouge.png")
+        if Rouge.image == None:
+            self.image = load_image("character/rouge.png")
+
         self.idle_type = [0, 2984, 28, 40, 28, 40]
         self.move_type = [0, 2905, 36, 40, 36, 40]
         self.jump_type = [0, 2730, 38, 40, 38, 40]
@@ -489,9 +518,11 @@ class Rouge(Character):
         self.cur_state.draw(self)
 
 class Shadow(Character):
+    image = None
     def __init__(self):
         super(Shadow, self).__init__()
-        self.image = load_image("character/shadow.png")
+        if Shadow.image == None:
+            self.image = load_image("character/shadow.png")
 
         self.idle_type = [0, 2958, 37, 40, 37, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
@@ -519,11 +550,13 @@ class Shadow(Character):
 ##############################################################################################################
 
 class Silver(Character):
+    image = None
     def __init__(self):
         super(Silver, self).__init__()
-        self.image = load_image("character/silver.png")
+        if Silver.image == None:
+            self.image = load_image("character/silver.png")
 
-        self.idle_type = [self.idle_frame * 50, 2984, 40, 40]
+        self.idle_type = [0, 2984, 40, 40, 40, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
         self.jump_type = [0, 2720, 38, 40, 38, 40]
         self.attack_type = [0, 2720, 38, 40, 38, 40]
@@ -546,9 +579,11 @@ class Silver(Character):
         self.cur_state.draw(self)
 
 class Blaze(Character):
+    image = None
     def __init__(self):
         super(Blaze, self).__init__()
-        self.image = load_image("character/123.png")
+        if Blaze.image == None:
+            self.image = load_image("character/Blaze.png")
 
         self.idle_type = [0, 2810, 34, 40, 34, 40]
         self.move_type = [0, 2610, 35, 40, 35, 40]
@@ -573,9 +608,11 @@ class Blaze(Character):
         self.cur_state.draw(self)
 
 class Espio(Character):
+    image = None
     def __init__(self):
         super(Espio, self).__init__()
-        self.image = load_image("character/espio.png")
+        if Espio.image == None:
+            self.image = load_image("character/espio.png")
 
         self.idle_type = [0, 1220, 27, 40, 27, 40]
         self.move_type = [0, 1130, 35, 40, 35, 40]
@@ -601,9 +638,11 @@ class Espio(Character):
         self.cur_state.draw(self)
 
 class Mighty(Character):
+    image = None
     def __init__(self):
         super(Mighty, self).__init__()
-        self.image = load_image("character/mighty.png")
+        if Mighty.image == None:
+            self.image = load_image("character/mighty.png")
 
         self.idle_type = [0, 2920, 30, 40, 30, 40]
         self.move_type = [0, 2670, 38, 40, 38, 40]
@@ -628,9 +667,11 @@ class Mighty(Character):
         self.cur_state.draw(self)
 
 class SuperSonic(Character):
+    image = None
     def __init__(self):
         super(SuperSonic, self).__init__()
-        self.image = load_image("character/super sonic.png")
+        if SuperSonic.image == None:
+            self.image = load_image("character/super sonic.png")
 
         self.idle_type = [0, 2890, 24, 46, 24, 46]
         self.move_type = [0, 2890, 35, 46, 35, 46]
@@ -656,9 +697,11 @@ class SuperSonic(Character):
         self.cur_state.draw(self)
 
 class SuperShadow(Character):
+    image = None
     def __init__(self):
         super(SuperShadow, self).__init__()
-        self.image = load_image("character/super shadow.png")
+        if SuperShadow.image == None:
+            self.image = load_image("character/super shadow.png")
 
         self.idle_type = [0, 2940, 25, 38, 25, 38]
         self.move_type = [0, 2842, 34, 36, 34, 36]

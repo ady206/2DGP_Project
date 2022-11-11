@@ -1,13 +1,10 @@
-from pico2d import *
-from math import *
-from random import *
-
-import character
 import game_framework
+import game_world
 import middle_state
 import result_state
+from time import *
 
-from character import *
+import character
 from map import *
 
 stage = None
@@ -41,13 +38,19 @@ def handle_events():
 
 ##############################################################################################################
 
-def enter():
-    global stage, stage_count, sound
-    stage = Palm()
+set_stage_time = 0
+cur_stage_time = 0
+timer = 0
+stage_time = 600
 
+def enter():
+    global stage, stage_count, sound, set_stage_time
+    set_stage_time = time()
+
+    stage = Palm()
     character.human = False
-    # for i in range (3):
-    #     character.RandomCharacter()
+    for i in range (3):
+        character.RandomCharacter()
 
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
@@ -59,17 +62,26 @@ def enter():
     game_world.add_object(stage, 0)
 
     character.player_character.x = 400
-    # character.computer_character[0].x = 200
-    # character.computer_character[1].x = 500
-    # character.computer_character[2].x = 600
+    character.computer_character[0].x = 200
+    character.computer_character[1].x = 500
+    character.computer_character[2].x = 600
 
 def exit():
     global stage, sound
     del stage, sound
 
 def update():
+    global set_stage_time, cur_stage_time, timer, stage_time
     for game_object in game_world.all_objects():
         game_object.update()
+
+    cur_stage_time = time()
+    timer = cur_stage_time - set_stage_time
+    stage_time = stage_time - timer
+
+    if timer >= 600:
+        result_state.win = False
+        game_framework.change_state(result_state)
 
 def draw_world():
     for game_object in game_world.all_objects():
@@ -104,6 +116,17 @@ def resume():
     #     sound.set_volume(20)
     #     sound.repeat_play()
     pass
+
+def collide(a, b):
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+
+    return True
 
 def test_self():
     import sys
