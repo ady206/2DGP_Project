@@ -372,7 +372,7 @@ class Tales(Character):
         self.idle_type = [0, 2650, 50, 40, 50, 40]
         self.move_type = [0, 2980, 50, 40, 50, 40]
         self.jump_type = [0, 2740, 40, 45, 40, 45]
-        self.attack_type = [0, 950, 40, 40, 40, 40]
+        self.attack_type = [0, 2600, 52, 40, 52, 40]
 
     def update(self):
         super(Tales, self).update()
@@ -381,7 +381,7 @@ class Tales(Character):
         self.idle_size = self.idle_frame * 52 + 20
         self.move_size = self.move_frame * 55 + 10
         self.jump_size = self.jump_frame * 50 + 15
-        self.attack_size = self.attack_frame * 40
+        self.attack_size = self.attack_frame * 55
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 8
@@ -402,7 +402,7 @@ class Knuckles(Character):
         self.idle_type = [0, 2980, 35, 40, 35, 40]
         self.move_type = [0, 2680, 40, 40, 40, 40]
         self.jump_type = [0, 1074, 45, 40, 45, 40]
-        self.attack_type = [0, 1074, 45, 40, 45, 40]
+        self.attack_type = [0, 1990, 50, 50, 50, 50]
 
     def update(self):
         super(Knuckles, self).update()
@@ -411,12 +411,13 @@ class Knuckles(Character):
         self.idle_size = self.idle_frame * 35 + 410
         self.move_size = self.move_frame * 41 + 2
         self.jump_size = self.jump_frame * 51 + 2
-        self.attack_size = self.attack_frame * 40
+        self.attack_size = self.attack_frame * 55
 
         if self.time % 5 == 0:
             self.jump_frame = (self.jump_frame + 1) % 8
         if self.time % 10 == 0:
             self.idle_frame = (self.idle_frame + 1) % 3
+            self.attack_frame = (self.attack_frame + 1) % 9
         if self.time % 20 == 0:
             self.move_frame = (self.move_frame + 1) % 8
 
@@ -449,6 +450,7 @@ class AmyRose(Character):
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 7
+            self.attack_frame = (self.attack_frame + 1) % 7
 
     def draw(self):
         self.cur_state.draw(self)

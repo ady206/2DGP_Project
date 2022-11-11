@@ -1,12 +1,3 @@
-2개남음
---------sonic
-
-attack 33
-
---------tales
-
-attack 8
-
 --------knuckles
 
 attack 19
@@ -35,8 +26,6 @@ attack 14
 
 --------blaze
 
-run
-jump
 attack 8
 
 --------espio
