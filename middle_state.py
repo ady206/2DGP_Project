@@ -31,6 +31,8 @@ def enter():
     pass
 
 def exit():
+    global image
+    image = None
     pass
 
 def draw():

@@ -81,6 +81,9 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_UP): JUMP
 }
 
+move_dir = [ False, False ]
+set_time, cur_time = 0, 0
+
 class IDLE:
     global move_dir
     @staticmethod
@@ -105,7 +108,6 @@ class IDLE:
                                             self.rotate, self.face_dir,
                                             self.x, self.y, self.idle_type[4], self.idle_type[5])
 
-move_dir = [ False, False ]
 class RUN:
     global move_dir
     def enter(self, event):
@@ -199,7 +201,6 @@ class Player_JUMP:
                                        self.rotate, self.face_dir,
                                        self.x, self.y, self.jump_type[4], self.jump_type[5])
 
-set_time, cur_time = 0, 0
 class ATTACK:
     @staticmethod
     def enter(self, event):
@@ -223,6 +224,7 @@ class ATTACK:
             self.face_dir = 'h'
         if move_dir[0] == False and move_dir[1] == False:
             self.dir_x = 0
+        self.attack += 1
 
     @staticmethod
     def exit(self, event):
@@ -268,6 +270,18 @@ next_state = {
 
 ########################################
 
+TIMER_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIMER_PER_ACTION
+FRAMES_PER_ACTION = 8
+
+PIXEL_PER_METER = 10.0 / 0.3
+RUN_SPEED_KPH = 20.0 # 마라토너의 평속
+RUN_SPEED_MPM = RUN_SPEED_KPH * 1000.0 / 60.0
+RUN_SPEED_MPS = RUN_SPEED_MPM / 60.0
+RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
+
+########################################
+
 class Character:
     def __init__(self):
         self.hp = 100
@@ -283,6 +297,7 @@ class Character:
         self.jump_size = 0
         self.attack_size = 0
 
+        self.attack = 0
         self.damage = 6
         self.time = 0
         self.face_dir = 'None'  # 이미지 반전
@@ -401,7 +416,7 @@ class Knuckles(Character):
 
         self.idle_type = [0, 2980, 35, 40, 35, 40]
         self.move_type = [0, 2680, 40, 40, 40, 40]
-        self.jump_type = [0, 1074, 45, 40, 45, 40]
+        self.jump_type = [0, 1074, 45, 40, 40, 36]
         self.attack_type = [0, 1990, 50, 50, 50, 50]
 
     def update(self):
@@ -525,7 +540,7 @@ class Shadow(Character):
         self.idle_type = [0, 2958, 37, 40, 37, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
         self.jump_type = [0, 2720, 38, 40, 38, 40]
-        self.attack_type = [0, 2720, 38, 40, 38, 40]
+        self.attack_type = [0, 100, 45, 44, 45, 44]
 
     def update(self):
         super(Shadow, self).update()
@@ -534,13 +549,14 @@ class Shadow(Character):
         self.idle_size = self.idle_frame * 35 + 202
         self.move_size = self.move_frame * 41 + 6
         self.jump_size = self.jump_frame * 35 + 620
-        self.attack_size = self.attack_frame * 35 + 620
+        self.attack_size = self.attack_frame * 45
 
         if self.time % 10 == 0:
             self.move_frame = (self.move_frame + 1) % 8
         if self.time % 10 == 0:
             self.idle_frame = (self.idle_frame + 1) % 4
             self.jump_frame = (self.jump_frame + 1) % 4
+            self.attack_frame = (self.attack_frame + 1) % 8
 
     def draw(self):
         self.cur_state.draw(self)
@@ -586,7 +602,7 @@ class Blaze(Character):
         self.idle_type = [0, 2810, 34, 40, 34, 40]
         self.move_type = [0, 2610, 35, 40, 35, 40]
         self.jump_type = [0, 2480, 35, 40, 35, 40]
-        self.attack_type = [0, 2480, 35, 40, 35, 40]
+        self.attack_type = [0, 1930, 45, 45, 40, 40]
 
     def update(self):
         super(Blaze, self).update()
@@ -595,12 +611,13 @@ class Blaze(Character):
         self.idle_size = self.idle_frame * 35 + 24
         self.move_size = self.move_frame * 35 + 24
         self.jump_size = self.jump_frame * 40 + 210
-        self.attack_size = self.attack_frame * 40 + 210
+        self.attack_size = self.attack_frame * 45 + 25 + (self.attack % 2) * 90
 
         if self.time % 5 == 0:
             self.idle_frame = (self.idle_frame + 1) % 13
             self.move_frame = (self.move_frame + 1) % 8
             self.jump_frame = (self.jump_frame + 1) % 3
+            self.attack_frame = (self.attack_frame + 1) % 2
 
     def draw(self):
         self.cur_state.draw(self)

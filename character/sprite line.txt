@@ -10,8 +10,6 @@ attack 14
 
 --------blaze
 
-run
-jump
 attack 8
 
 --------espio
