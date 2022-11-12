@@ -2,7 +2,9 @@ import game_framework
 import game_world
 import middle_state
 import result_state
+
 from time import *
+from random import *
 
 import character
 from map import *
@@ -71,9 +73,9 @@ def drawHp(a, x, y):
         stage.timer_image.clip_composite_draw(39 * (b - 5), 0, 26, 22, 0, ' ', x - 22, y, 22, 22)
 
     # a % 10
-    if 0 <= (a % 10) // 10 <= 4:
+    if 0 <= a % 10 <= 4:
         stage.timer_image.clip_composite_draw(39 * (a % 10), 36, 26, 22, 0, ' ', x, y, 22, 22)
-    if 5 <= (a % 10) // 10 <= 9:
+    if 5 <= a % 10 <= 9:
         stage.timer_image.clip_composite_draw(39 * ((a % 10) - 5), 0, 26, 22, 0, ' ', x, y, 22, 22)
 
 def drawIcon(a, x, y):
@@ -111,9 +113,9 @@ def enter():
     game_world.add_object(stage, 0)
 
     character.player_character.x = 400
-    character.computer_character[0].x = 150
-    character.computer_character[1].x = 550
-    character.computer_character[2].x = 700
+    character.computer_character[0].x = randint(100, 700)
+    character.computer_character[1].x = randint(100, 700)
+    character.computer_character[2].x = randint(100, 700)
 
 def exit():
     global stage, sound
@@ -135,22 +137,26 @@ def update():
         result_state.win = False
         game_framework.change_state(result_state)
 
-    stage.x -= character.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
-    for i in range(3):
-        character.computer_character[i].x -= character.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
+    distance_x = character.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
+    stage.x -= distance_x
+    for in_character in character.computer_character:
+        in_character.x -= distance_x
 
 def draw_world():
     global stage_time
     for game_object in game_world.all_objects():
         game_object.draw()
 
+    number_character = 0
     tm = localtime(stage_time)
     drawTimer(tm.tm_min, tm.tm_sec)
     drawHp(character.player_character.hp, 150, 50)
     drawIcon(character.player_character, 70, 50)
-    for i in range(3):
-        drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
-        drawIcon(character.computer_character[i], 270 + (i * 200), 50)
+
+    for in_character in character.computer_character:
+        drawHp(in_character.hp, 350 + (number_character * 200), 50)
+        drawIcon(in_character, 270 + (number_character * 200), 50)
+        number_character += 1
 
 def draw():
     clear_canvas()

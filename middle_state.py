@@ -13,11 +13,11 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-            elif event.key == SDLK_RETURN:
-                if main_state.stage_count == 0:
-                    game_framework.change_state(main_state)
-                else:
-                    game_framework.pop_state()
+        elif event.type == SDL_MOUSEBUTTONDOWN:
+            if main_state.stage_count == 0:
+                game_framework.change_state(main_state)
+            else:
+                game_framework.pop_state()
 
 def enter():
     global image

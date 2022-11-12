@@ -128,7 +128,7 @@ def draw():
                 character_image.clip_draw(470, 250, 150, 120, 410, 140)
                 character_name.clip_draw(0, 311, 100, 23, 405, 47)
 
-        stage_go.clip_draw(0, 0, 200, 200, 720, 90, 180, 180)
+        stage_go.clip_draw(0, 0, 230, 200, 700, 90, 200, 180)
 
     update_canvas()
 
