@@ -130,6 +130,7 @@ class RUN:
             self.dir_x = -1
             self.face_dir = 'h'
         if move_dir[0] == False and move_dir[1] == False:
+            self.dir_x = 0
             self.cur_state.exit(self, NULL)
             try:
                 self.cur_state = next_state[IDLE][NULL]
@@ -144,6 +145,7 @@ class RUN:
         self.move_type[0] = self.move_size
         self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 800)
+        self.x = 400
 
     def draw(self):
         self.image.clip_composite_draw(self.move_type[0], self.move_type[1], self.move_type[2], self.move_type[3],
@@ -219,6 +221,8 @@ class ATTACK:
         if event == SPACE:
             set_time = time()
             self.attack_frame = 0
+            self.attack += 1
+
             if self.attack % 2 == 0:
                 self.kick_sound.set_volume(10)
                 self.kick_sound.play(1)
@@ -244,7 +248,6 @@ class ATTACK:
             self.face_dir = 'h'
         if move_dir[0] == False and move_dir[1] == False:
             self.dir_x = 0
-        self.attack += 1
 
     @staticmethod
     def exit(self, event):
@@ -253,7 +256,6 @@ class ATTACK:
     def do(self):
         global cur_time, set_time
         self.attack_type[0] = self.attack_size
-        self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 800)
 
         cur_time = time()

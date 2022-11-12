@@ -96,7 +96,7 @@ def enter():
     global stage, stage_count, sound, set_stage_time, font
     set_stage_time = time()
 
-    stage = Palm()
+    stage = Palm(character.player_character.x, 300)
     character.human = False
     for i in range (3):
         character.RandomCharacter()
@@ -110,9 +110,9 @@ def enter():
         game_world.add_object(in_character, 1)
     game_world.add_object(stage, 0)
 
-    character.player_character.x = 100
-    character.computer_character[0].x = 300
-    character.computer_character[1].x = 500
+    character.player_character.x = 400
+    character.computer_character[0].x = 150
+    character.computer_character[1].x = 550
     character.computer_character[2].x = 700
 
 def exit():
@@ -134,6 +134,10 @@ def update():
     if character.player_character.hp <= 0:
         result_state.win = False
         game_framework.change_state(result_state)
+
+    stage.x -= character.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
+    for i in range(3):
+        character.computer_character[i].x -= character.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
 
 def draw_world():
     global stage_time
@@ -162,7 +166,7 @@ def pause():
 def resume():
     global stage, stage_count, sound_on, sound, set_stage_time
     if stage_count == 1:
-        stage = Lake()
+        stage = Lake(character.player_character.x, 300)
         sound = load_music('sound/Lake.mp3')
         if sound_on == True:
             sound.set_volume(20)
@@ -170,20 +174,14 @@ def resume():
         else:
             sound.stop()
     if stage_count == 2:
-        stage = Space()
+        stage = Space(character.player_character.x, 300)
         sound = load_music('sound/Space.mp3')
         if sound_on == True:
             sound.set_volume(20)
             sound.repeat_play()
         else:
             sound.stop()
-
     game_world.add_object(stage, 0)
-
-    character.player_character.x = 300
-    character.computer_character[0].x = 100
-    character.computer_character[1].x = 500
-    character.computer_character[2].x = 700
 
     set_stage_time = time()
     pass

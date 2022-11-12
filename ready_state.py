@@ -12,6 +12,7 @@ choose = False
 x, y = 0, 0
 
 go = False
+
 def handle_events():
     global choose, human, go, x, y
     events = get_events()
@@ -21,9 +22,6 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-            elif event.key == SDLK_RETURN:
-                if go == True:
-                    game_framework.change_state(middle_state)
         elif event.type == SDL_MOUSEBUTTONDOWN:
             x, y = event.x, 600 - 1 - event.y
             if 280 <= y <= 500 and 25 <= x <= 770:
@@ -60,7 +58,9 @@ def handle_events():
                     if 665 <= x < 770:
                         character.human = True
                         character.RandomCharacter()
-
+            if go == True:
+                if 620 <= x <= 800 and 0 <= y <= 180:
+                    game_framework.change_state(middle_state)
 def enter():
     global image
     image = load_image('map/ready.png')
@@ -72,7 +72,7 @@ def exit():
     pass
 
 def draw():
-    global choose, character_image, character_name, stage_go, x, y
+    global choose, character_image, character_name, x, y
     clear_canvas()
     image.draw(390, 300)
 
@@ -80,7 +80,7 @@ def draw():
     if choose == True:
         character_image = load_image('map/choose.png')
         character_name = load_image('map/names.png')
-        # stage_go = load_image('map/go.png')
+        stage_go = load_image('map/go.png')
 
         # stage_go.clip_draw(0, 0, 230, 115, 685, 50)
         if 390 <= y < 500:
@@ -127,6 +127,8 @@ def draw():
             if 665 <= x < 770:
                 character_image.clip_draw(470, 250, 150, 120, 410, 140)
                 character_name.clip_draw(0, 311, 100, 23, 405, 47)
+
+        stage_go.clip_draw(0, 0, 200, 200, 720, 90, 180, 180)
 
     update_canvas()
 
