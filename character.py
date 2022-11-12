@@ -159,6 +159,8 @@ class Player_JUMP:
             set_time = time()
             self.jump_frame = 0
             self.radian = 0
+            self.jump_sound.set_volume(10)
+            self.jump_sound.play(1)
 
         print('ENTER JUMP')
         if event == RD:
@@ -217,6 +219,12 @@ class ATTACK:
         if event == SPACE:
             set_time = time()
             self.attack_frame = 0
+            if self.attack % 2 == 0:
+                self.kick_sound.set_volume(10)
+                self.kick_sound.play(1)
+            if self.attack % 2 == 1:
+                self.punch_sound.set_volume(10)
+                self.punch_sound.play(1)
 
         print('ENTER ATTACK')
         if event == RD:
@@ -313,6 +321,8 @@ class Character:
         self.rotate = 0 # 이미지 회전
         self.radian = 0
 
+        self.punch_sound = load_wav('sound/06_attack.wav')
+        self.kick_sound = load_wav('sound/05_kickback.wav')
         self.jump_sound = load_wav('sound/00_jump.wav')
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 130
