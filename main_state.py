@@ -100,7 +100,7 @@ def enter():
 
     stage = Palm(character.player_character.x, 300)
     character.human = False
-    for i in range (3):
+    for i in range (10):
         character.RandomCharacter()
 
     sound = load_music('sound/Tropical.mp3')
@@ -108,8 +108,8 @@ def enter():
     sound.repeat_play()
 
     game_world.add_object(character.player_character, 2)
-    for in_character in character.computer_character:
-        game_world.add_object(in_character, 1)
+    for i in range(3):
+        game_world.add_object(character.computer_character[i], 1)
     game_world.add_object(stage, 0)
 
     character.player_character.x = 400
@@ -139,24 +139,22 @@ def update():
 
     distance_x = character.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
     stage.x -= distance_x
-    for in_character in character.computer_character:
-        in_character.x -= distance_x
+    for i in range(3):
+        character.computer_character[i].x -= distance_x
 
 def draw_world():
     global stage_time
     for game_object in game_world.all_objects():
         game_object.draw()
 
-    number_character = 0
     tm = localtime(stage_time)
     drawTimer(tm.tm_min, tm.tm_sec)
     drawHp(character.player_character.hp, 150, 50)
     drawIcon(character.player_character, 70, 50)
 
-    for in_character in character.computer_character:
-        drawHp(in_character.hp, 350 + (number_character * 200), 50)
-        drawIcon(in_character, 270 + (number_character * 200), 50)
-        number_character += 1
+    for i in range(3):
+        drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
+        drawIcon(character.computer_character[i], 270 + (i * 200), 50)
 
 def draw():
     clear_canvas()

@@ -146,7 +146,6 @@ class RUN:
     def do(self):
         self.move_type[0] = self.move_size
         self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
-        self.x = clamp(0, self.x, 800)
         self.x = 400
 
     def draw(self):
@@ -193,13 +192,12 @@ class Player_JUMP:
         self.jump_type[0] = self.jump_size
         if move_dir[0] == True or move_dir[1] == True:
             self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
-            self.x = clamp(0, self.x, 800)
 
         cur_time = time()
         if cur_time < set_time + self.TIMER_PER_ACTION[2]:
-            if self.radian <= pi * 3 / 2:
-                self.radian += (pi / 10)
-                self.y += sin(self.radian)
+            if self.radian <= pi:
+                self.radian += (pi / 18)
+                self.y = 130 + sin(self.radian) * 10
             else:
                 self.y = 130
                 self.radian = 0
@@ -258,22 +256,20 @@ class ATTACK:
     def do(self):
         global cur_time, set_time
         self.attack_type[0] = self.attack_size
-        self.x = clamp(0, self.x, 800)
 
         cur_time = time()
 
         if cur_time > set_time + self.TIMER_PER_ACTION[3]:
-            for in_character in computer_character:
-                if main_state.collide(player_character, in_character):
-                    in_character.hp -= 5
+            for i in range(3):
+                if main_state.collide(player_character, computer_character[i]):
+                    computer_character[i].hp -= 50
 
-                    if in_character.hp <= 0:
-                        computer_character.remove(in_character)
-                        game_world.remove_object(in_character)
+                if computer_character[i].hp <= 0:
+                    game_world.remove_object(computer_character[i])
+                    del computer_character[i]
 
-                        RandomCharacter()
-                        game_world.add_object(computer_character[2], 1)
-                        computer_character[2].x = main_state.stage.x + randint(-300, 300)
+                    game_world.add_object(computer_character[2], 1)
+                    computer_character[2].x = main_state.stage.x + randint(-300, 300)
 
             self.cur_state.exit(self, NULL)
             try:
@@ -536,7 +532,7 @@ class Tikal(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 4
 
-        self.FRAMES_PER_ACTION = [8, 8, 6, 8]
+        self.FRAMES_PER_ACTION = [6, 8, 6, 8]
         self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
 
         self.idle_type = [0, 2700, 38, 40, 38, 40]
@@ -661,7 +657,7 @@ class Silver(Character):
         super(Silver, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = int(self.idle_frame) * 35 + 202
+        self.idle_size = int(self.idle_frame) * 50
         self.move_size = int(self.move_frame) * 41 + 6
         self.jump_size = int(self.jump_frame) * 35 + 620
         self.attack_size = int(self.attack_frame) * 35 + 620
