@@ -1,5 +1,7 @@
 from pico2d import *
 import game_world
+import game_framework
+
 from math import *
 from random import *
 from time import *
@@ -140,7 +142,6 @@ class RUN:
 
     def do(self):
         self.move_type[0] = self.move_size
-
         self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 800)
 
@@ -153,6 +154,12 @@ class Player_JUMP:
     global move_dir
     @staticmethod
     def enter(self, event):
+        global set_time
+        if event == JUMP:
+            set_time = time()
+            self.jump_frame = 0
+            self.radian = 0
+
         print('ENTER JUMP')
         if event == RD:
             move_dir[0] = True
@@ -176,15 +183,17 @@ class Player_JUMP:
 
     @staticmethod
     def do(self):
+        global cur_time, set_time
         self.jump_type[0] = self.jump_size
         if move_dir[0] == True or move_dir[1] == True:
-            self.x += self.dir_x * self.speed
+            self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
             self.x = clamp(0, self.x, 800)
 
-        if self.time % 8 == 0:
+        cur_time = time()
+        if cur_time < set_time + self.TIMER_PER_ACTION[2]:
             if self.radian <= pi * 3 / 2:
                 self.radian += (pi / 10)
-                self.y += sin(self.radian) * 10
+                self.y += sin(self.radian)
             else:
                 self.y = 130
                 self.radian = 0
@@ -205,7 +214,10 @@ class ATTACK:
     @staticmethod
     def enter(self, event):
         global set_time
-        set_time = time()
+        if event == SPACE:
+            set_time = time()
+            self.attack_frame = 0
+
         print('ENTER ATTACK')
         if event == RD:
             move_dir[0] = True
@@ -233,11 +245,11 @@ class ATTACK:
     def do(self):
         global cur_time, set_time
         self.attack_type[0] = self.attack_size
-        self.x += self.dir_x * self.speed
+        self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 800)
 
         cur_time = time()
-        if cur_time > set_time + 0.3:
+        if cur_time > set_time + self.TIMER_PER_ACTION[3]:
             self.cur_state.exit(self, NULL)
             try:
                 if move_dir[0] == False and move_dir[1] == False:
@@ -270,10 +282,6 @@ next_state = {
 
 ########################################
 
-TIMER_PER_ACTION = 0.5
-ACTION_PER_TIME = 1.0 / TIMER_PER_ACTION
-FRAMES_PER_ACTION = 8
-
 PIXEL_PER_METER = 10.0 / 0.3
 RUN_SPEED_KPH = 20.0 # 마라토너의 평속
 RUN_SPEED_MPS = RUN_SPEED_KPH * 1000.0 / 3600.0
@@ -296,9 +304,11 @@ class Character:
         self.jump_size = 0
         self.attack_size = 0
 
+        self.FRAMES_PER_ACTION = []
+        self.TIMER_PER_ACTION = []
+
         self.attack = 0
         self.damage = 6
-        self.time = 0
         self.face_dir = 'None'  # 이미지 반전
         self.rotate = 0 # 이미지 회전
         self.radian = 0
@@ -312,7 +322,6 @@ class Character:
         self.cur_state.enter(self, None)
 
     def update(self):
-        self.time += 1
         if self.event_que:
             event = self.event_que.pop()
             self.cur_state.exit(self, event)
@@ -321,6 +330,11 @@ class Character:
             except KeyError:
                 print('Error', self.cur_state.__name__, ' ', event)
             self.cur_state.enter(self, event)
+
+        self.idle_frame = (self.idle_frame + self.FRAMES_PER_ACTION[0] / self.TIMER_PER_ACTION[0] * game_framework.frame_time) % self.FRAMES_PER_ACTION[0]
+        self.move_frame = (self.move_frame + self.FRAMES_PER_ACTION[1] / self.TIMER_PER_ACTION[1] * game_framework.frame_time) % self.FRAMES_PER_ACTION[1]
+        self.jump_frame = (self.jump_frame + self.FRAMES_PER_ACTION[2] / self.TIMER_PER_ACTION[2] * game_framework.frame_time) % self.FRAMES_PER_ACTION[2]
+        self.attack_frame = (self.attack_frame + self.FRAMES_PER_ACTION[3] / self.TIMER_PER_ACTION[3] * game_framework.frame_time) % self.FRAMES_PER_ACTION[3]
 
     def draw(self):
         self.cur_state.draw()
@@ -357,6 +371,9 @@ class Sonic(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 0
 
+        self.FRAMES_PER_ACTION = [8, 8, 8, 3]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.4]
+
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]
         self.jump_type = [0, 1250, 35, 40, 35, 40]
@@ -366,16 +383,10 @@ class Sonic(Character):
         super(Sonic, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 30 + 7
-        self.move_size = self.move_frame * 40 + 10
-        self.jump_size = self.jump_frame * 50 + 15
-        self.attack_size = self.attack_frame * 45
-
-        if self.time % 15 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 8
-            self.move_frame = (self.move_frame + 1) % 8
-            self.jump_frame = (self.jump_frame + 1) % 3
-            self.attack_frame = (self.attack_frame + 1) % 6
+        self.idle_size = int(self.idle_frame) * 30 + 7
+        self.move_size = int(self.move_frame) * 40 + 10
+        self.jump_size = int(self.jump_frame) * 50 + 15
+        self.attack_size = int(self.attack_frame) * 45
 
     def draw(self):
         self.cur_state.draw(self)
@@ -397,6 +408,9 @@ class Tales(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 1
 
+        self.FRAMES_PER_ACTION = [8, 8, 8, 8]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
+
         self.idle_type = [0, 2650, 50, 40, 50, 40]
         self.move_type = [0, 2980, 50, 40, 50, 40]
         self.jump_type = [0, 2740, 40, 45, 40, 45]
@@ -406,16 +420,10 @@ class Tales(Character):
         super(Tales, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 52 + 20
-        self.move_size = self.move_frame * 55 + 10
-        self.jump_size = self.jump_frame * 50 + 15
-        self.attack_size = self.attack_frame * 55
-
-        if self.time % 5 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 8
-            self.move_frame = (self.move_frame + 1) % 8
-            self.jump_frame = (self.jump_frame + 1) % 8
-            self.attack_frame = (self.attack_frame + 1) % 8
+        self.idle_size = int(self.idle_frame) * 52 + 20
+        self.move_size = int(self.move_frame) * 55 + 10
+        self.jump_size = int(self.jump_frame) * 50 + 15
+        self.attack_size = int(self.attack_frame) * 55
 
     def draw(self):
         self.cur_state.draw(self)
@@ -431,6 +439,9 @@ class Knuckles(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 2
 
+        self.FRAMES_PER_ACTION = [3, 8, 8, 9]
+        self.TIMER_PER_ACTION = [0.5, 1, 0.5, 0.5]
+
         self.idle_type = [0, 2980, 35, 40, 35, 40]
         self.move_type = [0, 2680, 40, 40, 40, 40]
         self.jump_type = [0, 1074, 45, 40, 40, 36]
@@ -440,18 +451,10 @@ class Knuckles(Character):
         super(Knuckles, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 35 + 410
-        self.move_size = self.move_frame * 41 + 2
-        self.jump_size = self.jump_frame * 51 + 2
-        self.attack_size = self.attack_frame * 55
-
-        if self.time % 5 == 0:
-            self.jump_frame = (self.jump_frame + 1) % 8
-        if self.time % 10 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 3
-            self.attack_frame = (self.attack_frame + 1) % 9
-        if self.time % 20 == 0:
-            self.move_frame = (self.move_frame + 1) % 8
+        self.idle_size = int(self.idle_frame) * 35 + 410
+        self.move_size = int(self.move_frame) * 41 + 2
+        self.jump_size = int(self.jump_frame) * 51 + 2
+        self.attack_size = int(self.attack_frame) * 55
 
     def draw(self):
         self.cur_state.draw(self)
@@ -467,6 +470,9 @@ class AmyRose(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 3
 
+        self.FRAMES_PER_ACTION = [3, 3, 7, 3]
+        self.TIMER_PER_ACTION = [0.7, 0.7, 1, 0.3]
+
         self.idle_type = [0, 2750, 30, 40, 30, 40]
         self.move_type = [0, 2563, 38, 40, 38, 40]
         self.jump_type = [0, 1855, 50, 44, 50, 44]
@@ -476,17 +482,10 @@ class AmyRose(Character):
         super(AmyRose, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 28 + 2
-        self.move_size = self.move_frame * 41 + 2
-        self.jump_size = self.jump_frame * 51 + 2
-        self.attack_size = self.attack_frame * 55
-
-        if self.time % 30 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 8
-        if self.time % 10 == 0:
-            self.move_frame = (self.move_frame + 1) % 8
-            self.jump_frame = (self.jump_frame + 1) % 7
-            self.attack_frame = (self.attack_frame + 1) % 8
+        self.idle_size = int(self.idle_frame) * 28 + 2
+        self.move_size = int(self.move_frame) * 41 + 2
+        self.jump_size = int(self.jump_frame) * 51 + 2
+        self.attack_size = int(self.attack_frame) * 55
 
     def draw(self):
         self.cur_state.draw(self)
@@ -502,6 +501,9 @@ class Tikal(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 4
 
+        self.FRAMES_PER_ACTION = [8, 8, 6, 8]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
+
         self.idle_type = [0, 2700, 38, 40, 38, 40]
         self.move_type = [0, 2640, 40, 40, 40, 40]
         self.jump_type = [0, 2570, 38, 43, 38, 43]
@@ -511,16 +513,10 @@ class Tikal(Character):
         super(Tikal, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 36 + 5
-        self.move_size = self.move_frame * 41 + 5
-        self.jump_size = self.jump_frame * 39 + 5
-        self.attack_size = self.attack_frame * 51 + 2
-
-        if self.time % 10 == 0:
-            self.move_frame = (self.move_frame + 1) % 8
-        if self.time % 30 == 0:
-            self.jump_frame = (self.jump_frame + 1) % 8
-            self.idle_frame = (self.idle_frame + 1) % 6
+        self.idle_size = int(self.idle_frame) * 36 + 5
+        self.move_size = int(self.move_frame) * 41 + 5
+        self.jump_size = int(self.jump_frame) * 39 + 5
+        self.attack_size = int(self.attack_frame) * 51 + 2
 
     def draw(self):
         self.cur_state.draw(self)
@@ -536,25 +532,22 @@ class Rouge(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 5
 
-        self.idle_type = [0, 2984, 28, 40, 28, 40]
-        self.move_type = [0, 2905, 36, 40, 36, 40]
-        self.jump_type = [0, 2730, 38, 40, 38, 40]
+        self.FRAMES_PER_ACTION = [6, 8, 6, 14]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 1.2]
+
+        self.idle_type = [0, 2984, 28, 40, 30, 40]
+        self.move_type = [0, 2905, 36, 40, 40, 40]
+        self.jump_type = [0, 2730, 38, 40, 40, 40]
         self.attack_type = [0, 2470, 45, 42, 45, 42]
 
     def update(self):
         super(Rouge, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 30
-        self.move_size = self.move_frame * 36
-        self.jump_size = self.jump_frame * 40
-        self.attack_size = self.attack_frame * 50
-
-        if self.time % 5 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 6
-            self.move_frame = (self.move_frame + 1) % 8
-            self.jump_frame = (self.jump_frame + 1) % 6
-            self.attack_frame = (self.attack_frame + 1) % 14
+        self.idle_size = int(self.idle_frame) * 30
+        self.move_size = int(self.move_frame) * 36
+        self.jump_size = int(self.jump_frame) * 40
+        self.attack_size = int(self.attack_frame) * 50
 
     def draw(self):
         self.cur_state.draw(self)
@@ -570,6 +563,9 @@ class Shadow(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 6
 
+        self.FRAMES_PER_ACTION = [4, 8, 4, 8]
+        self.TIMER_PER_ACTION = [0.9, 1, 0.5, 0.5]
+
         self.idle_type = [0, 2958, 37, 40, 37, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
         self.jump_type = [0, 2720, 38, 40, 38, 40]
@@ -579,17 +575,10 @@ class Shadow(Character):
         super(Shadow, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 35 + 202
-        self.move_size = self.move_frame * 41 + 6
-        self.jump_size = self.jump_frame * 35 + 620
-        self.attack_size = self.attack_frame * 45
-
-        if self.time % 10 == 0:
-            self.move_frame = (self.move_frame + 1) % 8
-        if self.time % 10 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 4
-            self.jump_frame = (self.jump_frame + 1) % 4
-            self.attack_frame = (self.attack_frame + 1) % 8
+        self.idle_size = int(self.idle_frame) * 35 + 202
+        self.move_size = int(self.move_frame) * 41 + 6
+        self.jump_size = int(self.jump_frame) * 35 + 620
+        self.attack_size = int(self.attack_frame) * 45
 
     def draw(self):
         self.cur_state.draw(self)
@@ -607,6 +596,9 @@ class Silver(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 7
 
+        self.FRAMES_PER_ACTION = [7, 7, 7, 7]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
+
         self.idle_type = [0, 2984, 40, 40, 40, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
         self.jump_type = [0, 2720, 38, 40, 38, 40]
@@ -616,15 +608,10 @@ class Silver(Character):
         super(Silver, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 35 + 202
-        self.move_size = self.move_frame * 41 + 6
-        self.jump_size = self.jump_frame * 35 + 620
-        self.attack_size = self.attack_frame * 35 + 620
-
-        if self.time % 15 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 7
-            self.move_frame = (self.move_frame + 1) % 7
-            self.jump_frame = (self.jump_frame + 1) % 7
+        self.idle_size = int(self.idle_frame) * 35 + 202
+        self.move_size = int(self.move_frame) * 41 + 6
+        self.jump_size = int(self.jump_frame) * 35 + 620
+        self.attack_size = int(self.attack_frame) * 35 + 620
 
     def draw(self):
         self.cur_state.draw(self)
@@ -640,6 +627,9 @@ class Blaze(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 8
 
+        self.FRAMES_PER_ACTION = [13, 8, 3, 2]
+        self.TIMER_PER_ACTION = [2, 1, 0.5, 0.3]
+
         self.idle_type = [0, 2810, 34, 40, 34, 40]
         self.move_type = [0, 2610, 35, 40, 35, 40]
         self.jump_type = [0, 2480, 35, 40, 35, 40]
@@ -649,16 +639,10 @@ class Blaze(Character):
         super(Blaze, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 35 + 24
-        self.move_size = self.move_frame * 35 + 24
-        self.jump_size = self.jump_frame * 40 + 210
-        self.attack_size = self.attack_frame * 45 + 25 + (self.attack % 2) * 90
-
-        if self.time % 5 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 13
-            self.move_frame = (self.move_frame + 1) % 8
-            self.jump_frame = (self.jump_frame + 1) % 3
-            self.attack_frame = (self.attack_frame + 1) % 2
+        self.idle_size = int(self.idle_frame) * 35 + 24
+        self.move_size = int(self.move_frame) * 35 + 24
+        self.jump_size = int(self.jump_frame) * 40 + 210
+        self.attack_size = int(self.attack_frame) * 45 + 25 + (self.attack % 2) * 90
 
     def draw(self):
         self.cur_state.draw(self)
@@ -674,6 +658,9 @@ class Espio(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 9
 
+        self.FRAMES_PER_ACTION = [6, 9, 10, 5]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
+
         self.idle_type = [0, 1220, 27, 40, 27, 40]
         self.move_type = [0, 1130, 35, 40, 35, 40]
         self.jump_type = [0, 780, 35, 40, 35, 40]
@@ -683,17 +670,10 @@ class Espio(Character):
         super(Espio, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 27 + 5
-        self.move_size = self.move_frame * 35 + 5
-        self.jump_size = self.jump_frame * 35 + 5
-        self.attack_size = self.attack_frame * 45
-
-        if self.time % 20 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 6
-            self.move_frame = (self.move_frame + 1) % 9
-        if self.time % 20 == 0:
-            self.jump_frame = (self.jump_frame + 1) % 10
-            self.attack_frame = (self.attack_frame + 1) % 5
+        self.idle_size = int(self.idle_frame) * 27 + 5
+        self.move_size = int(self.move_frame) * 35 + 5
+        self.jump_size = int(self.jump_frame) * 35 + 5
+        self.attack_size = int(self.attack_frame) * 45
 
     def draw(self):
         self.cur_state.draw(self)
@@ -709,7 +689,10 @@ class Mighty(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 10
 
-        self.idle_type = [0, 2920, 30, 40, 33, 40]
+        self.FRAMES_PER_ACTION = [5, 9, 6, 3]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
+
+        self.idle_type = [0, 2920, 30, 40, 32, 40]
         self.move_type = [0, 2670, 35, 40, 35, 40]
         self.jump_type = [0, 2830, 30, 40, 30, 40]
         self.attack_type = [0, 2220, 35, 40, 35, 40]
@@ -718,16 +701,10 @@ class Mighty(Character):
         super(Mighty, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 28
-        self.move_size = self.move_frame * 35
-        self.jump_size = self.jump_frame * 24
-        self.attack_size = self.attack_frame * 40
-
-        if self.time % 5 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 5
-            self.move_frame = (self.move_frame + 1) % 9
-            self.jump_frame = (self.jump_frame + 1) % 6
-            self.attack_frame = (self.attack_frame + 1) % 3
+        self.idle_size = int(self.idle_frame) * 28
+        self.move_size = int(self.move_frame) * 35
+        self.jump_size = int(self.jump_frame) * 24
+        self.attack_size = int(self.attack_frame) * 40
 
     def draw(self):
         self.cur_state.draw(self)
@@ -743,6 +720,9 @@ class SuperSonic(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 11
 
+        self.FRAMES_PER_ACTION = [6, 1, 4, 2]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
+
         self.idle_type = [0, 2890, 24, 46, 24, 46]
         self.move_type = [0, 2890, 35, 46, 35, 46]
         self.jump_type = [0, 2410, 38, 40, 38, 40]
@@ -752,19 +732,15 @@ class SuperSonic(Character):
         super(SuperSonic, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = self.idle_frame * 25 + 2
-        self.move_size = self.move_frame + 394
-        self.jump_size = self.jump_frame * 36 + 10
-        self.attack_size = self.attack_frame * 45 + (self.attack % 2 * 150)
+        self.idle_size = int(self.idle_frame) * 25 + 2
+        self.move_size = int(self.move_frame) + 394
+        self.jump_size = int(self.jump_frame) * 36 + 10
+        self.attack_size = int(self.attack_frame) * 45 + (self.attack % 2 * 150)
 
-        if self.time % 20 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 6
-        if self.time % 10 == 0:
-            self.jump_frame = (self.jump_frame + 1) % 4
-            if self.attack % 2 == 0:
-                self.attack_frame = (self.attack_frame + 1) % 4
-            if self.attack % 2 == 1:
-                self.attack_frame = (self.attack_frame + 1) % 3
+        if self.attack % 2 == 0:
+            self.FRAMES_PER_ACTION[3] = 4
+        if self.attack % 2 == 1:
+            self.FRAMES_PER_ACTION[3] = 2
 
 
     def draw(self):
@@ -781,6 +757,9 @@ class SuperShadow(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 12
 
+        self.FRAMES_PER_ACTION = [2, 5, 6, 6]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
+
         self.idle_type = [0, 2940, 25, 38, 25, 38]
         self.move_type = [0, 2842, 34, 36, 34, 36]
         self.jump_type = [0, 2724, 37, 38, 37, 38]
@@ -790,17 +769,10 @@ class SuperShadow(Character):
         super(SuperShadow, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = 4032 - 282 - 25 - self.idle_frame * 26
-        self.move_size = 4032 - 260 - 32 - self.move_frame * 32
-        self.jump_size = 4032 - 38 - 23 - self.jump_frame * 38
-        self.attack_size = 4032 - 45 - self.attack_frame * 45
-
-        if self.time % 5 == 0:
-            self.idle_frame = (self.idle_frame + 1) % 2
-        if self.time % 7 == 0:
-            self.move_frame = (self.move_frame + 1) % 5
-            self.jump_frame = (self.jump_frame + 1) % 6
-            self.attack_frame = (self.attack_frame + 1) % 6
+        self.idle_size = 4032 - 282 - 25 - int(self.idle_frame) * 26
+        self.move_size = 4032 - 260 - 32 - int(self.move_frame) * 32
+        self.jump_size = 4032 - 38 - 23 - int(self.jump_frame) * 38
+        self.attack_size = 4032 - 45 - int(self.attack_frame) * 45
 
     def draw(self):
         self.cur_state.draw(self)

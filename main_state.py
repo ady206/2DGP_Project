@@ -94,7 +94,7 @@ stage_count = 0
 
 def enter():
     global stage, stage_count, sound, set_stage_time, font
-    set_stage_time = time() + 2
+    set_stage_time = time()
 
     stage = Palm()
     character.human = False
@@ -105,7 +105,7 @@ def enter():
     sound.set_volume(20)
     sound.repeat_play()
 
-    game_world.add_object(character.player_character, 1)
+    game_world.add_object(character.player_character, 2)
     for in_character in character.computer_character:
         game_world.add_object(in_character, 1)
     game_world.add_object(stage, 0)

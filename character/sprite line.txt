@@ -3,20 +3,3 @@
 run 2
 jump 7
 attack 14
-
---------espio
-
-attack 10
-
---------mighty
-
-attack
-
---------super sonic
-
-attack
-
---------super shadow
-
-attack
-
