@@ -141,7 +141,7 @@ class RUN:
     def do(self):
         self.move_type[0] = self.move_size
 
-        self.x += self.dir_x * self.speed
+        self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 800)
 
     def draw(self):
@@ -276,8 +276,7 @@ FRAMES_PER_ACTION = 8
 
 PIXEL_PER_METER = 10.0 / 0.3
 RUN_SPEED_KPH = 20.0 # 마라토너의 평속
-RUN_SPEED_MPM = RUN_SPEED_KPH * 1000.0 / 60.0
-RUN_SPEED_MPS = RUN_SPEED_MPM / 60.0
+RUN_SPEED_MPS = RUN_SPEED_KPH * 1000.0 / 3600.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
 ########################################
@@ -341,12 +340,22 @@ class Character:
     def handle_collision(self, other, group):
         pass
 
+    def Index(self):
+        global list
+        for i in range(13):
+            if list[self.index] == list[i]:
+                return i
+
 class Sonic(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Sonic, self).__init__()
         if Sonic.image == None:
             self.image = load_image("character/sonic.png")
+        if Sonic.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 0
 
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]
@@ -379,10 +388,14 @@ class Sonic(Character):
 
 class Tales(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Tales, self).__init__()
         if Tales.image == None:
             self.image = load_image("character/tales.png")
+        if Tales.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 1
 
         self.idle_type = [0, 2650, 50, 40, 50, 40]
         self.move_type = [0, 2980, 50, 40, 50, 40]
@@ -409,10 +422,14 @@ class Tales(Character):
 
 class Knuckles(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Knuckles, self).__init__()
         if Knuckles.image == None:
             self.image = load_image("character/knuckles.png")
+        if Knuckles.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 2
 
         self.idle_type = [0, 2980, 35, 40, 35, 40]
         self.move_type = [0, 2680, 40, 40, 40, 40]
@@ -441,10 +458,14 @@ class Knuckles(Character):
 
 class AmyRose(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(AmyRose, self).__init__()
         if AmyRose.image == None:
             self.image = load_image("character/amy rose.png")
+        if AmyRose.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 3
 
         self.idle_type = [0, 2750, 30, 40, 30, 40]
         self.move_type = [0, 2563, 38, 40, 38, 40]
@@ -472,10 +493,14 @@ class AmyRose(Character):
 
 class Tikal(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Tikal, self).__init__()
         if Tikal.image == None:
             self.image = load_image("character/tikal.png")
+        if Tikal.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 4
 
         self.idle_type = [0, 2700, 38, 40, 38, 40]
         self.move_type = [0, 2640, 40, 40, 40, 40]
@@ -502,10 +527,14 @@ class Tikal(Character):
 
 class Rouge(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Rouge, self).__init__()
         if Rouge.image == None:
             self.image = load_image("character/rouge.png")
+        if Rouge.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 5
 
         self.idle_type = [0, 2984, 28, 40, 28, 40]
         self.move_type = [0, 2905, 36, 40, 36, 40]
@@ -532,10 +561,14 @@ class Rouge(Character):
 
 class Shadow(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Shadow, self).__init__()
         if Shadow.image == None:
             self.image = load_image("character/shadow.png")
+        if Shadow.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 6
 
         self.idle_type = [0, 2958, 37, 40, 37, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
@@ -565,10 +598,14 @@ class Shadow(Character):
 
 class Silver(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Silver, self).__init__()
         if Silver.image == None:
             self.image = load_image("character/silver.png")
+        if Silver.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 7
 
         self.idle_type = [0, 2984, 40, 40, 40, 40]
         self.move_type = [0, 2864, 42, 40, 42, 40]
@@ -594,10 +631,14 @@ class Silver(Character):
 
 class Blaze(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Blaze, self).__init__()
         if Blaze.image == None:
             self.image = load_image("character/Blaze.png")
+        if Blaze.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 8
 
         self.idle_type = [0, 2810, 34, 40, 34, 40]
         self.move_type = [0, 2610, 35, 40, 35, 40]
@@ -624,10 +665,14 @@ class Blaze(Character):
 
 class Espio(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Espio, self).__init__()
         if Espio.image == None:
             self.image = load_image("character/espio.png")
+        if Espio.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 9
 
         self.idle_type = [0, 1220, 27, 40, 27, 40]
         self.move_type = [0, 1130, 35, 40, 35, 40]
@@ -655,10 +700,14 @@ class Espio(Character):
 
 class Mighty(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(Mighty, self).__init__()
         if Mighty.image == None:
             self.image = load_image("character/mighty.png")
+        if Mighty.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 10
 
         self.idle_type = [0, 2920, 30, 40, 33, 40]
         self.move_type = [0, 2670, 35, 40, 35, 40]
@@ -685,10 +734,14 @@ class Mighty(Character):
 
 class SuperSonic(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(SuperSonic, self).__init__()
         if SuperSonic.image == None:
             self.image = load_image("character/super sonic.png")
+        if SuperSonic.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 11
 
         self.idle_type = [0, 2890, 24, 46, 24, 46]
         self.move_type = [0, 2890, 35, 46, 35, 46]
@@ -719,10 +772,14 @@ class SuperSonic(Character):
 
 class SuperShadow(Character):
     image = None
+    icon_image = None
     def __init__(self):
         super(SuperShadow, self).__init__()
         if SuperShadow.image == None:
             self.image = load_image("character/super shadow.png")
+        if SuperShadow.icon_image == None:
+            self.icon_image = load_image("map/icons.png")
+        self.index = 12
 
         self.idle_type = [0, 2940, 25, 38, 25, 38]
         self.move_type = [0, 2842, 34, 36, 34, 36]

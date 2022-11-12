@@ -31,6 +31,54 @@ def handle_events():
         else:
             character.player_character.handle_event(event)
 
+def drawTimer(a, b):
+    size = 30
+    # minute
+    if 0 <= a <= 4:
+        stage.timer_image.clip_composite_draw(39 * a, 36, 26, 22, 0, ' ', 370, 560, size, size)
+    if 5 <= a <= 9:
+        stage.timer_image.clip_composite_draw(39 * (a - 5), 0, 26, 22, 0, ' ', 370, 560, size, size)
+    if a == 10:
+        stage.timer_image.clip_composite_draw(39, 36, 26, 22, 0, ' ', 345, 560, size, size)
+        stage.timer_image.clip_composite_draw(0, 36, 26, 22, 0, ' ', 370, 560, size, size)
+
+    # :
+    for i in range(2):
+        stage.timer_image.clip_composite_draw(39 * 5, 0, 26, 22, 0, ' ', 400, 560 + (i * 10), 22, 22)
+
+    # second 10
+    if 0 <= b // 10 <= 4:
+        stage.timer_image.clip_composite_draw(39 * (b // 10), 36, 26, 22, 0, ' ', 430, 560, size, size)
+    if b // 10 == 5:
+        stage.timer_image.clip_composite_draw(0, 0, 26, 22, 0, ' ', 430, 560, size, size)
+
+    # second 1
+    if 0 <= b % 10 <= 4:
+        stage.timer_image.clip_composite_draw(39 * (b % 10), 36, 26, 22, 0, ' ', 465, 560, size, size)
+    if 5 <= b % 10 <= 9:
+        stage.timer_image.clip_composite_draw(39 * ((b % 10) - 5), 0, 26, 22, 0, ' ', 465, 560, size, size)
+
+def drawHp(a, x, y):
+    # a // 100
+    if a // 100 == 1:
+        stage.timer_image.clip_composite_draw(39, 36, 26, 22, 0, ' ', x - 44, y, 22, 22)
+
+    # (a % 100 // 10)
+    b = (a % 100) // 10
+    if 0 <= b <= 4:
+        stage.timer_image.clip_composite_draw(39 * b, 36, 26, 22, 0, ' ', x - 22, y, 22, 22)
+    if 5 <= b <= 9:
+        stage.timer_image.clip_composite_draw(39 * (b - 5), 0, 26, 22, 0, ' ', x - 22, y, 22, 22)
+
+    # a % 10
+    if 0 <= (a % 10) // 10 <= 4:
+        stage.timer_image.clip_composite_draw(39 * (a % 10), 36, 26, 22, 0, ' ', x, y, 22, 22)
+    if 5 <= (a % 10) // 10 <= 9:
+        stage.timer_image.clip_composite_draw(39 * ((a % 10) - 5), 0, 26, 22, 0, ' ', x, y, 22, 22)
+
+def drawIcon(a, x, y):
+    a.icon_image.clip_composite_draw(30 * a.Index(), 0, 30, 23, 0, ' ', x, y, 40, 30)
+
 ##############################################################################################################
 
 set_stage_time = 0
@@ -41,17 +89,14 @@ stage_time = 600
 stage = None
 sound = None
 sound_on = True
-font = None
 
 stage_count = 0
 
 def enter():
     global stage, stage_count, sound, set_stage_time, font
-    set_stage_time = time()
-    font = load_font('ENCR10B.TTF', 30)
+    set_stage_time = time() + 2
 
     stage = Palm()
-
     character.human = False
     for i in range (3):
         character.RandomCharacter()
@@ -65,8 +110,8 @@ def enter():
         game_world.add_object(in_character, 1)
     game_world.add_object(stage, 0)
 
-    character.player_character.x = 300
-    character.computer_character[0].x = 100
+    character.player_character.x = 100
+    character.computer_character[0].x = 300
     character.computer_character[1].x = 500
     character.computer_character[2].x = 700
 
@@ -88,12 +133,17 @@ def update():
         game_framework.change_state(result_state)
 
 def draw_world():
-    global font, stage_time
+    global stage_time
     for game_object in game_world.all_objects():
         game_object.draw()
 
     tm = localtime(stage_time)
-    font.draw(350, 560, f'{tm.tm_min} : {tm.tm_sec}', (0, 0, 0))
+    drawTimer(tm.tm_min, tm.tm_sec)
+    drawHp(character.player_character.hp, 150, 50)
+    drawIcon(character.player_character, 70, 50)
+    for i in range(3):
+        drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
+        drawIcon(character.computer_character[i], 270 + (i * 200), 50)
 
 def draw():
     clear_canvas()

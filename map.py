@@ -1,11 +1,17 @@
 from pico2d import *
+import character
+import main_state
+from time import *
 
 class Map:
-    pass
+    def __init__(self):
+        self.timer_image = load_image('map/numbers.png')
+        pass
 
 class Palm(Map):
     image = None
     def __init__(self):
+        super(Palm, self).__init__()
         if Palm.image == None:
             self.image = load_image('map/palmtree.png')
         self.image_floor = load_image('map/palmtree floor.png')
@@ -31,6 +37,7 @@ class Palm(Map):
 class Lake(Map):
     image = None
     def __init__(self):
+        super(Lake, self).__init__()
         if Lake.image == None:
             self.image = load_image('map/lake.png')
 
@@ -43,6 +50,7 @@ class Lake(Map):
 class Space(Map):
     image = None
     def __init__(self):
+        super(Space, self).__init__()
         if Space.image == None:
             self.image = load_image('map/space.png')
         self.image_floor = load_image('map/space floor.png')
