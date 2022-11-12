@@ -161,7 +161,6 @@ class Player_JUMP:
         if event == JUMP:
             set_time = time()
             self.jump_frame = 0
-            self.radian = 0
             self.jump_sound.set_volume(10)
             self.jump_sound.play(1)
 
@@ -181,6 +180,8 @@ class Player_JUMP:
         if move_dir[1] == True:
             self.dir_x = -1
             self.face_dir = 'h'
+        if move_dir[0] == False and move_dir[1] == False:
+            self.dir_x = 0
 
     @staticmethod
     def exit(self, event):
@@ -190,23 +191,23 @@ class Player_JUMP:
     def do(self):
         global cur_time, set_time
         self.jump_type[0] = self.jump_size
-        if move_dir[0] == True or move_dir[1] == True:
-            self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
 
         cur_time = time()
-        if cur_time < set_time + self.TIMER_PER_ACTION[2]:
-            if self.radian <= pi:
-                self.radian += (pi / 18)
-                self.y = 130 + sin(self.radian) * 10
-            else:
-                self.y = 130
-                self.radian = 0
-                self.cur_state.exit(self, NULL)
-                try:
-                    self.cur_state = next_state[RUN][NULL]
-                except KeyError:
-                    print('Error', self.cur_state.__name__, ' ', "None")
-                self.cur_state.enter(self, NULL)
+        if cur_time < set_time + (self.TIMER_PER_ACTION[2] / 2):
+            self.dir_y = 1
+            self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
+        elif set_time + (self.TIMER_PER_ACTION[2] / 2) <= cur_time <= set_time + self.TIMER_PER_ACTION[2]:
+            self.dir_y = -1
+            self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
+        elif cur_time > set_time + self.TIMER_PER_ACTION[2] :
+            self.dir_y = 0
+            self.y = 130
+            self.cur_state.exit(self, NULL)
+            try:
+                self.cur_state = next_state[RUN][NULL]
+            except KeyError:
+                print('Error', self.cur_state.__name__, ' ', "None")
+            self.cur_state.enter(self, NULL)
 
     @staticmethod
     def draw(self):
@@ -262,7 +263,7 @@ class ATTACK:
         if cur_time > set_time + self.TIMER_PER_ACTION[3]:
             for i in range(3):
                 if main_state.collide(player_character, computer_character[i]):
-                    computer_character[i].hp -= 50
+                    computer_character[i].hp -= self.damage
 
                 if computer_character[i].hp <= 0:
                     game_world.remove_object(computer_character[i])
@@ -308,6 +309,10 @@ RUN_SPEED_KPH = 20.0 # 마라토너의 평속
 RUN_SPEED_MPS = RUN_SPEED_KPH * 1000.0 / 3600.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
+JUMP_SPEED_MPS = 20.0
+PIXEL_PER_JUMP_METER = 10.0 / 0.5
+JUMP_SPEED_PPS = JUMP_SPEED_MPS * PIXEL_PER_JUMP_METER
+
 ########################################
 
 class Character:
@@ -329,10 +334,11 @@ class Character:
         self.TIMER_PER_ACTION = []
 
         self.attack = 0
-        self.damage = 6
+        self.damage = 20
+        self.jump_high = 130
+
         self.face_dir = 'None'  # 이미지 반전
         self.rotate = 0 # 이미지 회전
-        self.radian = 0
 
         self.punch_sound = load_wav('sound/06_attack.wav')
         self.kick_sound = load_wav('sound/05_kickback.wav')
@@ -385,7 +391,7 @@ class Sonic(Character):
         self.index = 0
 
         self.FRAMES_PER_ACTION = [8, 8, 8, 3]
-        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.4]
+        self.TIMER_PER_ACTION = [1, 1, 1, 0.4]
 
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]

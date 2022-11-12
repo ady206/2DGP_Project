@@ -17,6 +17,7 @@ class Palm(Map):
         if Palm.image == None:
             self.image = load_image('map/palmtree.png')
         self.image_floor = load_image('map/palmtree floor.png')
+        self.floor_high = 180
 
     def update(self):
         pass
@@ -27,11 +28,11 @@ class Palm(Map):
             self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + i * 30, 100)
 
         for i in range(5):
-            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + i * 30, 230)
+            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + i * 30, self.floor_high)
         for i in range(5):
-            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + 810 - i * 30, 230)
+            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + 810 - i * 30, self.floor_high)
         for i in range(5):
-            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + 350 + i * 30, 230)
+            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + 350 + i * 30, self.floor_high)
 
     def get_bb(self):
         return 0, 0, 1600 - 1, 50
