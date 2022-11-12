@@ -131,6 +131,9 @@ def update():
     if timer >= 600:
         result_state.win = False
         game_framework.change_state(result_state)
+    if character.player_character.hp <= 0:
+        result_state.win = False
+        game_framework.change_state(result_state)
 
 def draw_world():
     global stage_time
@@ -160,7 +163,7 @@ def resume():
     global stage, stage_count, sound_on, sound, set_stage_time
     if stage_count == 1:
         stage = Lake()
-        sound = load_music('sound/Tropical.mp3')
+        sound = load_music('sound/Lake.mp3')
         if sound_on == True:
             sound.set_volume(20)
             sound.repeat_play()
@@ -168,7 +171,7 @@ def resume():
             sound.stop()
     if stage_count == 2:
         stage = Space()
-        sound = load_music('sound/Tropical.mp3')
+        sound = load_music('sound/Space.mp3')
         if sound_on == True:
             sound.set_volume(20)
             sound.repeat_play()
