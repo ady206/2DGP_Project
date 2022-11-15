@@ -14,6 +14,7 @@ computer_character = []
 list = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
 human = False
+
 def RandomCharacter():
     global player_character, computer_character, human
     rc = choice(list)
@@ -113,7 +114,7 @@ class IDLE:
                                             self.x, self.y, self.idle_type[4], self.idle_type[5])
 
 class RUN:
-    global move_dir
+    global move_dir, RUN_SPEED_PPS
     def enter(self, event):
         print('ENTER RUN')
         if event == RD:
@@ -154,7 +155,7 @@ class RUN:
                                             self.x, self.y, self.move_type[4], self.move_type[5])
 
 class Player_JUMP:
-    global move_dir
+    global move_dir, JUMP_SPEED_PPS
     @staticmethod
     def enter(self, event):
         global set_time
@@ -391,7 +392,7 @@ class Sonic(Character):
         self.index = 0
 
         self.FRAMES_PER_ACTION = [8, 8, 8, 3]
-        self.TIMER_PER_ACTION = [1, 1, 1, 0.4]
+        self.TIMER_PER_ACTION = [1, 1, 0.5, 0.4]
 
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]
