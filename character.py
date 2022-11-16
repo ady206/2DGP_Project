@@ -2,7 +2,6 @@ from pico2d import *
 import game_world
 import game_framework
 
-from math import *
 from random import *
 from time import *
 
@@ -93,7 +92,6 @@ class IDLE:
     global move_dir
     @staticmethod
     def enter(self, event):
-        print('ENTER IDLE')
         if event == RU:
             self.dir_x = 0
             move_dir[0] = False
@@ -103,7 +101,7 @@ class IDLE:
 
     @staticmethod
     def exit(self, event):
-        print('EXIT IDLE')
+        pass
 
     def do(self):
         self.idle_type[0] = self.idle_size
@@ -116,7 +114,6 @@ class IDLE:
 class RUN:
     global move_dir, RUN_SPEED_PPS
     def enter(self, event):
-        print('ENTER RUN')
         if event == RD:
             move_dir[0] = True
         elif event == LD:
@@ -142,7 +139,7 @@ class RUN:
             self.cur_state.enter(self, NULL)
 
     def exit(self, event):
-        print('EXIT RUN')
+        pass
 
     def do(self):
         self.move_type[0] = self.move_size
@@ -232,7 +229,6 @@ class ATTACK:
                 self.punch_sound.set_volume(10)
                 self.punch_sound.play(1)
 
-        print('ENTER ATTACK')
         if event == RD:
             move_dir[0] = True
         elif event == LD:
@@ -253,7 +249,8 @@ class ATTACK:
 
     @staticmethod
     def exit(self, event):
-        print('EXIT ATTACK')
+        pass
+
     @staticmethod
     def do(self):
         global cur_time, set_time
@@ -262,16 +259,10 @@ class ATTACK:
         cur_time = time()
 
         if cur_time > set_time + self.TIMER_PER_ACTION[3]:
-            for i in range(3):
-                if main_state.collide(player_character, computer_character[i]):
-                    computer_character[i].hp -= self.damage
-
-                if computer_character[i].hp <= 0:
-                    game_world.remove_object(computer_character[i])
-                    del computer_character[i]
-
-                    game_world.add_object(computer_character[2], 1)
-                    computer_character[2].x = main_state.stage.x + randint(-300, 300)
+            if len(computer_character) >= 3:
+                Attacked_Character(3)
+            else:
+                Attacked_Character(len(computer_character))
 
             self.cur_state.exit(self, NULL)
             try:
@@ -302,6 +293,18 @@ next_state = {
                LU: ATTACK, LD: ATTACK,
                NULL: ATTACK, SPACE: ATTACK, JUMP: ATTACK},
 }
+
+def Attacked_Character(character_count):
+    for i in range(character_count):
+        if main_state.collide(player_character, computer_character[i]):
+            computer_character[i].hp -= player_character.damage
+            if computer_character[i].hp <= 0:
+                game_world.remove_object(computer_character[i])
+                del computer_character[i]
+
+                if len(computer_character) >= 3:
+                    game_world.add_object(computer_character[2], 1)
+                    computer_character[2].x = main_state.stage.x + randint(-300, 300)
 
 ########################################
 
@@ -335,7 +338,7 @@ class Character:
         self.TIMER_PER_ACTION = []
 
         self.attack = 0
-        self.damage = 20
+        self.damage = 50
         self.jump_high = 130
 
         self.face_dir = 'None'  # 이미지 반전

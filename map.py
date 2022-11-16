@@ -3,6 +3,15 @@ import character
 import main_state
 from time import *
 
+
+def AppendFloor(c, x, y, limit):
+    main_state.stage_floor.append(c(x, y, limit))
+
+def AppendPalmFloor():
+    AppendFloor(Palmfloor, character.player_character.x - 380, 100, 20)
+    AppendFloor(Palmfloor, character.player_character.x - 380, 200, 5)
+    AppendFloor(Palmfloor, character.player_character.x - 20, 200, 5)
+
 class Map:
     def __init__(self, x, y):
         self.timer_image = load_image('map/numbers.png')
@@ -16,26 +25,34 @@ class Palm(Map):
         super(Palm, self).__init__(x, y)
         if Palm.image == None:
             self.image = load_image('map/palmtree.png')
-        self.image_floor = load_image('map/palmtree floor.png')
-        self.floor_high = 180
+        self.x = x
+        self.y = y
 
     def update(self):
         pass
 
     def draw(self):
         self.image.clip_draw(0, 160, 2500, 640, self.x, self.y - 20)
-        for i in range(28):
-            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + i * 30, 100)
 
-        for i in range(5):
-            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + i * 30, self.floor_high)
-        for i in range(5):
-            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + 810 - i * 30, self.floor_high)
-        for i in range(5):
-            self.image_floor.clip_draw(0, 0, 40, 40, self.x - 400 + 350 + i * 30, self.floor_high)
+class Palmfloor(Map):
+    image = None
+    def __init__(self, x, y, draw_limit):
+        super(Palmfloor, self).__init__(x, y)
+        if Palmfloor.image == None:
+            self.image_floor = load_image('map/palmtree floor.png')
+        self.x = x
+        self.y = y
+        self.draw_limit = draw_limit
+
+    def update(self):
+        pass
+
+    def draw(self):
+        for i in range(self.draw_limit):
+            self.image_floor.clip_draw(0, 0, 40, 40, self.x + i * 40, self.y)
 
     def get_bb(self):
-        return 0, 0, 1600 - 1, 50
+        return self.x - 20, self.y - 20, self.x + self.draw_limit * 40 - 20, self.y + 20
 
 class Lake(Map):
     image = None

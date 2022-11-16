@@ -89,16 +89,19 @@ timer = 0
 stage_time = 600
 
 stage = None
+stage_floor = []
 sound = None
 sound_on = True
 
 stage_count = 0
 
 def enter():
-    global stage, stage_count, sound, set_stage_time, font
+    global stage, stage_count, sound, set_stage_time, stage_floor
     set_stage_time = time()
 
     stage = Palm(character.player_character.x, 300)
+    AppendPalmFloor()
+
     character.human = False
     for i in range (10):
         character.RandomCharacter()
@@ -111,6 +114,8 @@ def enter():
     for i in range(3):
         game_world.add_object(character.computer_character[i], 1)
     game_world.add_object(stage, 0)
+    for i in stage_floor:
+        game_world.add_object(i, 0)
 
     character.player_character.x = 400
     character.computer_character[0].x = randint(100, 700)
@@ -118,11 +123,11 @@ def enter():
     character.computer_character[2].x = randint(100, 700)
 
 def exit():
-    global stage, sound
-    del stage, sound
+    global stage, sound, stage_floor
+    del stage, sound, stage_floor
 
 def update():
-    global set_stage_time, cur_stage_time, timer, stage_time
+    global set_stage_time, cur_stage_time, timer, stage_time, stage, stage_floor
     for game_object in game_world.all_objects():
         game_object.update()
 
@@ -139,8 +144,15 @@ def update():
 
     distance_x = character.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
     stage.x -= distance_x
-    for i in range(3):
-        character.computer_character[i].x -= distance_x
+    for i in stage_floor:
+        i.x -= distance_x
+
+    if len(character.computer_character) >= 3:
+        for i in range(3):
+            character.computer_character[i].x -= distance_x
+    else:
+        for i in character.computer_character:
+            i.x -= distance_x
 
 def draw_world():
     global stage_time
@@ -152,9 +164,14 @@ def draw_world():
     drawHp(character.player_character.hp, 150, 50)
     drawIcon(character.player_character, 70, 50)
 
-    for i in range(3):
-        drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
-        drawIcon(character.computer_character[i], 270 + (i * 200), 50)
+    if len(character.computer_character) >= 3:
+        for i in range(3):
+            drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
+            drawIcon(character.computer_character[i], 270 + (i * 200), 50)
+    else:
+        for i in character.computer_character:
+            drawHp(i.hp, 350 + (i * 200), 50)
+            drawIcon(i, 270 + (i * 200), 50)
 
 def draw():
     clear_canvas()
