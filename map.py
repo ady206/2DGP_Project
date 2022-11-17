@@ -12,6 +12,10 @@ def AppendPalmFloor():
     AppendFloor(Palmfloor, character.player_character.x - 380, 200, 5)
     AppendFloor(Palmfloor, character.player_character.x - 20, 200, 5)
 
+def AppendSpaceFloor():
+    AppendFloor(Spacefloor, character.player_character.x - 15, 100, 1)
+
+
 class Map:
     def __init__(self, x, y):
         self.timer_image = load_image('map/numbers.png')
@@ -40,8 +44,6 @@ class Palmfloor(Map):
         super(Palmfloor, self).__init__(x, y)
         if Palmfloor.image == None:
             self.image_floor = load_image('map/palmtree floor.png')
-        self.x = x
-        self.y = y
         self.draw_limit = draw_limit
 
     def update(self):
@@ -66,18 +68,34 @@ class Lake(Map):
 
     def draw(self):
         self.image.clip_draw(0, 160, 2500, 640, self.x, self.y - 20)
+
 class Space(Map):
     image = None
     def __init__(self, x, y):
         super(Space, self).__init__(x, y)
         if Space.image == None:
             self.image = load_image('map/space.png')
-        self.image_floor = load_image('map/space floor.png')
 
     def update(self):
         pass
 
     def draw(self):
         self.image.clip_draw(0, 160, 2500, 640, self.x, self.y - 20)
-        for i in range(28):
-            self.image_floor.clip_draw(33, 0, 30, 30, self.x - 400 + i * 30, 100)
+
+class Spacefloor(Map):
+    image = None
+    def __init__(self, x, y, draw_limit):
+        super(Spacefloor, self).__init__(x, y)
+        if Spacefloor.image == None:
+            self.image_floor = load_image('map/space floor.png')
+        self.draw_limit = draw_limit
+
+    def update(self):
+        pass
+
+    def draw(self):
+        for i in range(self.draw_limit):
+            self.image_floor.clip_draw(33, 0, 30, 30, self.x + i * 30, self.y)
+
+    def get_bb(self):
+        return self.x - 20, self.y - 20, self.x + self.draw_limit * 40 - 20, self.y + 20

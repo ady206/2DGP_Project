@@ -103,7 +103,7 @@ def enter():
     AppendPalmFloor()
 
     character.human = False
-    for i in range (10):
+    for i in range (3):
         character.RandomCharacter()
 
     sound = load_music('sound/Tropical.mp3')
@@ -116,6 +116,9 @@ def enter():
     game_world.add_object(stage, 0)
     for i in stage_floor:
         game_world.add_object(i, 0)
+
+    game_world.add_collision_group(character.player_character, character.computer_character, 'player_character:computer_character')
+    game_world.add_collision_group(character.player_character, stage_floor, 'player_character:stage_floor')
 
     character.player_character.x = 400
     character.computer_character[0].x = randint(100, 700)
@@ -168,10 +171,16 @@ def draw_world():
         for i in range(3):
             drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
             drawIcon(character.computer_character[i], 270 + (i * 200), 50)
-    else:
-        for i in character.computer_character:
-            drawHp(i.hp, 350 + (i * 200), 50)
-            drawIcon(i, 270 + (i * 200), 50)
+
+    if len(character.computer_character) == 2:
+        for i in range(1):
+            drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
+            drawIcon(character.computer_character[i], 270 + (i * 200), 50)
+
+    if len(character.computer_character) == 1:
+        for i in range(1):
+            drawHp(character.computer_character[i].hp, 350 + (i * 200), 50)
+            drawIcon(character.computer_character[i], 270 + (i * 200), 50)
 
 def draw():
     clear_canvas()
@@ -179,13 +188,13 @@ def draw():
     update_canvas()
 
 def pause():
-    global stage_count, sound
+    global stage_count, sound, stage_floor
     stage_count += 1
     sound.stop()
-    game_world.remove_object(stage)
+    stage_floor.clear()
 
 def resume():
-    global stage, stage_count, sound_on, sound, set_stage_time
+    global stage, stage_count, sound_on, sound, set_stage_time, stage_floor
     if stage_count == 1:
         stage = Lake(character.player_character.x, 300)
         sound = load_music('sound/Lake.mp3')
@@ -196,8 +205,9 @@ def resume():
             sound.stop()
     if stage_count == 2:
         stage = Space(character.player_character.x, 300)
+        AppendSpaceFloor()
         sound = load_music('sound/Space.mp3')
-        if sound_on == True:
+        if sound_on ==  True:
             sound.set_volume(20)
             sound.repeat_play()
         else:

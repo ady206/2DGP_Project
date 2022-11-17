@@ -12,7 +12,7 @@ choose = False
 x, y = 0, 0
 
 go = False
-
+sound = None
 def handle_events():
     global choose, human, go, x, y
     events = get_events()
@@ -62,13 +62,17 @@ def handle_events():
                 if 620 <= x <= 800 and 0 <= y <= 180:
                     game_framework.change_state(middle_state)
 def enter():
-    global image
+    global image, sound
     image = load_image('map/ready.png')
+
+    sound = load_music('sound/ready sound.mp3')
+    sound.set_volume(20)
+    sound.repeat_play()
     pass
 
 def exit():
-    global image
-    del image
+    global image, sound
+    del image, sound
     pass
 
 def draw():

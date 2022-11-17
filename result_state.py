@@ -2,6 +2,7 @@ from pico2d import *
 import game_framework
 
 image = None
+sound = None
 win = False
 
 # 927 618
@@ -18,16 +19,21 @@ def handle_events():
             game_framework.quit()
 
 def enter():
-    global image
+    global image, sound
     if win == False:
         image = load_image('map/middle defeat.png')
+        sound = load_wav('sound/SE_Child_Cry.wav')
     else:
         image = load_image('map/middle win.png')
+        sound = load_wav('sound/SE_Cheer.wav')
+
+    sound.set_volume(20)
+    sound.play()
     pass
 
 def exit():
-    global image
-    del image
+    global image, sound
+    del image, sound
     pass
 
 def draw():

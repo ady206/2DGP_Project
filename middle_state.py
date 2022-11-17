@@ -3,7 +3,7 @@ import game_framework
 import main_state
 
 image = None
-
+sound = None
 # 927 618
 def handle_events():
     events = get_events()
@@ -15,12 +15,13 @@ def handle_events():
                 game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
             if main_state.stage_count == 0:
+                main_state.a = 1
                 game_framework.change_state(main_state)
             else:
                 game_framework.pop_state()
 
 def enter():
-    global image
+    global image, sound
     image = None
     if image == None:
         image = load_image('map/stage1.png')
@@ -28,11 +29,16 @@ def enter():
         image = load_image('map/stage2.png')
     if main_state.stage_count == 2:
         image = load_image('map/stage3.png')
+
+    sound = load_wav('sound/SE_Mission.wav')
+    sound.set_volume(20)
+    sound.play()
     pass
 
 def exit():
-    global image
+    global image, sound
     image = None
+    del sound
     pass
 
 def draw():

@@ -3,6 +3,7 @@ import game_framework
 import ready_state
 
 image = None
+sound = None
 
 def handle_events():
     events = get_events()
@@ -16,13 +17,17 @@ def handle_events():
             game_framework.change_state(ready_state)
 
 def enter():
-    global image
+    global image, sound
     image = load_image('map/start.png')
+
+    sound = load_music('sound/start sound.mp3')
+    sound.set_volume(20)
+    sound.repeat_play()
     pass
 
 def exit():
-    global image
-    del image
+    global image, sound
+    del image, sound
     pass
 
 def draw():

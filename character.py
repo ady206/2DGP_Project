@@ -157,7 +157,9 @@ class Player_JUMP:
     def enter(self, event):
         global set_time
         if event == JUMP:
-            set_time = time()
+            if self.jump == False:
+                set_time = time()
+            self.jump = True
             self.jump_frame = 0
             self.jump_sound.set_volume(10)
             self.jump_sound.play(1)
@@ -197,15 +199,18 @@ class Player_JUMP:
         elif set_time + (self.TIMER_PER_ACTION[2] / 2) <= cur_time <= set_time + self.TIMER_PER_ACTION[2]:
             self.dir_y = -1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
-        elif cur_time > set_time + self.TIMER_PER_ACTION[2] :
-            self.dir_y = 0
-            self.y = 130
-            self.cur_state.exit(self, NULL)
-            try:
-                self.cur_state = next_state[RUN][NULL]
-            except KeyError:
-                print('Error', self.cur_state.__name__, ' ', "None")
-            self.cur_state.enter(self, NULL)
+        else:
+            for floors in main_state.stage_floor:
+                if main_state.collide(player_character, floors):
+                    self.dir_y = 0
+                    self.y = 130
+                    self.jump = False
+                    self.cur_state.exit(self, NULL)
+                    try:
+                        self.cur_state = next_state[RUN][NULL]
+                    except KeyError:
+                        print('Error', self.cur_state.__name__, ' ', "None")
+                    self.cur_state.enter(self, NULL)
 
     @staticmethod
     def draw(self):
@@ -218,14 +223,16 @@ class ATTACK:
     def enter(self, event):
         global set_time
         if event == SPACE:
-            set_time = time()
+            if self.attack == False:
+                set_time = time()
+            self.attack = True
             self.attack_frame = 0
-            self.attack += 1
+            self.attack_count += 1
 
-            if self.attack % 2 == 0:
+            if self.attack_count % 2 == 0:
                 self.kick_sound.set_volume(10)
                 self.kick_sound.play(1)
-            if self.attack % 2 == 1:
+            if self.attack_count % 2 == 1:
                 self.punch_sound.set_volume(10)
                 self.punch_sound.play(1)
 
@@ -258,13 +265,13 @@ class ATTACK:
 
         cur_time = time()
 
-        if cur_time > set_time + self.TIMER_PER_ACTION[3]:
-            if len(computer_character) >= 3:
-                Attacked_Character(3)
-            else:
-                Attacked_Character(len(computer_character))
-
+        if cur_time < set_time + self.TIMER_PER_ACTION[3]:
+            for a, b, group in game_world.all_collision_pairs():
+                if main_state.collide(a, b):
+                    a.handle_collision(b, group)
             self.cur_state.exit(self, NULL)
+        else:
+            self.attack = False
             try:
                 if move_dir[0] == False and move_dir[1] == False:
                     self.cur_state = next_state[IDLE][NULL]
@@ -293,18 +300,6 @@ next_state = {
                LU: ATTACK, LD: ATTACK,
                NULL: ATTACK, SPACE: ATTACK, JUMP: ATTACK},
 }
-
-def Attacked_Character(character_count):
-    for i in range(character_count):
-        if main_state.collide(player_character, computer_character[i]):
-            computer_character[i].hp -= player_character.damage
-            if computer_character[i].hp <= 0:
-                game_world.remove_object(computer_character[i])
-                del computer_character[i]
-
-                if len(computer_character) >= 3:
-                    game_world.add_object(computer_character[2], 1)
-                    computer_character[2].x = main_state.stage.x + randint(-300, 300)
 
 ########################################
 
@@ -337,16 +332,18 @@ class Character:
         self.FRAMES_PER_ACTION = []
         self.TIMER_PER_ACTION = []
 
-        self.attack = 0
+        self.attack = True
+        self.attack_count = 0
         self.damage = 50
         self.jump_high = 130
+        self.jump = False
 
         self.face_dir = 'None'  # 이미지 반전
         self.rotate = 0 # 이미지 회전
 
         self.punch_sound = load_wav('sound/06_attack.wav')
         self.kick_sound = load_wav('sound/05_kickback.wav')
-        self.jump_sound = load_wav('sound/00_jump.wav')
+        self.jump_sound = load_wav('sound/03_jump.wav')
         self.dir_x, self.dir_y = 0, 0
         self.x, self.y = 400, 130
 
@@ -382,6 +379,18 @@ class Character:
         for i in range(13):
             if list[self.index] == list[i]:
                 return i
+
+    def handle_collision(self, other, group):
+        if group == 'player_character:computer_character':
+            other.hp -= self.damage
+            for computer in other:
+                if computer.hp <= 0:
+                    game_world.remove_object(computer)
+                    del computer
+
+                    RandomCharacter()
+                    game_world.add_object(other[2], 1)
+                    other[2].x = main_state.stage.x + randint(-300, 300)
 
 class Sonic(Character):
     image = None
@@ -707,7 +716,7 @@ class Blaze(Character):
         self.idle_size = int(self.idle_frame) * 35 + 24
         self.move_size = int(self.move_frame) * 35 + 24
         self.jump_size = int(self.jump_frame) * 40 + 210
-        self.attack_size = int(self.attack_frame) * 45 + 25 + (self.attack % 2) * 90
+        self.attack_size = int(self.attack_frame) * 45 + 25 + (self.attack_count % 2) * 90
 
     def draw(self):
         self.cur_state.draw(self)
@@ -818,11 +827,11 @@ class SuperSonic(Character):
         self.idle_size = int(self.idle_frame) * 25 + 2
         self.move_size = int(self.move_frame) + 394
         self.jump_size = int(self.jump_frame) * 36 + 10
-        self.attack_size = int(self.attack_frame) * 45 + (self.attack % 2 * 150)
+        self.attack_size = int(self.attack_frame) * 45 + (self.attack_count % 2 * 150)
 
-        if self.attack % 2 == 0:
+        if self.attack_count % 2 == 0:
             self.FRAMES_PER_ACTION[3] = 4
-        if self.attack % 2 == 1:
+        if self.attack_count % 2 == 1:
             self.FRAMES_PER_ACTION[3] = 2
 
     def draw(self):
