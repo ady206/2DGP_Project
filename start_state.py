@@ -2,10 +2,19 @@ from pico2d import *
 import game_framework
 import ready_state
 
+from time import *
+
 image = None
 sound = None
+click_sound = None
+
+clicked = False
+
+set_time = 0
+cur_time = 0
 
 def handle_events():
+    global clicked, set_time, click_sound
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -14,20 +23,27 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
-            game_framework.change_state(ready_state)
+            clicked = True
+            if clicked == True:
+                set_time = time()
+
+            click_sound.play()
 
 def enter():
-    global image, sound
+    global image, sound, clicked, set_time, click_sound
     image = load_image('map/start.png')
 
     sound = load_music('sound/start sound.mp3')
+    click_sound = load_wav('sound/SE_Window_Open.wav')
+    click_sound.set_volume(20)
     sound.set_volume(20)
     sound.repeat_play()
+
     pass
 
 def exit():
-    global image, sound
-    del image, sound
+    global image, sound, click_sound
+    del image, sound, click_sound
     pass
 
 def draw():
@@ -36,7 +52,14 @@ def draw():
     update_canvas()
 
 def update():
+    global clicked, set_time, cur_time
     handle_events()
+
+    cur_time = time()
+    if clicked == True and cur_time >= set_time + 2:
+        game_framework.change_state(ready_state)
+    print(set_time, ' ', cur_time)
+
 
 def pause():
     pass
