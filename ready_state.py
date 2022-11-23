@@ -1,7 +1,9 @@
 from pico2d import *
 import game_framework
 import middle_state
+
 import character
+import server
 from random import *
 
 image = None
@@ -14,7 +16,7 @@ x, y = 0, 0
 go = False
 sound = None
 def handle_events():
-    global choose, human, go, x, y
+    global choose, go, x, y
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -29,32 +31,32 @@ def handle_events():
                 go = True
                 if 390 <= y < 500:
                     if 25 <= x < 130:
-                        character.player_character = character.Sonic()
+                        server.player_character = character.Sonic()
                     if 130 <= x < 240:
-                        character.player_character = character.Tales()
+                        server.player_character = character.Tales()
                     if 240 <= x < 345:
-                        character.player_character = character.Knuckles()
+                        server.player_character = character.Knuckles()
                     if 345 <= x < 450:
-                        character.player_character = character.AmyRose()
+                        server.player_character = character.AmyRose()
                     if 450 <= x < 560:
-                        character.player_character = character.Tikal()
+                        server.player_character = character.Tikal()
                     if 560 <= x < 665:
-                        character.player_character = character.Rouge()
+                        server.player_character = character.Rouge()
                     if 665 <= x < 770:
-                        character.player_character = character.Shadow()
+                        server.player_character = character.Shadow()
                 elif 280 <= y <= 390:
                     if 25 <= x < 130:
-                        character.player_character = character.Silver()
+                        server.player_character = character.Silver()
                     if 130 <= x < 240:
-                        character.player_character = character.Blaze()
+                        server.player_character = character.Blaze()
                     if 240 <= x < 345:
-                        character.player_character = character.Espio()
+                        server.player_character = character.Espio()
                     if 345 <= x < 450:
-                        character.player_character = character.Mighty()
+                        server.player_character = character.Mighty()
                     if 450 <= x < 560:
-                        character.player_character = character.SuperSonic()
+                        server.player_character = character.SuperSonic()
                     if 560 <= x < 665:
-                        character.player_character = character.SuperShadow()
+                        server.player_character = character.SuperShadow()
                     if 665 <= x < 770:
                         character.human = True
                         character.RandomCharacter()

@@ -58,8 +58,6 @@ def update():
     cur_time = time()
     if clicked == True and cur_time >= set_time + 2:
         game_framework.change_state(ready_state)
-    print(set_time, ' ', cur_time)
-
 
 def pause():
     pass

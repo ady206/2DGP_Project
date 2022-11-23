@@ -1,19 +1,19 @@
 from pico2d import *
-import character
-import main_state
 from time import *
 
+import main_state
+import server
 
 def AppendFloor(c, x, y, limit):
-    main_state.stage_floor.append(c(x, y, limit))
+    server.stage_floor.append(c(x, y, limit))
 
 def AppendPalmFloor():
-    AppendFloor(Palmfloor, character.player_character.x - 380, 100, 20)
-    AppendFloor(Palmfloor, character.player_character.x - 380, 200, 5)
-    AppendFloor(Palmfloor, character.player_character.x - 20, 200, 5)
+    AppendFloor(Palmfloor, server.player_character.x - 380, 100, 20)
+    AppendFloor(Palmfloor, server.player_character.x - 380, 200, 5)
+    AppendFloor(Palmfloor, server.player_character.x - 20, 200, 5)
 
 def AppendSpaceFloor():
-    AppendFloor(Spacefloor, character.player_character.x - 15, 100, 1)
+    AppendFloor(Spacefloor, server.player_character.x - 15, 100, 1)
 
 
 class Map:

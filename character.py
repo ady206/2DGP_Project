@@ -6,71 +6,69 @@ from random import *
 from time import *
 
 import main_state
-
-player_character = None
-computer_character = []
+import server
 
 list = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
 human = False
 
 def RandomCharacter():
-    global player_character, computer_character, human
+    global human
     rc = choice(list)
     if human == True:
         if rc == 'Sonic':
-            player_character = Sonic()
+            server.player_character = Sonic()
         elif rc == 'Tales':
-            player_character = Tales()
+            server.player_character = Tales()
         elif rc == 'Knuckles':
-            player_character = Knuckles()
+            server.player_character = Knuckles()
         elif rc == 'AmyRose':
-            player_character = AmyRose()
+            server.player_character = AmyRose()
         elif rc == 'Tikal':
-            player_character = Tikal()
+            server.player_character = Tikal()
         elif rc == 'Rouge':
-            player_character = Rouge()
+            server.player_character = Rouge()
         elif rc == 'Shadow':
-            player_character = Shadow()
+            server.player_character = Shadow()
         elif rc == 'Silver':
-            player_character = Silver()
+            server.player_character = Silver()
         elif rc == 'Blaze':
-            player_character = Blaze()
+            server.player_character = Blaze()
         elif rc == 'Espio':
-            player_character = Espio()
+            server.player_character = Espio()
         elif rc == 'Mighty':
-            player_character = Mighty()
+            server.player_character = Mighty()
         elif rc == 'Super Sonic':
-            player_character = SuperSonic()
+            server.player_character = SuperSonic()
         elif rc == 'Super Shadow':
-            player_character = SuperShadow()
+            server.player_character = SuperShadow()
     else:
         if rc == 'Sonic':
-            computer_character.append(Sonic())
+            server.computer_character.append(Sonic())
         elif rc == 'Tales':
-            computer_character.append(Tales())
+            server.computer_character.append(Tales())
         elif rc == 'Knuckles':
-            computer_character.append(Knuckles())
+            server.computer_character.append(Knuckles())
         elif rc == 'AmyRose':
-            computer_character.append(AmyRose())
+            server.computer_character.append(AmyRose())
         elif rc == 'Tikal':
-            computer_character.append(Tikal())
+            server.computer_character.append(Tikal())
         elif rc == 'Rouge':
-            computer_character.append(Rouge())
+            server.computer_character.append(Rouge())
         elif rc == 'Shadow':
-            computer_character.append(Shadow())
+            server.computer_character.append(Shadow())
         elif rc == 'Silver':
-            computer_character.append(Silver())
+            server.computer_character.append(Silver())
         elif rc == 'Blaze':
-            computer_character.append(Blaze())
+            server.computer_character.append(Blaze())
         elif rc == 'Espio':
-            computer_character.append(Espio())
+            server.computer_character.append(Espio())
         elif rc == 'Mighty':
-            computer_character.append(Mighty())
+            server.computer_character.append(Mighty())
         elif rc == 'Super Sonic':
-            computer_character.append(SuperSonic())
+            server.computer_character.append(SuperSonic())
         elif rc == 'Super Shadow':
-            computer_character.append(SuperShadow())
+            server.computer_character.append(SuperShadow())
 
 ##############################################################################################################
 
@@ -200,8 +198,8 @@ class Player_JUMP:
             self.dir_y = -1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
         else:
-            for floors in main_state.stage_floor:
-                if main_state.collide(player_character, floors):
+            for floors in server.stage_floor:
+                if main_state.collide(server.player_character, floors):
                     self.dir_y = 0
                     self.y = 130
                     self.jump = False
@@ -266,9 +264,20 @@ class ATTACK:
         cur_time = time()
 
         if cur_time < set_time + self.TIMER_PER_ACTION[3]:
-            for a, b, group in game_world.all_collision_pairs():
-                if main_state.collide(a, b):
-                    a.handle_collision(b, group)
+            for in_character in server.computer_character:
+                if main_state.collide(server.player_character, in_character):
+                    in_character.hp -= 5
+
+                    if in_character.hp <= 0:
+                        server.computer_character.remove(in_character)
+                        game_world.remove_object(in_character)
+
+                        RandomCharacter()
+                        game_world.add_object(server.computer_character[2], 1)
+                        server.computer_character[2].x = server.stage.x + randint(-300, 300)
+            # for a, b, group in game_world.all_collision_pairs():
+            #     if main_state.collide(a, b):
+            #         a.handle_collision(b, group)
             self.cur_state.exit(self, NULL)
         else:
             self.attack = False
