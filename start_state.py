@@ -23,10 +23,9 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
-            clicked = True
-            if clicked == True:
+            if clicked == False:
                 set_time = time()
-
+            clicked = True
             click_sound.play()
 
 def enter():

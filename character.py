@@ -162,7 +162,6 @@ class Player_JUMP:
             self.jump_sound.set_volume(10)
             self.jump_sound.play(1)
 
-        print('ENTER JUMP')
         if event == RD:
             move_dir[0] = True
         elif event == LD:
@@ -219,20 +218,22 @@ class Player_JUMP:
 class ATTACK:
     @staticmethod
     def enter(self, event):
+        print('ENTER ATTACK')
         global set_time
+
         if event == SPACE:
             if self.attack == False:
                 set_time = time()
-            self.attack = True
-            self.attack_frame = 0
-            self.attack_count += 1
+                self.attack = True
+                self.attack_frame = 0
+                self.attack_count += 1
 
-            if self.attack_count % 2 == 0:
-                self.kick_sound.set_volume(10)
-                self.kick_sound.play(1)
-            if self.attack_count % 2 == 1:
-                self.punch_sound.set_volume(10)
-                self.punch_sound.play(1)
+                if self.attack_count % 2 == 0:
+                    self.kick_sound.set_volume(10)
+                    self.kick_sound.play(1)
+                if self.attack_count % 2 == 1:
+                    self.punch_sound.set_volume(10)
+                    self.punch_sound.play(1)
 
         if event == RD:
             move_dir[0] = True
@@ -254,6 +255,7 @@ class ATTACK:
 
     @staticmethod
     def exit(self, event):
+        print('EXIT ATTACK')
         pass
 
     @staticmethod
@@ -265,8 +267,10 @@ class ATTACK:
 
         if cur_time < set_time + self.TIMER_PER_ACTION[3]:
             for in_character in server.computer_character:
-                if main_state.collide(server.player_character, in_character):
-                    in_character.hp -= 5
+                if main_state.collide(self, in_character):
+                    if in_character.hit == False:
+                        in_character.hp -= 5
+                    in_character.hit = True
 
                     if in_character.hp <= 0:
                         server.computer_character.remove(in_character)
@@ -275,12 +279,11 @@ class ATTACK:
                         RandomCharacter()
                         game_world.add_object(server.computer_character[2], 1)
                         server.computer_character[2].x = server.stage.x + randint(-300, 300)
-            # for a, b, group in game_world.all_collision_pairs():
-            #     if main_state.collide(a, b):
-            #         a.handle_collision(b, group)
-            self.cur_state.exit(self, NULL)
         else:
             self.attack = False
+            for in_character in server.computer_character:
+                in_character.hit = False
+            self.cur_state.exit(self, NULL)
             try:
                 if move_dir[0] == False and move_dir[1] == False:
                     self.cur_state = next_state[IDLE][NULL]
@@ -341,7 +344,8 @@ class Character:
         self.FRAMES_PER_ACTION = []
         self.TIMER_PER_ACTION = []
 
-        self.attack = True
+        self.attack = False
+        self.hit = False
         self.attack_count = 0
         self.damage = 50
         self.jump_high = 130
