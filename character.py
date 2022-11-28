@@ -201,12 +201,12 @@ class Player_JUMP:
             if main_state.collide(server.player_character, floors):
                 self.dir_y = 0
                 self.jump = False
-            self.cur_state.exit(self, NULL)
-            try:
-                self.cur_state = next_state[RUN][NULL]
-            except KeyError:
-                print('Error', self.cur_state.__name__, ' ', "None")
-            self.cur_state.enter(self, NULL)
+                self.cur_state.exit(self, NULL)
+                try:
+                    self.cur_state = next_state[RUN][NULL]
+                except KeyError:
+                    print('Error', self.cur_state.__name__, ' ', "None")
+                self.cur_state.enter(self, NULL)
 
     @staticmethod
     def draw(self):
