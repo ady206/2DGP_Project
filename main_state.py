@@ -118,11 +118,16 @@ def enter():
 
     game_world.add_collision_group(server.player_character, server.computer_character, 'player_character:computer_character')
     game_world.add_collision_group(server.player_character, server.stage_floor, 'player_character:stage_floor')
+    game_world.add_collision_group(server.player_character, server.stage_floor, 'computer_character:stage_floor')
 
     server.player_character.x = 400
     server.computer_character[0].x = randint(100, 700)
     server.computer_character[1].x = randint(100, 700)
     server.computer_character[2].x = randint(100, 700)
+
+    for i in server.stage_floor:
+        a, b, c, d = i.get_bb()
+        print(a, b, c, d)
 
 def exit():
     global sound

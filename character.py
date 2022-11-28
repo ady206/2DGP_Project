@@ -182,7 +182,7 @@ class Player_JUMP:
 
     @staticmethod
     def exit(self, event):
-        print('exit JUMP')
+        pass
 
     @staticmethod
     def do(self):
@@ -193,21 +193,20 @@ class Player_JUMP:
         if cur_time < set_time + (self.TIMER_PER_ACTION[2] / 2):
             self.dir_y = 1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
-        elif set_time + (self.TIMER_PER_ACTION[2] / 2) <= cur_time <= set_time + self.TIMER_PER_ACTION[2]:
+        else:
             self.dir_y = -1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
-        else:
-            for floors in server.stage_floor:
-                if main_state.collide(server.player_character, floors):
-                    self.dir_y = 0
-                    self.y = 130
-                    self.jump = False
-                    self.cur_state.exit(self, NULL)
-                    try:
-                        self.cur_state = next_state[RUN][NULL]
-                    except KeyError:
-                        print('Error', self.cur_state.__name__, ' ', "None")
-                    self.cur_state.enter(self, NULL)
+
+        for floors in server.stage_floor:
+            if main_state.collide(server.player_character, floors):
+                self.dir_y = 0
+                self.jump = False
+            self.cur_state.exit(self, NULL)
+            try:
+                self.cur_state = next_state[RUN][NULL]
+            except KeyError:
+                print('Error', self.cur_state.__name__, ' ', "None")
+            self.cur_state.enter(self, NULL)
 
     @staticmethod
     def draw(self):
@@ -218,7 +217,6 @@ class Player_JUMP:
 class ATTACK:
     @staticmethod
     def enter(self, event):
-        print('ENTER ATTACK')
         global set_time
 
         if event == SPACE:
@@ -255,7 +253,6 @@ class ATTACK:
 
     @staticmethod
     def exit(self, event):
-        print('EXIT ATTACK')
         pass
 
     @staticmethod
@@ -404,6 +401,9 @@ class Character:
                     RandomCharacter()
                     game_world.add_object(other[2], 1)
                     other[2].x = main_state.stage.x + randint(-300, 300)
+        if group == 'player_character:stage_floor':
+            if server.stage_floor.y + 15 > self.y - 20:
+                self.y = server.stage_floor.y + 35
 
 class Sonic(Character):
     image = None
