@@ -125,10 +125,6 @@ def enter():
     server.computer_character[1].x = randint(100, 700)
     server.computer_character[2].x = randint(100, 700)
 
-    for i in server.stage_floor:
-        a, b, c, d = i.get_bb()
-        print(a, b, c, d)
-
 def exit():
     global sound
     del sound
@@ -228,16 +224,6 @@ def collide(a, b):
     if left_a > right_b: return False
     if right_a < left_b: return False
     if top_a < bottom_b: return False
-    if bottom_a > top_b: return False
-
-    return True
-
-def collide_floor(a, b):
-    left_a, bottom_a, right_a, top_a = a.get_bb()
-    left_b, bottom_b, right_b, top_b = b.get_bb()
-
-    if left_a > right_b: return False
-    if right_a < left_b: return False
     if bottom_a > top_b: return False
 
     return True

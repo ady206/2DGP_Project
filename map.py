@@ -55,7 +55,7 @@ class Palmfloor(Map):
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + self.draw_limit * 40 - 20, self.y + 10
+        return self.x - 20, self.y + 9, self.x + self.draw_limit * 40 - 20, self.y + 10
 
 
 class Lake(Map):

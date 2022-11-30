@@ -29,7 +29,6 @@ def clear():
 
 def add_collision_group(a, b, group):
     if group not in collision_group:
-        print('New Group Made', group)
         collision_group[group] = [[], []]
 
     if a: # a가 있으면

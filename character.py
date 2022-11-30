@@ -71,7 +71,7 @@ def RandomCharacter():
             server.computer_character.append(SuperShadow())
 
 def IsCollideFloor(a, floor_number, high):
-    if main_state.collide_floor(server.player_character, server.stage_floor[floor_number]):
+    if main_state.collide(server.player_character, server.stage_floor[floor_number]):
         a.dir_y = 0
         a.y = high
         a.jump = False
@@ -81,16 +81,14 @@ def IsCollideFloor(a, floor_number, high):
         except KeyError:
             print('Error', a.cur_state.__name__, ' ', "None")
         a.cur_state.enter(a, NULL)
+
+def RunCollideFloor(a, floor_number, high):
+    if main_state.collide(server.player_character, server.stage_floor[floor_number]):
+        a.y = high
     else:
-        a.dir_y = 0
-        a.y = 130
-        a.jump = False
-        a.cur_state.exit(a, NULL)
-        try:
-            a.cur_state = next_state[RUN][NULL]
-        except KeyError:
-            print('Error', a.cur_state.__name__, ' ', "None")
-        a.cur_state.enter(a, NULL)
+        a.dir_y = -1
+        a.y += a.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
+        IsCollideFloor(a, 0, 130)
 
 ##############################################################################################################
 
@@ -166,8 +164,8 @@ class RUN:
         self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = 400
 
-        IsCollideFloor(self, 1, 230)
-        IsCollideFloor(self, 2, 230)
+        RunCollideFloor(self, 1, 230)
+        RunCollideFloor(self, 2, 230)
 
     def draw(self):
         self.image.clip_composite_draw(self.move_type[0], self.move_type[1], self.move_type[2], self.move_type[3],
@@ -222,6 +220,7 @@ class Player_JUMP:
             self.dir_y = -1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
 
+        IsCollideFloor(self, 0, 130)
         IsCollideFloor(self, 1, 230)
         IsCollideFloor(self, 2, 230)
 
@@ -312,9 +311,6 @@ class ATTACK:
             except KeyError:
                 print('Error', self.cur_state.__name__, ' ', "None")
             self.cur_state.enter(self, NULL)
-
-        IsCollideFloor(self, 1, 230)
-        IsCollideFloor(self, 2, 230)
 
     @staticmethod
     def draw(self):
