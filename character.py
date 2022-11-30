@@ -70,6 +70,28 @@ def RandomCharacter():
         elif rc == 'Super Shadow':
             server.computer_character.append(SuperShadow())
 
+def IsCollideFloor(a, floor_number, high):
+    if main_state.collide_floor(server.player_character, server.stage_floor[floor_number]):
+        a.dir_y = 0
+        a.y = high
+        a.jump = False
+        a.cur_state.exit(a, NULL)
+        try:
+            a.cur_state = next_state[RUN][NULL]
+        except KeyError:
+            print('Error', a.cur_state.__name__, ' ', "None")
+        a.cur_state.enter(a, NULL)
+    else:
+        a.dir_y = 0
+        a.y = 130
+        a.jump = False
+        a.cur_state.exit(a, NULL)
+        try:
+            a.cur_state = next_state[RUN][NULL]
+        except KeyError:
+            print('Error', a.cur_state.__name__, ' ', "None")
+        a.cur_state.enter(a, NULL)
+
 ##############################################################################################################
 
 NULL, RD, LD, RU, LU, SPACE, JUMP = range(7)
@@ -144,6 +166,9 @@ class RUN:
         self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = 400
 
+        IsCollideFloor(self, 1, 230)
+        IsCollideFloor(self, 2, 230)
+
     def draw(self):
         self.image.clip_composite_draw(self.move_type[0], self.move_type[1], self.move_type[2], self.move_type[3],
                                             self.rotate, self.face_dir,
@@ -197,16 +222,8 @@ class Player_JUMP:
             self.dir_y = -1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
 
-        if main_state.collide_floor(server.player_character, server.stage_floor[0]):
-            self.dir_y = 0
-            self.y = 130
-            self.jump = False
-            self.cur_state.exit(self, NULL)
-            try:
-                self.cur_state = next_state[RUN][NULL]
-            except KeyError:
-                print('Error', self.cur_state.__name__, ' ', "None")
-            self.cur_state.enter(self, NULL)
+        IsCollideFloor(self, 1, 230)
+        IsCollideFloor(self, 2, 230)
 
     @staticmethod
     def draw(self):
@@ -295,6 +312,9 @@ class ATTACK:
             except KeyError:
                 print('Error', self.cur_state.__name__, ' ', "None")
             self.cur_state.enter(self, NULL)
+
+        IsCollideFloor(self, 1, 230)
+        IsCollideFloor(self, 2, 230)
 
     @staticmethod
     def draw(self):
@@ -516,6 +536,7 @@ class Knuckles(Character):
 
     def draw(self):
         self.cur_state.draw(self)
+        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20

@@ -52,9 +52,10 @@ class Palmfloor(Map):
     def draw(self):
         for i in range(self.draw_limit):
             self.image_floor.clip_draw(0, 0, 40, 40, self.x + i * 40, self.y)
+        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - 20, self.y - 15, self.x + self.draw_limit * 40 - 20, self.y + 15
+        return self.x - 20, self.y - 20, self.x + self.draw_limit * 40 - 20, self.y + 10
 
 
 class Lake(Map):
