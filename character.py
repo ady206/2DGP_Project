@@ -197,16 +197,16 @@ class Player_JUMP:
             self.dir_y = -1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
 
-        for floors in server.stage_floor:
-            if main_state.collide(server.player_character, floors):
-                self.dir_y = 0
-                self.jump = False
-                self.cur_state.exit(self, NULL)
-                try:
-                    self.cur_state = next_state[RUN][NULL]
-                except KeyError:
-                    print('Error', self.cur_state.__name__, ' ', "None")
-                self.cur_state.enter(self, NULL)
+        if main_state.collide_floor(server.player_character, server.stage_floor[0]):
+            self.dir_y = 0
+            self.y = 130
+            self.jump = False
+            self.cur_state.exit(self, NULL)
+            try:
+                self.cur_state = next_state[RUN][NULL]
+            except KeyError:
+                print('Error', self.cur_state.__name__, ' ', "None")
+            self.cur_state.enter(self, NULL)
 
     @staticmethod
     def draw(self):
@@ -267,6 +267,12 @@ class ATTACK:
                 if main_state.collide(self, in_character):
                     if in_character.hit == False:
                         in_character.hp -= 5
+                        if move_dir[0] == False and move_dir[1] == False:
+                            in_character.x += 15
+                        if move_dir[0] == True and move_dir[1] == False:
+                            in_character.x += 15
+                        if move_dir[1] == True and move_dir[0] == False:
+                            in_character.x -= 15
                     in_character.hit = True
 
                     if in_character.hp <= 0:
@@ -289,6 +295,7 @@ class ATTACK:
             except KeyError:
                 print('Error', self.cur_state.__name__, ' ', "None")
             self.cur_state.enter(self, NULL)
+
     @staticmethod
     def draw(self):
         self.image.clip_composite_draw(self.attack_type[0],self.attack_type[1],self.attack_type[2],self.attack_type[3],
