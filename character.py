@@ -184,10 +184,10 @@ class Player_JUMP:
         if event == JUMP:
             if self.jump == False:
                 set_time = time()
+                self.jump_sound.set_volume(10)
+                self.jump_sound.play(1)
             self.jump = True
             self.jump_frame = 0
-            self.jump_sound.set_volume(10)
-            self.jump_sound.play(1)
 
         if event == RD:
             move_dir[0] = True
@@ -289,11 +289,12 @@ class ATTACK:
 
         cur_time = time()
 
+        global human
         if cur_time < set_time + self.TIMER_PER_ACTION[3]:
             for in_character in server.computer_character:
                 if main_state.collide(self, in_character):
                     if in_character.hit == False:
-                        in_character.hp -= 5
+                        in_character.hp -= self.damage
                         if move_dir[0] == False and move_dir[1] == False:
                             in_character.x += 15
                         if move_dir[0] == True and move_dir[1] == False:
@@ -308,7 +309,7 @@ class ATTACK:
 
                         RandomCharacter()
                         game_world.add_object(server.computer_character[2], 1)
-                        server.computer_character[2].x = server.stage.x + randint(-300, 300)
+                        server.computer_character[2].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
         else:
             self.attack = False
             for in_character in server.computer_character:
@@ -474,7 +475,8 @@ class Sonic(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -511,7 +513,8 @@ class Tales(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -587,7 +590,8 @@ class AmyRose(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -624,7 +628,8 @@ class Tikal(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -661,7 +666,8 @@ class Rouge(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -698,7 +704,8 @@ class Shadow(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -737,7 +744,8 @@ class Silver(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -774,7 +782,8 @@ class Blaze(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -811,7 +820,8 @@ class Espio(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -848,7 +858,8 @@ class Mighty(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -890,7 +901,8 @@ class SuperSonic(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
@@ -927,7 +939,8 @@ class SuperShadow(Character):
         self.cur_state.draw(self)
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass

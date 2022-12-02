@@ -121,9 +121,8 @@ def enter():
     game_world.add_collision_group(server.player_character, server.stage_floor, 'computer_character:stage_floor')
 
     server.player_character.x = server.stage.w // 2
-    server.computer_character[0].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
-    server.computer_character[1].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
-    server.computer_character[2].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
+    for i in range(3):
+        server.computer_character[i].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
 
 def exit():
     global sound
@@ -142,6 +141,9 @@ def update():
         result_state.win = False
         game_framework.change_state(result_state)
     if server.player_character.hp <= 0:
+        result_state.win = False
+        game_framework.change_state(result_state)
+    if server.player_character.y < -40:
         result_state.win = False
         game_framework.change_state(result_state)
 
@@ -216,13 +218,3 @@ def collide_floor(a, b):
     if bottom_a > top_b - 1: return False
 
     return True
-
-def test_self():
-    import sys
-    this_module = sys.modules['__main__']
-    open_canvas()
-    game_framework.run(this_module)
-    close_canvas()
-
-if __name__ == '__main__': # 만약 단독 실행 상태이면
-    test_self()

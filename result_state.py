@@ -22,13 +22,11 @@ def enter():
     global image, sound
     if win == False:
         image = load_image('map/middle defeat.png')
-        sound = load_wav('sound/SE_Child_Cry.wav')
     else:
         image = load_image('map/middle win.png')
         sound = load_wav('sound/SE_Cheer.wav')
-
-    sound.set_volume(20)
-    sound.play()
+        sound.set_volume(20)
+        sound.play()
     pass
 
 def exit():
