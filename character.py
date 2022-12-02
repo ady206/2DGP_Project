@@ -88,7 +88,9 @@ def RunCollideFloor(a, floor_number, high):
     else:
         a.dir_y = -1
         a.y += a.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
-        IsCollideFloor(a, 0, 130)
+        if main_state.collide(server.player_character, server.stage_floor[0]):
+            a.dir_y = 0
+            a.y = 130
 
 ##############################################################################################################
 
@@ -162,15 +164,16 @@ class RUN:
     def do(self):
         self.move_type[0] = self.move_size
         self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
-        self.x = 400
+        self.x = clamp(0, self.x, server.stage.w - 1)
 
         RunCollideFloor(self, 1, 230)
         RunCollideFloor(self, 2, 230)
 
     def draw(self):
+        sx = server.stage.canvas_width // 2
         self.image.clip_composite_draw(self.move_type[0], self.move_type[1], self.move_type[2], self.move_type[3],
                                             self.rotate, self.face_dir,
-                                            self.x, self.y, self.move_type[4], self.move_type[5])
+                                            sx, self.y, self.move_type[4], self.move_type[5])
 
 class Player_JUMP:
     global move_dir, JUMP_SPEED_PPS
@@ -312,6 +315,9 @@ class ATTACK:
                 print('Error', self.cur_state.__name__, ' ', "None")
             self.cur_state.enter(self, NULL)
 
+        RunCollideFloor(self, 1, 230)
+        RunCollideFloor(self, 2, 230)
+
     @staticmethod
     def draw(self):
         self.image.clip_composite_draw(self.attack_type[0],self.attack_type[1],self.attack_type[2],self.attack_type[3],
@@ -378,7 +384,7 @@ class Character:
         self.kick_sound = load_wav('sound/05_kickback.wav')
         self.jump_sound = load_wav('sound/03_jump.wav')
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = 400, 130
+        self.x, self.y = 2016, 130
 
         self.event_que = []
         self.cur_state = IDLE
@@ -532,7 +538,6 @@ class Knuckles(Character):
 
     def draw(self):
         self.cur_state.draw(self)
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
@@ -815,10 +820,10 @@ class Mighty(Character):
         self.FRAMES_PER_ACTION = [5, 9, 6, 3]
         self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
 
-        self.idle_type = [0, 2920, 30, 40, 32, 40]
-        self.move_type = [0, 2670, 35, 40, 35, 40]
-        self.jump_type = [0, 2830, 30, 40, 30, 40]
-        self.attack_type = [0, 2220, 35, 40, 35, 40]
+        self.idle_type = [0, 2920, 30, 40, 36, 40]
+        self.move_type = [0, 2670, 35, 40, 40, 40]
+        self.jump_type = [0, 2830, 30, 40, 35, 40]
+        self.attack_type = [0, 2220, 35, 40, 38, 40]
 
     def update(self):
         super(Mighty, self).update()

@@ -98,7 +98,7 @@ def enter():
     global stage_count, sound, set_stage_time
     set_stage_time = time()
 
-    server.stage = Palm(server.player_character.x, 300)
+    server.stage = Palm()
     AppendPalmFloor()
 
     character.human = False
@@ -120,10 +120,10 @@ def enter():
     game_world.add_collision_group(server.player_character, server.stage_floor, 'player_character:stage_floor')
     game_world.add_collision_group(server.player_character, server.stage_floor, 'computer_character:stage_floor')
 
-    server.player_character.x = 400
-    server.computer_character[0].x = randint(100, 700)
-    server.computer_character[1].x = randint(100, 700)
-    server.computer_character[2].x = randint(100, 700)
+    server.player_character.x = server.stage.w // 2
+    server.computer_character[0].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
+    server.computer_character[1].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
+    server.computer_character[2].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
 
 def exit():
     global sound
@@ -145,17 +145,6 @@ def update():
         result_state.win = False
         game_framework.change_state(result_state)
 
-    distance_x = server.player_character.dir_x * character.RUN_SPEED_PPS * game_framework.frame_time
-    server.stage.x -= distance_x
-    for i in server.stage_floor:
-        i.x -= distance_x
-
-    if len(server.computer_character) >= 3:
-        for i in range(3):
-            server.computer_character[i].x -= distance_x
-    else:
-        for i in server.computer_character:
-            i.x -= distance_x
 
 def draw_world():
     global stage_time
@@ -167,20 +156,9 @@ def draw_world():
     drawHp(server.player_character.hp, 150, 50)
     drawIcon(server.player_character, 70, 50)
 
-    if len(server.computer_character) >= 3:
-        for i in range(3):
-            drawHp(server.computer_character[i].hp, 350 + (i * 200), 50)
-            drawIcon(server.computer_character[i], 270 + (i * 200), 50)
-
-    if len(server.computer_character) == 2:
-        for i in range(1):
-            drawHp(server.computer_character[i].hp, 350 + (i * 200), 50)
-            drawIcon(server.computer_character[i], 270 + (i * 200), 50)
-
-    if len(server.computer_character) == 1:
-        for i in range(1):
-            drawHp(server.computer_character[i].hp, 350 + (i * 200), 50)
-            drawIcon(server.computer_character[i], 270 + (i * 200), 50)
+    for i in range(3):
+        drawHp(server.computer_character[i].hp, 350 + (i * 200), 50)
+        drawIcon(server.computer_character[i], 270 + (i * 200), 50)
 
 def draw():
     clear_canvas()

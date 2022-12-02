@@ -63,6 +63,7 @@ def handle_events():
             if go == True:
                 if 620 <= x <= 800 and 0 <= y <= 180:
                     game_framework.change_state(middle_state)
+
 def enter():
     global image, sound
     image = load_image('map/ready.png')
