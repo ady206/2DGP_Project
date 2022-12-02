@@ -8,9 +8,9 @@ def AppendFloor(c, x, y, limit):
     server.stage_floor.append(c(x, y, limit))
 
 def AppendPalmFloor():
-    AppendFloor(Palmfloor, 2016 - 380, 100, 20)
-    AppendFloor(Palmfloor, 2016 - 380, 200, 5)
-    AppendFloor(Palmfloor, 2016 - 20, 200, 5)
+    AppendFloor(Palmfloor, 2016 - 380, 80, 20)
+    AppendFloor(Palmfloor, 2016 - 380, 180, 5)
+    AppendFloor(Palmfloor, 2016 - 20, 180, 5)
 
 def AppendSpaceFloor():
     AppendFloor(Spacefloor, server.player_character.x - 15, 100, 1)
@@ -53,12 +53,14 @@ class Palmfloor(Map):
         pass
 
     def draw(self):
-        sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom
         for i in range(self.draw_limit):
-            self.image_floor.clip_draw_to_origin(0, 0, 40, 40, sx, sy)
+            self.image_floor.clip_draw_to_origin(0, 0, 40, 40, sx + i * 40, sy)
+        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - 20, self.y + 9, self.x + self.draw_limit * 40 - 20, self.y + 10
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom
+        return sx, sy + 39, sx + self.draw_limit * 40 , sy + 40
 
 class Lake(Map):
     def __init__(self, x, y):

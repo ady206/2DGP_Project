@@ -71,7 +71,7 @@ def RandomCharacter():
             server.computer_character.append(SuperShadow())
 
 def IsCollideFloor(a, floor_number, high):
-    if main_state.collide(server.player_character, server.stage_floor[floor_number]):
+    if main_state.collide_floor(server.player_character, server.stage_floor[floor_number]):
         a.dir_y = 0
         a.y = high
         a.jump = False
@@ -90,7 +90,7 @@ def RunCollideFloor(a, floor_number, high):
         a.y += a.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
         if main_state.collide(server.player_character, server.stage_floor[0]):
             a.dir_y = 0
-            a.y = 130
+            a.y = 140
 
 ##############################################################################################################
 
@@ -127,9 +127,10 @@ class IDLE:
         self.idle_type[0] = self.idle_size
 
     def draw(self):
+        sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
         self.image.clip_composite_draw(self.idle_type[0],self.idle_type[1],self.idle_type[2],self.idle_type[3],
                                             self.rotate, self.face_dir,
-                                            self.x, self.y, self.idle_type[4], self.idle_type[5])
+                                            sx, sy, self.idle_type[4], self.idle_type[5])
 
 class RUN:
     global move_dir, RUN_SPEED_PPS
@@ -166,11 +167,11 @@ class RUN:
         self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, server.stage.w - 1)
 
-        RunCollideFloor(self, 1, 230)
-        RunCollideFloor(self, 2, 230)
+        RunCollideFloor(self, 1, 240)
+        RunCollideFloor(self, 2, 240)
 
     def draw(self):
-        sx = server.stage.canvas_width // 2
+        sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
         self.image.clip_composite_draw(self.move_type[0], self.move_type[1], self.move_type[2], self.move_type[3],
                                             self.rotate, self.face_dir,
                                             sx, self.y, self.move_type[4], self.move_type[5])
@@ -215,6 +216,9 @@ class Player_JUMP:
         global cur_time, set_time
         self.jump_type[0] = self.jump_size
 
+        self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
+        self.x = clamp(0, self.x, server.stage.w - 1)
+
         cur_time = time()
         if cur_time < set_time + (self.TIMER_PER_ACTION[2] / 2):
             self.dir_y = 1
@@ -223,15 +227,16 @@ class Player_JUMP:
             self.dir_y = -1
             self.y += self.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
 
-        IsCollideFloor(self, 0, 130)
-        IsCollideFloor(self, 1, 230)
-        IsCollideFloor(self, 2, 230)
+        IsCollideFloor(self, 0, 140)
+        IsCollideFloor(self, 1, 240)
+        IsCollideFloor(self, 2, 240)
 
     @staticmethod
     def draw(self):
+        sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
         self.image.clip_composite_draw(self.jump_type[0], self.jump_type[1], self.jump_type[2], self.jump_type[3],
                                        self.rotate, self.face_dir,
-                                       self.x, self.y, self.jump_type[4], self.jump_type[5])
+                                       sx,sy, self.jump_type[4], self.jump_type[5])
 
 class ATTACK:
     @staticmethod
@@ -279,6 +284,9 @@ class ATTACK:
         global cur_time, set_time
         self.attack_type[0] = self.attack_size
 
+        self.x += self.dir_x * RUN_SPEED_PPS * game_framework.frame_time
+        self.x = clamp(0, self.x, server.stage.w - 1)
+
         cur_time = time()
 
         if cur_time < set_time + self.TIMER_PER_ACTION[3]:
@@ -315,14 +323,15 @@ class ATTACK:
                 print('Error', self.cur_state.__name__, ' ', "None")
             self.cur_state.enter(self, NULL)
 
-        RunCollideFloor(self, 1, 230)
-        RunCollideFloor(self, 2, 230)
+        RunCollideFloor(self, 1, 240)
+        RunCollideFloor(self, 2, 240)
 
     @staticmethod
     def draw(self):
+        sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
         self.image.clip_composite_draw(self.attack_type[0],self.attack_type[1],self.attack_type[2],self.attack_type[3],
                                        self.rotate, self.face_dir,
-                                       self.x, self.y, self.attack_type[4], self.attack_type[5])
+                                       sx, sy, self.attack_type[4], self.attack_type[5])
 
 next_state = {
     IDLE:  {RU: IDLE, RD: RUN,
@@ -374,7 +383,6 @@ class Character:
         self.hit = False
         self.attack_count = 0
         self.damage = 50
-        self.jump_high = 130
         self.jump = False
 
         self.face_dir = 'None'  # 이미지 반전
@@ -384,7 +392,7 @@ class Character:
         self.kick_sound = load_wav('sound/05_kickback.wav')
         self.jump_sound = load_wav('sound/03_jump.wav')
         self.dir_x, self.dir_y = 0, 0
-        self.x, self.y = 2016, 130
+        self.x, self.y = 2016, 140
 
         self.event_que = []
         self.cur_state = IDLE
@@ -538,9 +546,11 @@ class Knuckles(Character):
 
     def draw(self):
         self.cur_state.draw(self)
+        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20
+        return sx, sy, sx + 40, sy + 40
 
     def handle_collision(self, other, group):
         pass
