@@ -7,6 +7,7 @@ from time import *
 
 import main_state
 import server
+from BehaviorTree import BehaviorTree, SelectorNode, SequenceNode, LeafNode
 
 list = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
@@ -443,6 +444,32 @@ class Character:
             if server.stage_floor.y + 15 > self.y - 20:
                 self.y = server.stage_floor.y + 35
 
+    def find_player(self):
+        distance = (server.player_character.x - self.x) ** 2 + (server.player_character.y - self.y) ** 2
+        if distance < (PIXEL_PER_METER * 10) ** 2:
+            return BehaviorTree.SUCCESS
+        else:
+            self.speed = 0
+        return BehaviorTree.FAIL
+        pass
+
+    def move_to_player(self):
+        self.speed = RUN_SPEED_PPS
+        self.dir = math.atan2(server.player_character.y - self.y, server.player_character.x - self.x)
+        return BehaviorTree.SUCCESS
+
+        pass
+
+    def build_behavior_tree(self):
+        find_player_node = LeafNode("Find Player", self.find_player)
+        move_to_player_node = LeafNode("Move to Player", self.move_to_player)
+
+        chase_node = SequenceNode("Chase")
+        chase_node.add_children(find_player_node, move_to_player_node)
+
+        self.bt = BehaviorTree(chase_node)
+        pass
+
 class Sonic(Character):
     image = None
     icon_image = None
@@ -481,6 +508,16 @@ class Sonic(Character):
     def handle_collision(self, other, group):
         pass
 
+    def find_player(self):
+        super(Sonic, self).find_player()
+
+    def move_to_player(self):
+        super(Sonic, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Sonic, self).build_behavior_tree()
+
+
 class Tales(Character):
     image = None
     icon_image = None
@@ -518,6 +555,15 @@ class Tales(Character):
 
     def handle_collision(self, other, group):
         pass
+
+    def find_player(self):
+        super(Tales, self).find_player()
+
+    def move_to_player(self):
+        super(Tales, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Tales, self).build_behavior_tree()
 
 class Knuckles(Character):
     image = None
@@ -558,6 +604,16 @@ class Knuckles(Character):
     def handle_collision(self, other, group):
         pass
 
+    def find_player(self):
+        super(Knuckles, self).find_player()
+
+    def move_to_player(self):
+        super(Knuckles, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Knuckles, self).build_behavior_tree()
+
+
 class AmyRose(Character):
     image = None
     icon_image = None
@@ -595,6 +651,16 @@ class AmyRose(Character):
 
     def handle_collision(self, other, group):
         pass
+
+    def find_player(self):
+        super(AmyRose, self).find_player()
+
+    def move_to_player(self):
+        super(AmyRose, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(AmyRose, self).build_behavior_tree()
+
 
 class Tikal(Character):
     image = None
@@ -634,6 +700,16 @@ class Tikal(Character):
     def handle_collision(self, other, group):
         pass
 
+    def find_player(self):
+        super(Tikal, self).find_player()
+
+    def move_to_player(self):
+        super(Tikal, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Tikal, self).build_behavior_tree()
+
+
 class Rouge(Character):
     image = None
     icon_image = None
@@ -672,6 +748,16 @@ class Rouge(Character):
     def handle_collision(self, other, group):
         pass
 
+    def find_player(self):
+        super(Rouge, self).find_player()
+
+    def move_to_player(self):
+        super(Rouge, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Rouge, self).build_behavior_tree()
+
+
 class Shadow(Character):
     image = None
     icon_image = None
@@ -709,6 +795,16 @@ class Shadow(Character):
 
     def handle_collision(self, other, group):
         pass
+
+    def find_player(self):
+        super(Shadow, self).find_player()
+
+    def move_to_player(self):
+        super(Shadow, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Shadow, self).build_behavior_tree()
+
 
 ##############################################################################################################
 
@@ -750,6 +846,16 @@ class Silver(Character):
     def handle_collision(self, other, group):
         pass
 
+    def find_player(self):
+        super(Silver, self).find_player()
+
+    def move_to_player(self):
+        super(Silver, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Silver, self).build_behavior_tree()
+
+
 class Blaze(Character):
     image = None
     icon_image = None
@@ -787,6 +893,16 @@ class Blaze(Character):
 
     def handle_collision(self, other, group):
         pass
+
+    def find_player(self):
+        super(Blaze, self).find_player()
+
+    def move_to_player(self):
+        super(Blaze, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Blaze, self).build_behavior_tree()
+
 
 class Espio(Character):
     image = None
@@ -826,6 +942,16 @@ class Espio(Character):
     def handle_collision(self, other, group):
         pass
 
+    def find_player(self):
+        super(Espio, self).find_player()
+
+    def move_to_player(self):
+        super(Espio, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Espio, self).build_behavior_tree()
+
+
 class Mighty(Character):
     image = None
     icon_image = None
@@ -863,6 +989,16 @@ class Mighty(Character):
 
     def handle_collision(self, other, group):
         pass
+
+    def find_player(self):
+        super(Mighty, self).find_player()
+
+    def move_to_player(self):
+        super(Mighty, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(Mighty, self).build_behavior_tree()
+
 
 class SuperSonic(Character):
     image = None
@@ -907,6 +1043,16 @@ class SuperSonic(Character):
     def handle_collision(self, other, group):
         pass
 
+    def find_player(self):
+        super(SuperSonic, self).find_player()
+
+    def move_to_player(self):
+        super(SuperSonic, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(SuperSonic, self).build_behavior_tree()
+
+
 class SuperShadow(Character):
     image = None
     icon_image = None
@@ -944,3 +1090,12 @@ class SuperShadow(Character):
 
     def handle_collision(self, other, group):
         pass
+
+    def find_player(self):
+        super(SuperShadow, self).find_player()
+
+    def move_to_player(self):
+        super(SuperShadow, self).move_to_player()
+
+    def build_behavior_tree(self):
+        super(SuperShadow, self).build_behavior_tree()

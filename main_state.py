@@ -132,6 +132,9 @@ def update():
     global set_stage_time, cur_stage_time, timer, stage_time
     for game_object in game_world.all_objects():
         game_object.update()
+    for in_character in server.computer_character:
+        in_character.build_behavior_tree()
+        in_character.bt.run()
 
     cur_stage_time = time()
     timer = cur_stage_time - set_stage_time
