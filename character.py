@@ -473,7 +473,7 @@ class Character:
         self.attack = False
         self.hit = False
         self.attack_count = 0
-        self.damage = 100
+        self.damage = 10
         self.jump = False
 
         self.face_dir = 'None'  # 이미지 반전

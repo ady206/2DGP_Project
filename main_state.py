@@ -142,7 +142,7 @@ def update():
 
     cur_stage_time = time()
     timer = cur_stage_time - set_stage_time
-    stage_time = 600 - timer
+    stage_time = 300 - timer
 
     global hit_time, hit_delay_time
 
@@ -151,7 +151,7 @@ def update():
         in_character.y += in_character.speed * math.sin(in_character.dir) * game_framework.frame_time
         in_character.x = clamp(server.stage.w // 2 - 400, in_character.x, server.stage.w // 2 + 400)
 
-        in_character.damage = 4
+        in_character.damage = 5
         if 0 <= stage_time % 3 <= in_character.TIMER_PER_ACTION[3]:
             in_character.cur_state = character.COMATTACK
             if collide(in_character, server.player_character):
@@ -216,9 +216,14 @@ def pause():
     server.player_character.cur_state.enter(server.player_character, character.NULL)
     game_world.clear()
     server.stage = None
+    server.computer_character.clear()
     server.stage_floor.clear()
     server.prepare_list.clear()
 
+    character.human = False
+    for i in range (3):
+        character.RandomCharacter(server.player_character, server.computer_character)
+        server.computer_character[i].hp = 100
     character.Prepare()
     game_world.add_object(server.player_character, 2)
     for i in range(3):
