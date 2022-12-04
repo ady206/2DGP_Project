@@ -59,7 +59,7 @@ def handle_events():
                         server.player_character = character.SuperShadow()
                     if 665 <= x < 770:
                         character.human = True
-                        character.RandomCharacter()
+                        character.RandomCharacter(server.player_character, server.computer_character)
             if go == True:
                 if 620 <= x <= 800 and 0 <= y <= 180:
                     game_framework.change_state(middle_state)

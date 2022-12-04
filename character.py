@@ -5,6 +5,7 @@ import game_framework
 from random import *
 from time import *
 
+import math
 import main_state
 import server
 from BehaviorTree import BehaviorTree, SelectorNode, SequenceNode, LeafNode
@@ -13,66 +14,72 @@ list = ['Sonic', 'Tales', 'Knuckles', 'AmyRose', 'Tikal', 'Rouge', 'Shadow',
              'Silver', 'Blaze', 'Espio', 'Mighty', 'Super Sonic', 'Super Shadow']
 human = False
 
-def RandomCharacter():
+def RandomCharacter(a, b):
     global human
     rc = choice(list)
     if human == True:
         if rc == 'Sonic':
-            server.player_character = Sonic()
+            a = Sonic()
         elif rc == 'Tales':
-            server.player_character = Tales()
+            a = Tales()
         elif rc == 'Knuckles':
-            server.player_character = Knuckles()
+            a = Knuckles()
         elif rc == 'AmyRose':
-            server.player_character = AmyRose()
+            a = AmyRose()
         elif rc == 'Tikal':
-            server.player_character = Tikal()
+            a = Tikal()
         elif rc == 'Rouge':
-            server.player_character = Rouge()
+            a = Rouge()
         elif rc == 'Shadow':
-            server.player_character = Shadow()
+            a = Shadow()
         elif rc == 'Silver':
-            server.player_character = Silver()
+            a = Silver()
         elif rc == 'Blaze':
-            server.player_character = Blaze()
+            a = Blaze()
         elif rc == 'Espio':
-            server.player_character = Espio()
+            a = Espio()
         elif rc == 'Mighty':
-            server.player_character = Mighty()
+            a = Mighty()
         elif rc == 'Super Sonic':
-            server.player_character = SuperSonic()
+            a = SuperSonic()
         elif rc == 'Super Shadow':
-            server.player_character = SuperShadow()
+            a = SuperShadow()
     else:
         if rc == 'Sonic':
-            server.computer_character.append(Sonic())
+            b.append(Sonic())
         elif rc == 'Tales':
-            server.computer_character.append(Tales())
+            b.append(Tales())
         elif rc == 'Knuckles':
-            server.computer_character.append(Knuckles())
+            b.append(Knuckles())
         elif rc == 'AmyRose':
-            server.computer_character.append(AmyRose())
+            b.append(AmyRose())
         elif rc == 'Tikal':
-            server.computer_character.append(Tikal())
+            b.append(Tikal())
         elif rc == 'Rouge':
-            server.computer_character.append(Rouge())
+            b.append(Rouge())
         elif rc == 'Shadow':
-            server.computer_character.append(Shadow())
+            b.append(Shadow())
         elif rc == 'Silver':
-            server.computer_character.append(Silver())
+            b.append(Silver())
         elif rc == 'Blaze':
-            server.computer_character.append(Blaze())
+            b.append(Blaze())
         elif rc == 'Espio':
-            server.computer_character.append(Espio())
+            b.append(Espio())
         elif rc == 'Mighty':
-            server.computer_character.append(Mighty())
+            b.append(Mighty())
         elif rc == 'Super Sonic':
-            server.computer_character.append(SuperSonic())
+            b.append(SuperSonic())
         elif rc == 'Super Shadow':
-            server.computer_character.append(SuperShadow())
+            b.append(SuperShadow())
+
+def Prepare():
+    global human
+    human = False
+    for i in range(10):
+        RandomCharacter(server.player_character, server.prepare_list)
 
 def IsCollideFloor(a, floor_number, high):
-    if main_state.collide_floor(server.player_character, server.stage_floor[floor_number]):
+    if main_state.collide(a, server.stage_floor[floor_number]):
         a.dir_y = 0
         a.y = high
         a.jump = False
@@ -84,12 +91,12 @@ def IsCollideFloor(a, floor_number, high):
         a.cur_state.enter(a, NULL)
 
 def RunCollideFloor(a, floor_number, high):
-    if main_state.collide(server.player_character, server.stage_floor[floor_number]):
+    if main_state.collide(a, server.stage_floor[floor_number]):
         a.y = high
     else:
         a.dir_y = -1
         a.y += a.dir_y * JUMP_SPEED_PPS * game_framework.frame_time
-        if main_state.collide(server.player_character, server.stage_floor[0]):
+        if a.y <= 140 and server.stage.w // 2 - 400 <= a.x <= server.stage.w // 2 + 400:
             a.dir_y = 0
             a.y = 140
 
@@ -126,6 +133,9 @@ class IDLE:
 
     def do(self):
         self.idle_type[0] = self.idle_size
+
+        RunCollideFloor(self, 1, 240)
+        RunCollideFloor(self, 2, 240)
 
     def draw(self):
         sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
@@ -308,9 +318,13 @@ class ATTACK:
                         server.computer_character.remove(in_character)
                         game_world.remove_object(in_character)
 
-                        RandomCharacter()
+                        new = server.prepare_list.pop()
+                        server.computer_character.append(new)
                         game_world.add_object(server.computer_character[2], 1)
                         server.computer_character[2].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
+
+                        server.cleared += 1
+
         else:
             self.attack = False
             for in_character in server.computer_character:
@@ -357,6 +371,10 @@ RUN_SPEED_KPH = 20.0 # 마라토너의 평속
 RUN_SPEED_MPS = RUN_SPEED_KPH * 1000.0 / 3600.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
+COM_RUN_SPEED_KPH = 8.0 # 마라토너의 평속
+COM_RUN_SPEED_MPS = COM_RUN_SPEED_KPH * 1000.0 / 3600.0
+COM_RUN_SPEED_PPS = COM_RUN_SPEED_MPS * PIXEL_PER_METER
+
 JUMP_SPEED_MPS = 20.0
 PIXEL_PER_JUMP_METER = 10.0 / 0.5
 JUMP_SPEED_PPS = JUMP_SPEED_MPS * PIXEL_PER_JUMP_METER
@@ -366,7 +384,7 @@ JUMP_SPEED_PPS = JUMP_SPEED_MPS * PIXEL_PER_JUMP_METER
 class Character:
     def __init__(self):
         self.hp = 100
-        self.speed = 1.2
+        self.speed = 0
 
         self.idle_frame = 0
         self.move_frame = 0
@@ -394,11 +412,13 @@ class Character:
         self.kick_sound = load_wav('sound/05_kickback.wav')
         self.jump_sound = load_wav('sound/03_jump.wav')
         self.dir_x, self.dir_y = 0, 0
+        self.dir = 0
         self.x, self.y = 2016, 140
 
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
+        self.build_behavior_tree()
 
     def update(self):
         if self.event_que:
@@ -446,7 +466,7 @@ class Character:
 
     def find_player(self):
         distance = (server.player_character.x - self.x) ** 2 + (server.player_character.y - self.y) ** 2
-        if distance < (PIXEL_PER_METER * 10) ** 2:
+        if distance < (PIXEL_PER_METER * 80) ** 2:
             return BehaviorTree.SUCCESS
         else:
             self.speed = 0
@@ -454,21 +474,41 @@ class Character:
         pass
 
     def move_to_player(self):
-        self.speed = RUN_SPEED_PPS
+        self.speed = COM_RUN_SPEED_PPS
         self.dir = math.atan2(server.player_character.y - self.y, server.player_character.x - self.x)
+
         return BehaviorTree.SUCCESS
 
+        pass
+
+    def attack_player(self):
+        if main_state.collide(self, server.player_character):
+            if server.player_character.hit == False:
+                server.player_character.hp -= self.damage
+                if move_dir[0] == False and move_dir[1] == False:
+                    server.player_character.x += 15
+                if move_dir[0] == True and move_dir[1] == False:
+                    server.player_character.x += 15
+                if move_dir[1] == True and move_dir[0] == False:
+                    server.player_character.x -= 15
+            server.player_character.hit = True
+        return BehaviorTree.SUCCESS
         pass
 
     def build_behavior_tree(self):
         find_player_node = LeafNode("Find Player", self.find_player)
         move_to_player_node = LeafNode("Move to Player", self.move_to_player)
+        attack_player_node = LeafNode("Attack Player", self.attack_player)
 
         chase_node = SequenceNode("Chase")
         chase_node.add_children(find_player_node, move_to_player_node)
 
+        attack_node = SequenceNode("Attack")
+        attack_node.add_children(move_to_player_node, attack_player_node)
+
         self.bt = BehaviorTree(chase_node)
         pass
+
 
 class Sonic(Character):
     image = None
@@ -564,6 +604,7 @@ class Tales(Character):
 
     def build_behavior_tree(self):
         super(Tales, self).build_behavior_tree()
+
 
 class Knuckles(Character):
     image = None

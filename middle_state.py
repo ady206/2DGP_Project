@@ -15,7 +15,6 @@ def handle_events():
                 game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
             if main_state.stage_count == 0:
-                main_state.a = 1
                 game_framework.change_state(main_state)
             else:
                 game_framework.pop_state()
@@ -37,8 +36,7 @@ def enter():
 
 def exit():
     global image, sound
-    image = None
-    del sound
+    del image, sound
     pass
 
 def draw():

@@ -36,7 +36,7 @@ class Palm(Map):
         self.window_bottom = clamp(0, (int)(server.player_character.x) - self.canvas_height // 2, self.h - self.canvas_height - 1)
 
     def draw(self):
-        self.image.clip_draw_to_origin(self.window_left, self.window_bottom, self.canvas_width, self.canvas_height, 0, 0)
+        self.image.clip_draw_to_origin(self.window_left, self.window_bottom, self.canvas_width, self.canvas_height, 0, 2)
 
 class Palmfloor(Map):
     image = None
@@ -56,50 +56,58 @@ class Palmfloor(Map):
         sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom
         for i in range(self.draw_limit):
             self.image_floor.clip_draw_to_origin(0, 0, 40, 40, sx + i * 40, sy)
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom
         return sx, sy + 39, sx + self.draw_limit * 40 , sy + 40
 
 class Lake(Map):
-    def __init__(self, x, y):
+    def __init__(self):
         super(Lake, self).__init__()
         self.image = load_image('map/lake.png')
-        self.x, self.y = x, y
+        self.w = self.image.w
+        self.h = self.image.h
 
     def update(self):
-        pass
+        self.window_left = clamp(0, (int)(server.player_character.x) - self.canvas_width // 2, self.w - self.canvas_width - 1)
+        self.window_bottom = clamp(0, (int)(server.player_character.x) - self.canvas_height // 2, self.h - self.canvas_height - 1)
 
     def draw(self):
-        self.image.clip_draw(0, 160, 2500, 640, self.x, self.y - 20)
+        self.image.clip_draw_to_origin(self.window_left, self.window_bottom, self.canvas_width, self.canvas_height, 0, 0)
 
 class Space(Map):
-    def __init__(self, x, y):
+    def __init__(self):
         super(Space, self).__init__()
         self.image = load_image('map/space.png')
-        self.x, self.y = x, y
+        self.w = self.image.w
+        self.h = self.image.h
 
     def update(self):
-        pass
+        self.window_left = clamp(0, (int)(server.player_character.x) - self.canvas_width // 2, self.w - self.canvas_width - 1)
+        self.window_bottom = clamp(0, (int)(server.player_character.x) - self.canvas_height // 2, self.h - self.canvas_height - 1)
 
     def draw(self):
-        self.image.clip_draw(0, 160, 2500, 640, self.x, self.y - 20)
+        self.image.clip_draw_to_origin(self.window_left, self.window_bottom, self.canvas_width, self.canvas_height, 0, 0)
 
 class Spacefloor(Map):
     image = None
     def __init__(self, x, y, draw_limit):
-        super(Spacefloor, self).__init__(x, y)
+        super(Spacefloor, self).__init__()
         if Spacefloor.image == None:
             self.image_floor = load_image('map/space floor.png')
         self.draw_limit = draw_limit
+        self.x, self.y = x, y
+        self.w = self.image_floor.w
+        self.h = self.image_floor.h
 
     def update(self):
         pass
 
     def draw(self):
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom
         for i in range(self.draw_limit):
             self.image_floor.clip_draw(33, 0, 30, 30, self.x + i * 30, self.y)
 
     def get_bb(self):
-        return self.x - 20, self.y + 9, self.x + self.draw_limit * 40 - 20, self.y + 10
+        sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom
+        return sx, sy + 39, sx + self.draw_limit * 40 , sy + 40

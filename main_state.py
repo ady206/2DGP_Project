@@ -20,12 +20,6 @@ def handle_events():
             game_framework.quit()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.quit()
-        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RETURN):
-            if(stage_count >= 2):
-                result_state.win = True
-                game_framework.change_state(result_state)
-            else:
-                game_framework.push_state(middle_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_F8):
             sound_on = ~sound_on
             if sound_on == True:
@@ -33,6 +27,12 @@ def handle_events():
             else: sound.stop()
         else:
             server. player_character.handle_event(event)
+
+def Count(a, x, y):
+    if 0 <= a % 10 <= 4:
+        server.stage.timer_image.clip_composite_draw(39 * (a % 10), 36, 26, 22, 0, ' ', x, y, 30, 30)
+    if 5 <= a % 10 <= 9:
+        server.stage.timer_image.clip_composite_draw(39 * ((a % 10) - 5), 0, 26, 22, 0, ' ', x, y, 30, 30)
 
 def drawTimer(a, b):
     size = 30
@@ -103,7 +103,8 @@ def enter():
 
     character.human = False
     for i in range (3):
-        character.RandomCharacter()
+        character.RandomCharacter(server.player_character, server.computer_character)
+    character.Prepare()
 
     sound = load_music('sound/Tropical.mp3')
     sound.set_volume(20)
@@ -124,6 +125,9 @@ def enter():
     for i in range(3):
         server.computer_character[i].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
 
+    for in_character in server.computer_character:
+        in_character.build_behavior_tree()
+
 def exit():
     global sound
     del sound
@@ -132,24 +136,36 @@ def update():
     global set_stage_time, cur_stage_time, timer, stage_time
     for game_object in game_world.all_objects():
         game_object.update()
-    for in_character in server.computer_character:
-        in_character.build_behavior_tree()
-        in_character.bt.run()
 
     cur_stage_time = time()
     timer = cur_stage_time - set_stage_time
     stage_time = 600 - timer
 
-    if timer >= 600:
+    for in_character in server.computer_character:
+        in_character.x += in_character.speed * math.cos(in_character.dir) * game_framework.frame_time
+        in_character.y += in_character.speed * math.sin(in_character.dir) * game_framework.frame_time
+        in_character.x = clamp(server.stage.w // 2 - 400, in_character.x, server.stage.w // 2 + 400)
+        in_character.bt.run()
+
+
+
+    if stage_time <= 0:
+        result_state.win = False
+        game_framework.change_state(result_state)
+    if server.player_character.y <= 0:
         result_state.win = False
         game_framework.change_state(result_state)
     if server.player_character.hp <= 0:
         result_state.win = False
         game_framework.change_state(result_state)
-    if server.player_character.y < -40:
-        result_state.win = False
-        game_framework.change_state(result_state)
 
+    if server.cleared >= 10:
+        server.cleared = 0
+        if (stage_count >= 2):
+            result_state.win = True
+            game_framework.change_state(result_state)
+        else:
+            game_framework.push_state(middle_state)
 
 def draw_world():
     global stage_time
@@ -160,7 +176,7 @@ def draw_world():
     drawTimer(tm.tm_min, tm.tm_sec)
     drawHp(server.player_character.hp, 150, 50)
     drawIcon(server.player_character, 70, 50)
-
+    Count(server.cleared, 750, 560)
     for i in range(3):
         drawHp(server.computer_character[i].hp, 350 + (i * 200), 50)
         drawIcon(server.computer_character[i], 270 + (i * 200), 50)
@@ -175,11 +191,13 @@ def pause():
     stage_count += 1
     sound.stop()
     server.stage_floor.clear()
+    server.prepare_list.clear()
 
 def resume():
     global stage_count, sound_on, sound, set_stage_time
+    character.Prepare()
     if stage_count == 1:
-        server.stage = Lake(server.player_character.x, 300)
+        server.stage = Lake()
         sound = load_music('sound/Lake.mp3')
         if sound_on == True:
             sound.set_volume(20)
@@ -187,7 +205,7 @@ def resume():
         else:
             sound.stop()
     if stage_count == 2:
-        server.stage = Space(server.player_character.x, 300)
+        server.stage = Space()
         AppendSpaceFloor()
         sound = load_music('sound/Space.mp3')
         if sound_on ==  True:
@@ -195,7 +213,7 @@ def resume():
             sound.repeat_play()
         else:
             sound.stop()
-    game_world.add_object(stage, 0)
+    game_world.add_object(server.stage, 0)
 
     set_stage_time = time()
     pass
@@ -208,16 +226,5 @@ def collide(a, b):
     if right_a < left_b: return False
     if top_a < bottom_b: return False
     if bottom_a > top_b: return False
-
-    return True
-
-def collide_floor(a, b):
-    left_a, bottom_a, right_a, top_a = a.get_bb()
-    left_b, bottom_b, right_b, top_b = b.get_bb()
-
-    if left_a > right_b: return False
-    if right_a < left_b: return False
-    if top_a < bottom_b - 1: return False
-    if bottom_a > top_b - 1: return False
 
     return True
