@@ -75,7 +75,7 @@ def RandomCharacter(a, b):
 def Prepare():
     global human
     human = False
-    for i in range(10):
+    for i in range(12):
         RandomCharacter(server.player_character, server.prepare_list)
 
 def IsCollideFloor(a, floor_number, high):
@@ -348,6 +348,77 @@ class ATTACK:
         self.image.clip_composite_draw(self.attack_type[0],self.attack_type[1],self.attack_type[2],self.attack_type[3],
                                        self.rotate, self.face_dir,
                                        sx, sy, self.attack_type[4], self.attack_type[5])
+class COMRUN:
+    global move_dir, RUN_SPEED_PPS
+    def enter(self, event):
+        pass
+
+    def exit(self, event):
+        pass
+
+    def do(self):
+        self.move_type[0] = self.move_size
+
+        for in_character in server.computer_character:
+            if server.player_character.x < in_character.x:
+                self.face_dir = 'h'
+            else:
+                self.face_dir = 'None'
+
+        RunCollideFloor(self, 1, 240)
+        RunCollideFloor(self, 2, 240)
+
+    def draw(self):
+        sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
+        self.image.clip_composite_draw(self.move_type[0], self.move_type[1], self.move_type[2], self.move_type[3],
+                                            self.rotate, self.face_dir,
+                                            sx, self.y, self.move_type[4], self.move_type[5])
+class COMATTACK:
+    @staticmethod
+    def enter(self, event):
+        global set_time
+
+        if event == SPACE:
+            if self.attack == False:
+                set_time = time()
+                self.attack = True
+                self.attack_frame = 0
+                self.attack_count += 1
+
+                if self.attack_count % 2 == 0:
+                    self.kick_sound.set_volume(10)
+                    self.kick_sound.play(1)
+                if self.attack_count % 2 == 1:
+                    self.punch_sound.set_volume(10)
+                    self.punch_sound.play(1)
+
+    @staticmethod
+    def exit(self, event):
+        pass
+
+    @staticmethod
+    def do(self):
+        global cur_time, set_time
+        self.attack_type[0] = self.attack_size
+
+        cur_time = time()
+
+        for in_character in server.computer_character:
+            if server.player_character.x < in_character.x:
+                self.face_dir = 'h'
+            else:
+                self.face_dir = 'None'
+
+
+        RunCollideFloor(self, 1, 240)
+        RunCollideFloor(self, 2, 240)
+
+    @staticmethod
+    def draw(self):
+        sx, sy = self.x - server.stage.window_left, self.y - server.stage.window_bottom
+        self.image.clip_composite_draw(self.attack_type[0],self.attack_type[1],self.attack_type[2],self.attack_type[3],
+                                       self.rotate, self.face_dir,
+                                       sx, sy, self.attack_type[4], self.attack_type[5])
 
 next_state = {
     IDLE:  {RU: IDLE, RD: RUN,
@@ -402,7 +473,7 @@ class Character:
         self.attack = False
         self.hit = False
         self.attack_count = 0
-        self.damage = 50
+        self.damage = 100
         self.jump = False
 
         self.face_dir = 'None'  # 이미지 반전
@@ -481,30 +552,12 @@ class Character:
 
         pass
 
-    def attack_player(self):
-        if main_state.collide(self, server.player_character):
-            if server.player_character.hit == False:
-                server.player_character.hp -= self.damage
-                if move_dir[0] == False and move_dir[1] == False:
-                    server.player_character.x += 15
-                if move_dir[0] == True and move_dir[1] == False:
-                    server.player_character.x += 15
-                if move_dir[1] == True and move_dir[0] == False:
-                    server.player_character.x -= 15
-            server.player_character.hit = True
-        return BehaviorTree.SUCCESS
-        pass
-
     def build_behavior_tree(self):
         find_player_node = LeafNode("Find Player", self.find_player)
         move_to_player_node = LeafNode("Move to Player", self.move_to_player)
-        attack_player_node = LeafNode("Attack Player", self.attack_player)
 
         chase_node = SequenceNode("Chase")
         chase_node.add_children(find_player_node, move_to_player_node)
-
-        attack_node = SequenceNode("Attack")
-        attack_node.add_children(move_to_player_node, attack_player_node)
 
         self.bt = BehaviorTree(chase_node)
         pass
@@ -521,12 +574,12 @@ class Sonic(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 0
 
-        self.FRAMES_PER_ACTION = [8, 8, 8, 3]
+        self.FRAMES_PER_ACTION = [8, 8, 3, 3]
         self.TIMER_PER_ACTION = [1, 1, 0.5, 0.4]
 
         self.idle_type = [0, 2285, 30, 40, 30, 40]
         self.move_type = [0, 1830, 40, 40, 40, 40]
-        self.jump_type = [0, 1250, 35, 40, 35, 40]
+        self.jump_type = [0, 1250, 38, 40, 38, 40]
         self.attack_type = [0, 950, 45, 40, 45, 40]
 
     def update(self):
@@ -535,7 +588,7 @@ class Sonic(Character):
 
         self.idle_size = int(self.idle_frame) * 30 + 7
         self.move_size = int(self.move_frame) * 40 + 10
-        self.jump_size = int(self.jump_frame) * 50 + 15
+        self.jump_size = int(self.jump_frame) * 45 + 245
         self.attack_size = int(self.attack_frame) * 45
 
     def draw(self):
@@ -636,7 +689,6 @@ class Knuckles(Character):
 
     def draw(self):
         self.cur_state.draw(self)
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         sx, sy = self.x - server.stage.window_left - 20, self.y - server.stage.window_bottom - 20

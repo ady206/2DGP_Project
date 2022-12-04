@@ -89,6 +89,9 @@ cur_stage_time = 0
 timer = 0
 stage_time = 600
 
+hit_time = 0
+hit_delay_time = 0
+
 sound = None
 sound_on = True
 
@@ -141,13 +144,30 @@ def update():
     timer = cur_stage_time - set_stage_time
     stage_time = 600 - timer
 
+    global hit_time, hit_delay_time
+
     for in_character in server.computer_character:
         in_character.x += in_character.speed * math.cos(in_character.dir) * game_framework.frame_time
         in_character.y += in_character.speed * math.sin(in_character.dir) * game_framework.frame_time
         in_character.x = clamp(server.stage.w // 2 - 400, in_character.x, server.stage.w // 2 + 400)
+
+        in_character.damage = 4
+        if 0 <= stage_time % 3 <= 1:
+            in_character.cur_state = character.COMATTACK
+            if collide(in_character, server.player_character):
+                if server.player_character.hit == False:
+                    hit_time = time()
+                    server.player_character.hp -= in_character.damage
+                    server.player_character.x -= 15
+                server.player_character.hit = True
+                hit_delay_time = time()
+
+                if hit_delay_time >= hit_time + 2:
+                    server.player_character.hit = False
+        else:
+            in_character.cur_state = character.COMRUN
+
         in_character.bt.run()
-
-
 
     if stage_time <= 0:
         result_state.win = False
@@ -190,14 +210,25 @@ def pause():
     global stage_count, sound
     stage_count += 1
     sound.stop()
+    server.player_character.hp = 100
+    server.player_character.cur_state.exit(server.player_character, character.NULL)
+    server.player_character.cur_state = character.IDLE
+    server.player_character.cur_state.enter(server.player_character, character.NULL)
+    game_world.clear()
+    server.stage = None
     server.stage_floor.clear()
     server.prepare_list.clear()
 
+    character.Prepare()
+    game_world.add_object(server.player_character, 2)
+    for i in range(3):
+        game_world.add_object(server.computer_character[i], 1)
+
 def resume():
     global stage_count, sound_on, sound, set_stage_time
-    character.Prepare()
     if stage_count == 1:
         server.stage = Lake()
+        AppendLakeFloor()
         sound = load_music('sound/Lake.mp3')
         if sound_on == True:
             sound.set_volume(20)
@@ -213,7 +244,21 @@ def resume():
             sound.repeat_play()
         else:
             sound.stop()
+
     game_world.add_object(server.stage, 0)
+    for i in server.stage_floor:
+        game_world.add_object(i, 0)
+
+    game_world.add_collision_group(server.player_character, server.computer_character,
+                                   'player_character:computer_character')
+    game_world.add_collision_group(server.player_character, server.stage_floor, 'player_character:stage_floor')
+    game_world.add_collision_group(server.player_character, server.stage_floor, 'computer_character:stage_floor')
+    server.player_character.x = server.stage.w // 2
+    for i in range(3):
+        server.computer_character[i].x = randint(server.stage.w // 2 - 300, server.stage.w // 2 + 300)
+
+    for in_character in server.computer_character:
+        in_character.build_behavior_tree()
 
     set_stage_time = time()
     pass
