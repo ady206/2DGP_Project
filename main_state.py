@@ -152,7 +152,7 @@ def update():
         in_character.x = clamp(server.stage.w // 2 - 400, in_character.x, server.stage.w // 2 + 400)
 
         in_character.damage = 4
-        if 0 <= stage_time % 3 <= 1:
+        if 0 <= stage_time % 3 <= in_character.TIMER_PER_ACTION[3]:
             in_character.cur_state = character.COMATTACK
             if collide(in_character, server.player_character):
                 if server.player_character.hit == False:

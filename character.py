@@ -588,7 +588,7 @@ class Sonic(Character):
 
         self.idle_size = int(self.idle_frame) * 30 + 7
         self.move_size = int(self.move_frame) * 40 + 10
-        self.jump_size = int(self.jump_frame) * 45 + 245
+        self.jump_size = int(self.jump_frame) * 40 + 245
         self.attack_size = int(self.attack_frame) * 45
 
     def draw(self):
@@ -766,22 +766,22 @@ class Tikal(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 4
 
-        self.FRAMES_PER_ACTION = [6, 8, 6, 8]
+        self.FRAMES_PER_ACTION = [6, 8, 6, 3]
         self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
 
-        self.idle_type = [0, 2700, 38, 40, 38, 40]
-        self.move_type = [0, 2640, 40, 40, 40, 40]
-        self.jump_type = [0, 2570, 38, 43, 38, 43]
-        self.attack_type = [0, 2570, 38, 43, 38, 43]
+        self.idle_type = [0, 2714, 35, 40, 32, 37]
+        self.move_type = [0, 2650, 45, 40, 45, 40]
+        self.jump_type = [0, 2584, 40, 43, 40, 43]
+        self.attack_type = [0, 2454, 38, 40, 40, 40]
 
     def update(self):
         super(Tikal, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = int(self.idle_frame) * 36 + 5
-        self.move_size = int(self.move_frame) * 41 + 5
-        self.jump_size = int(self.jump_frame) * 39 + 5
-        self.attack_size = int(self.attack_frame) * 51 + 2
+        self.idle_size = int(self.idle_frame) * 40
+        self.move_size = int(self.move_frame) * 45
+        self.jump_size = int(self.jump_frame) * 40
+        self.attack_size = int(self.attack_frame) * 40
 
     def draw(self):
         self.cur_state.draw(self)
@@ -912,22 +912,22 @@ class Silver(Character):
             self.icon_image = load_image("map/icons.png")
         self.index = 7
 
-        self.FRAMES_PER_ACTION = [7, 7, 7, 7]
+        self.FRAMES_PER_ACTION = [7, 8, 2, 8]
         self.TIMER_PER_ACTION = [1, 1, 0.5, 0.5]
 
         self.idle_type = [0, 2984, 40, 40, 40, 40]
-        self.move_type = [0, 2864, 42, 40, 42, 40]
-        self.jump_type = [0, 2720, 38, 40, 38, 40]
-        self.attack_type = [0, 2720, 38, 40, 38, 40]
+        self.move_type = [0, 2934, 45, 40, 45, 40]
+        self.jump_type = [0, 2684, 45, 40, 45, 40]
+        self.attack_type = [0, 2380, 45, 40, 45, 40]
 
     def update(self):
         super(Silver, self).update()
         self.cur_state.do(self)
 
-        self.idle_size = int(self.idle_frame) * 50
-        self.move_size = int(self.move_frame) * 41 + 6
-        self.jump_size = int(self.jump_frame) * 35 + 620
-        self.attack_size = int(self.attack_frame) * 35 + 620
+        self.idle_size = 4032 - 50 - int(self.idle_frame) * 50
+        self.move_size = 4032 - 50 - int(self.move_frame) * 50
+        self.jump_size = 4032 - 50 - int(self.jump_frame) * 50
+        self.attack_size = 4032 - 50 - int(self.attack_frame) * 50
 
     def draw(self):
         self.cur_state.draw(self)
